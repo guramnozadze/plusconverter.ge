@@ -46,7 +46,8 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   `getTranslations()` with a key in `messages/*.json`.
 - `ka.json` and `ru.json` currently **mirror English** (placeholders). Real Georgian/Russian
   translations are a pending task; `ka` is the default locale.
-- Adding a string = add the key to **all three** catalogs (use `/i18n-key`).
+- Adding a string = add the key to **all three** catalogs at the same path (keep
+  them in lockstep, or the locale missing it throws `MISSING_MESSAGE`).
 - Use `Link`/`useRouter`/`redirect` from `@/i18n/navigation`, never raw `next/link` /
   `next/navigation`, so the locale prefix is preserved.
 
