@@ -1,0 +1,93 @@
+{
+  "common": {
+    "appName": "PLUS Converter",
+    "tagline": "Buy & sell Bank of Georgia PLUS points",
+    "login": "Sign in with Google",
+    "logout": "Sign out",
+    "loading": "Loading…",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "nav": {
+    "home": "Home",
+    "admin": "Admin"
+  },
+  "converter": {
+    "title": "Convert PLUS Points",
+    "buy": "Buy points",
+    "sell": "Sell points",
+    "youPay": "You pay",
+    "youGet": "You get",
+    "gel": "GEL",
+    "points": "PLUS",
+    "rateBuy": "1 GEL = {rate} PLUS",
+    "rateSell": "{rate} PLUS = 1 GEL",
+    "buyDisabled": "Buying is currently unavailable",
+    "sellDisabled": "Selling is currently unavailable",
+    "continue": "Continue",
+    "loginToContinue": "Sign in to continue",
+    "enterAmount": "Enter an amount"
+  },
+  "order": {
+    "title": "Complete your transfer",
+    "timeLeft": "Time left",
+    "expired": "This order has expired",
+    "instructions": "Transfer the exact amount to the account below, then tap “I’ve paid”. We’ll send your points shortly.",
+    "bank": "Bank",
+    "accountName": "Account name",
+    "accountNumber": "Account number",
+    "youSend": "You send",
+    "youReceive": "You receive",
+    "paid": "I’ve paid",
+    "paidConfirmed": "Payment reported — waiting for confirmation",
+    "otherAccounts": "Other accounts",
+    "notFound": "Order not found",
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "bankStatus": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "sold_out": "Sold out"
+  },
+  "username": {
+    "title": "Choose a username",
+    "subtitle": "Optional — you can skip this.",
+    "placeholder": "Username",
+    "save": "Save",
+    "skip": "Skip"
+  },
+  "admin": {
+    "title": "Admin",
+    "rates": "Rates & availability",
+    "buyRate": "Buy rate (PLUS per GEL)",
+    "sellRate": "Sell rate (PLUS per GEL)",
+    "buyEnabled": "Buying enabled",
+    "sellEnabled": "Selling enabled",
+    "timerMinutes": "Order timer (minutes)",
+    "save": "Save",
+    "saved": "Saved",
+    "bankAccounts": "Bank accounts",
+    "addAccount": "Add account",
+    "bankName": "Bank",
+    "accountName": "Account name",
+    "accountNumber": "Account number",
+    "statusLabel": "Status",
+    "delete": "Delete",
+    "orders": "Orders",
+    "pendingTab": "Pending",
+    "historyTab": "History",
+    "markCompleted": "Mark completed",
+    "markCancelled": "Cancel order",
+    "noOrders": "No orders yet",
+    "notAuthorized": "You are not authorized to view this page.",
+    "direction": "Direction",
+    "amount": "Amount",
+    "user": "User",
+    "date": "Date"
+  }
+}
