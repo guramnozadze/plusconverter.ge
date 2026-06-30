@@ -20,8 +20,9 @@ export type Profile = {
 
 export type Settings = {
   id: number;
-  buy_rate: number;
-  sell_rate: number;
+  // Multipliers applied on top of the fixed 400 points/GEL base value.
+  buy_multiplier: number;
+  sell_multiplier: number;
   buy_enabled: boolean;
   sell_enabled: boolean;
   timer_minutes: number;

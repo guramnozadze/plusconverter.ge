@@ -10,8 +10,8 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
   const t = useTranslations("admin");
   const router = useRouter();
   const [form, setForm] = useState({
-    buy_rate: String(settings.buy_rate),
-    sell_rate: String(settings.sell_rate),
+    buy_multiplier: String(settings.buy_multiplier),
+    sell_multiplier: String(settings.sell_multiplier),
     buy_enabled: settings.buy_enabled,
     sell_enabled: settings.sell_enabled,
     timer_minutes: String(settings.timer_minutes),
@@ -23,8 +23,8 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
     setBusy(true);
     setSaved(false);
     const res = await updateSettings({
-      buy_rate: Number(form.buy_rate),
-      sell_rate: Number(form.sell_rate),
+      buy_multiplier: Number(form.buy_multiplier),
+      sell_multiplier: Number(form.sell_multiplier),
       buy_enabled: form.buy_enabled,
       sell_enabled: form.sell_enabled,
       timer_minutes: Number(form.timer_minutes),
@@ -38,7 +38,7 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
   }
 
   const numberField = (
-    key: "buy_rate" | "sell_rate" | "timer_minutes",
+    key: "buy_multiplier" | "sell_multiplier" | "timer_minutes",
     label: string,
   ) => (
     <label className="block">
@@ -46,7 +46,7 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
       <input
         type="number"
         min="0"
-        step={key === "timer_minutes" ? "1" : "any"}
+        step={key === "timer_minutes" ? "1" : "0.01"}
         value={form[key]}
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
         className="mt-1 w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2"
@@ -70,8 +70,8 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
     <section className="rounded-2xl border border-black/10 dark:border-white/15 p-5">
       <h2 className="font-semibold mb-4">{t("rates")}</h2>
       <div className="grid sm:grid-cols-2 gap-3">
-        {numberField("buy_rate", t("buyRate"))}
-        {numberField("sell_rate", t("sellRate"))}
+        {numberField("buy_multiplier", t("buyMultiplier"))}
+        {numberField("sell_multiplier", t("sellMultiplier"))}
         {toggle("buy_enabled", t("buyEnabled"))}
         {toggle("sell_enabled", t("sellEnabled"))}
         {numberField("timer_minutes", t("timerMinutes"))}

@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { computeConversion, isDirectionEnabled } from "@/lib/pricing";
+import {
+  bankValueGel,
+  gelFromPoints,
+  isDirectionEnabled,
+  julyValueGel,
+  multiplierFor,
+  pointsFromGel,
+} from "@/lib/pricing";
 import { createOrder } from "@/lib/actions/orders";
 import type { OrderDirection, Settings } from "@/lib/supabase/types";
 
@@ -13,6 +20,12 @@ type Props = {
   isAuthenticated: boolean;
 };
 
+function fmtField(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return "";
+  // Trim trailing zeros from the computed field for readability.
+  return String(Number(n.toFixed(2)));
+}
+
 export function Converter({ initialSettings, isAuthenticated }: Props) {
   const t = useTranslations("converter");
   const locale = useLocale();
@@ -20,11 +33,15 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
 
   const [settings, setSettings] = useState(initialSettings);
   const [direction, setDirection] = useState<OrderDirection>("buy");
-  const [amount, setAmount] = useState("");
+  const [gel, setGel] = useState("");
+  const [points, setPoints] = useState("");
+  const anchor = useRef<"gel" | "points">("points");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Live price: update rates instantly when the owner changes them.
+  const multiplier = multiplierFor(direction, settings);
+
+  // Live price: update multipliers instantly when the owner changes them.
   useEffect(() => {
     const supabase = createClient();
     const channel = supabase
@@ -40,32 +57,53 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
     };
   }, []);
 
-  const numericAmount = Number(amount);
-  const hasAmount = amount !== "" && Number.isFinite(numericAmount) && numericAmount > 0;
-  const enabled = isDirectionEnabled(direction, settings);
+  // Recompute the dependent field whenever the multiplier (live) or direction
+  // changes, anchored on whichever field the user last edited.
+  useEffect(() => {
+    if (anchor.current === "points") {
+      const p = Number(points);
+      setGel(p > 0 ? fmtField(gelFromPoints(p, multiplier)) : "");
+    } else {
+      const g = Number(gel);
+      setPoints(g > 0 ? fmtField(pointsFromGel(g, multiplier)) : "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [multiplier, direction]);
 
-  const conversion = useMemo(
-    () => (hasAmount ? computeConversion(direction, numericAmount, settings) : null),
-    [hasAmount, direction, numericAmount, settings],
+  const onPointsChange = useCallback(
+    (v: string) => {
+      anchor.current = "points";
+      setPoints(v);
+      const p = Number(v);
+      setGel(v !== "" && p > 0 ? fmtField(gelFromPoints(p, multiplier)) : "");
+    },
+    [multiplier],
   );
+
+  const onGelChange = useCallback(
+    (v: string) => {
+      anchor.current = "gel";
+      setGel(v);
+      const g = Number(v);
+      setPoints(v !== "" && g > 0 ? fmtField(pointsFromGel(g, multiplier)) : "");
+    },
+    [multiplier],
+  );
+
+  const pointsNum = Number(points);
+  const hasPoints = points !== "" && Number.isFinite(pointsNum) && pointsNum > 0;
+  const enabled = isDirectionEnabled(direction, settings);
 
   const gelFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
     [locale],
   );
-  const pointsFmt = useMemo(
-    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }),
-    [locale],
-  );
 
-  const rate = direction === "buy" ? settings.buy_rate : settings.sell_rate;
-  const inputUnit = direction === "buy" ? t("gel") : t("points");
-  const outputUnit = direction === "buy" ? t("points") : t("gel");
-  const outputValue = conversion
+  const pointsHint = hasPoints
     ? direction === "buy"
-      ? pointsFmt.format(conversion.points)
-      : gelFmt.format(conversion.gel)
-    : "0";
+      ? t("worthJuly", { gel: gelFmt.format(julyValueGel(pointsNum)) })
+      : t("worthInBank", { gel: gelFmt.format(bankValueGel(pointsNum)) })
+    : null;
 
   async function signIn() {
     setBusy(true);
@@ -80,10 +118,10 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
   }
 
   async function submit() {
-    if (!hasAmount || !enabled) return;
+    if (!hasPoints || !enabled) return;
     setError(null);
     setBusy(true);
-    const result = await createOrder({ direction, amount: numericAmount });
+    const result = await createOrder({ direction, points: pointsNum });
     if (result.ok) {
       router.push(`/order/${result.orderId}`);
     } else {
@@ -91,6 +129,48 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
       setBusy(false);
     }
   }
+
+  // Field renderers — order flips by direction.
+  const gelField = (label: string) => (
+    <div>
+      <label className="block text-sm text-foreground/60 mb-1">{label}</label>
+      <div className="flex items-center rounded-lg border border-black/15 dark:border-white/20 px-3 focus-within:ring-2 focus-within:ring-foreground/30">
+        <input
+          type="number"
+          inputMode="decimal"
+          min="0"
+          step="any"
+          value={gel}
+          onChange={(e) => onGelChange(e.target.value)}
+          placeholder="0"
+          className="flex-1 bg-transparent py-3 text-lg outline-none"
+        />
+        <span className="text-sm font-medium text-foreground/60">{t("gel")}</span>
+      </div>
+    </div>
+  );
+
+  const pointsField = (label: string) => (
+    <div>
+      <label className="block text-sm text-foreground/60 mb-1">{label}</label>
+      <div className="flex items-center rounded-lg border border-black/15 dark:border-white/20 px-3 focus-within:ring-2 focus-within:ring-foreground/30">
+        <input
+          type="number"
+          inputMode="decimal"
+          min="0"
+          step="any"
+          value={points}
+          onChange={(e) => onPointsChange(e.target.value)}
+          placeholder="0"
+          className="flex-1 bg-transparent py-3 text-lg outline-none"
+        />
+        <span className="text-sm font-medium text-foreground/60">
+          {t("points")}
+        </span>
+      </div>
+      <p className="mt-1 h-4 text-xs text-foreground/50">{pointsHint}</p>
+    </div>
+  );
 
   return (
     <div className="rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6">
@@ -107,9 +187,7 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
               setError(null);
             }}
             className={`rounded-md py-2 text-sm font-medium transition-colors ${
-              direction === dir
-                ? "bg-background shadow-sm"
-                : "text-foreground/60"
+              direction === dir ? "bg-background shadow-sm" : "text-foreground/60"
             }`}
             aria-pressed={direction === dir}
           >
@@ -118,37 +196,22 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
         ))}
       </div>
 
-      {/* Input */}
-      <label className="block text-sm text-foreground/60 mb-1">
-        {t("youPay")}
-      </label>
-      <div className="flex items-center rounded-lg border border-black/15 dark:border-white/20 px-3 mb-4 focus-within:ring-2 focus-within:ring-foreground/30">
-        <input
-          type="number"
-          inputMode="decimal"
-          min="0"
-          step="any"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="0"
-          className="flex-1 bg-transparent py-3 text-lg outline-none"
-        />
-        <span className="text-sm font-medium text-foreground/60">{inputUnit}</span>
+      <div className="space-y-4">
+        {direction === "buy" ? (
+          <>
+            {gelField(t("youPay"))}
+            {pointsField(t("youGet"))}
+          </>
+        ) : (
+          <>
+            {pointsField(t("youPay"))}
+            {gelField(t("youGet"))}
+          </>
+        )}
       </div>
 
-      {/* Output */}
-      <label className="block text-sm text-foreground/60 mb-1">
-        {t("youGet")}
-      </label>
-      <div className="flex items-center justify-between rounded-lg bg-black/5 dark:bg-white/10 px-3 py-3 mb-2">
-        <span className="text-lg font-semibold tabular-nums">{outputValue}</span>
-        <span className="text-sm font-medium text-foreground/60">{outputUnit}</span>
-      </div>
-
-      <p className="text-xs text-foreground/50 mb-5">
-        {direction === "buy"
-          ? t("rateBuy", { rate: pointsFmt.format(rate) })
-          : t("rateSell", { rate: pointsFmt.format(rate) })}
+      <p className="mt-3 mb-5 text-xs text-foreground/50">
+        {t("multiplier", { mult: multiplier })}
       </p>
 
       {!enabled && (
@@ -164,7 +227,7 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
         <button
           type="button"
           onClick={submit}
-          disabled={!hasAmount || !enabled || busy}
+          disabled={!hasPoints || !enabled || busy}
           className="w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
         >
           {t("continue")}

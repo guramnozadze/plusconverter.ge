@@ -1,26 +1,26 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { computeConversion, isDirectionEnabled } from "@/lib/pricing";
+import { quote, isDirectionEnabled } from "@/lib/pricing";
 import type { OrderDirection } from "@/lib/supabase/types";
 
 export type CreateOrderResult =
   | { ok: true; orderId: string }
   | { ok: false; error: string };
 
-// Authoritative order creation. The rate and both amounts are recomputed
-// server-side from the canonical settings row, so a client cannot forge a
-// favorable rate by tampering with the request.
+// Authoritative order creation. `points` is the canonical input; the GEL leg and
+// the multiplier are recomputed server-side from the settings row, so a client
+// cannot forge a favorable price by tampering with the request.
 export async function createOrder(input: {
   direction: OrderDirection;
-  amount: number;
+  points: number;
 }): Promise<CreateOrderResult> {
-  const { direction, amount } = input;
+  const { direction, points: inputPoints } = input;
 
   if (direction !== "buy" && direction !== "sell") {
     return { ok: false, error: "invalid_direction" };
   }
-  if (!Number.isFinite(amount) || amount <= 0) {
+  if (!Number.isFinite(inputPoints) || inputPoints <= 0) {
     return { ok: false, error: "invalid_amount" };
   }
 
@@ -42,7 +42,7 @@ export async function createOrder(input: {
     return { ok: false, error: "direction_disabled" };
   }
 
-  const { gel, points, rate } = computeConversion(direction, amount, settings);
+  const { gel, points, multiplier } = quote(direction, inputPoints, settings);
 
   // Assign the first available bank account (others still shown for scarcity).
   const { data: account } = await supabase
@@ -60,7 +60,7 @@ export async function createOrder(input: {
       direction,
       gel_amount: gel,
       points_amount: points,
-      rate_used: rate,
+      rate_used: multiplier,
       bank_account_id: account?.id ?? null,
     })
     .select("id")

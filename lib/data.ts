@@ -3,8 +3,8 @@ import type { BankAccount, Settings } from "@/lib/supabase/types";
 
 const DEFAULT_SETTINGS: Settings = {
   id: 1,
-  buy_rate: 400,
-  sell_rate: 400,
+  buy_multiplier: 1.5,
+  sell_multiplier: 1.5,
   buy_enabled: true,
   sell_enabled: true,
   timer_minutes: 30,

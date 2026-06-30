@@ -1,5 +1,10 @@
 import type { OrderDirection, Settings } from "@/lib/supabase/types";
 
+// Bank of Georgia's fixed face value: 1 GEL = 400 PLUS points (never changes).
+export const BASE_POINTS_PER_GEL = 400;
+// July 5th spend bonus: points are worth double when spent at the bank.
+export const JULY_BONUS = 2;
+
 export const POINTS_DECIMALS = 2;
 export const GEL_DECIMALS = 2;
 
@@ -8,40 +13,58 @@ export function round(value: number, decimals: number): number {
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
-export type Conversion = {
-  /** GEL leg of the trade. */
-  gel: number;
-  /** PLUS points leg of the trade. */
+export function multiplierFor(
+  direction: OrderDirection,
+  settings: Pick<Settings, "buy_multiplier" | "sell_multiplier">,
+): number {
+  return direction === "buy" ? settings.buy_multiplier : settings.sell_multiplier;
+}
+
+// The two legs are linked by:  gel = (points / 400) * multiplier
+export function gelFromPoints(points: number, multiplier: number): number {
+  return round((points / BASE_POINTS_PER_GEL) * multiplier, GEL_DECIMALS);
+}
+
+export function pointsFromGel(gel: number, multiplier: number): number {
+  if (multiplier <= 0) return 0;
+  return round((gel / multiplier) * BASE_POINTS_PER_GEL, POINTS_DECIMALS);
+}
+
+// Face value of a points amount at the bank (no multiplier).
+export function bankValueGel(points: number): number {
+  return round(points / BASE_POINTS_PER_GEL, GEL_DECIMALS);
+}
+
+// What the points are worth to spend on July 5th (double face value).
+export function julyValueGel(points: number): number {
+  return round((points / BASE_POINTS_PER_GEL) * JULY_BONUS, GEL_DECIMALS);
+}
+
+export type Quote = {
+  /** PLUS points leg. */
   points: number;
-  /** points-per-GEL rate applied. */
-  rate: number;
+  /** GEL leg (paid for buy, received for sell). */
+  gel: number;
+  /** multiplier applied (also snapshotted onto the order as rate_used). */
+  multiplier: number;
 };
 
 /**
- * Canonical conversion math, shared by the client converter (preview) and the
- * server action (authoritative). `inputAmount` is interpreted per direction:
- *   - buy:  the user pays this many GEL and receives points
- *   - sell: the user sends this many points and receives GEL
+ * Authoritative quote from a points quantity, shared by the client preview and
+ * the server action. `points` is the canonical input for both directions:
+ *   - buy:  user receives `points`, pays `gel`
+ *   - sell: user sends `points`, receives `gel`
  */
-export function computeConversion(
+export function quote(
   direction: OrderDirection,
-  inputAmount: number,
-  settings: Pick<Settings, "buy_rate" | "sell_rate">,
-): Conversion {
-  if (direction === "buy") {
-    const rate = settings.buy_rate;
-    return {
-      gel: round(inputAmount, GEL_DECIMALS),
-      points: round(inputAmount * rate, POINTS_DECIMALS),
-      rate,
-    };
-  }
-
-  const rate = settings.sell_rate;
+  points: number,
+  settings: Pick<Settings, "buy_multiplier" | "sell_multiplier">,
+): Quote {
+  const multiplier = multiplierFor(direction, settings);
   return {
-    gel: round(inputAmount / rate, GEL_DECIMALS),
-    points: round(inputAmount, POINTS_DECIMALS),
-    rate,
+    points: round(points, POINTS_DECIMALS),
+    gel: gelFromPoints(points, multiplier),
+    multiplier,
   };
 }
 

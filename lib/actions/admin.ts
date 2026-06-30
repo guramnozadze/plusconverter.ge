@@ -10,17 +10,17 @@ type ActionResult = { ok: boolean; error?: string };
 // these were called by a non-admin the database would reject them.
 
 export async function updateSettings(input: {
-  buy_rate: number;
-  sell_rate: number;
+  buy_multiplier: number;
+  sell_multiplier: number;
   buy_enabled: boolean;
   sell_enabled: boolean;
   timer_minutes: number;
 }): Promise<ActionResult> {
   if (
-    !Number.isFinite(input.buy_rate) ||
-    input.buy_rate <= 0 ||
-    !Number.isFinite(input.sell_rate) ||
-    input.sell_rate <= 0 ||
+    !Number.isFinite(input.buy_multiplier) ||
+    input.buy_multiplier <= 0 ||
+    !Number.isFinite(input.sell_multiplier) ||
+    input.sell_multiplier <= 0 ||
     !Number.isInteger(input.timer_minutes) ||
     input.timer_minutes <= 0
   ) {
