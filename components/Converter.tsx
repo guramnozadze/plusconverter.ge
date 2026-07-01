@@ -16,6 +16,7 @@ import {
 } from "@/lib/pricing";
 import type { OrderDirection, Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
+import { Spinner } from "./Spinner";
 
 type Props = {
   initialSettings: Settings;
@@ -415,8 +416,9 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
           type="button"
           onClick={signIn}
           disabled={busy}
-          className="mt-5 w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
+          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
         >
+          {busy && <Spinner />}
           {t("loginToContinue")}
         </button>
       )}

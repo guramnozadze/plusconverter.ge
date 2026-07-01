@@ -13,12 +13,14 @@ export async function Footer() {
           <nav className="flex flex-col items-start gap-2">
             <Link
               href="/terms"
+              prefetch={false}
               className="text-foreground/70 hover:text-foreground"
             >
               {t("footer.termsLink")}
             </Link>
             <Link
               href="/privacy"
+              prefetch={false}
               className="text-foreground/70 hover:text-foreground"
             >
               {t("footer.privacyLink")}

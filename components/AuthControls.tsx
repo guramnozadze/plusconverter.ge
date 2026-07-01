@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Spinner } from "./Spinner";
 
 type Props = {
   isAuthenticated: boolean;
@@ -41,8 +42,9 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         type="button"
         onClick={signIn}
         disabled={busy}
-        className="rounded-md bg-foreground text-background px-3 py-1.5 text-sm font-medium disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-md bg-foreground text-background px-3 py-1.5 text-sm font-medium disabled:opacity-50"
       >
+        {busy && <Spinner />}
         {t("login")}
       </button>
     );
@@ -59,8 +61,9 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         type="button"
         onClick={signOut}
         disabled={busy}
-        className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 disabled:opacity-50"
       >
+        {busy && <Spinner />}
         {t("logout")}
       </button>
     </div>

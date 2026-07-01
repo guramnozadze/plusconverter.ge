@@ -32,8 +32,15 @@ export function AuthReload() {
     const supabase = createClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      router.refresh();
+    } = supabase.auth.onAuthStateChange((event) => {
+      // onAuthStateChange fires an extra synthetic event (INITIAL_SESSION)
+      // as soon as we subscribe, on top of whatever real transition is in
+      // flight (e.g. a client-side code exchange after OAuth). Refreshing on
+      // every event re-fetched the same URL 2-3x in a row; only SIGNED_IN /
+      // SIGNED_OUT represent an actual state change worth a re-render.
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        router.refresh();
+      }
     });
     return () => subscription.unsubscribe();
   }, [router]);
