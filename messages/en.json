@@ -46,7 +46,7 @@
     "title": "Complete your transfer",
     "timeLeft": "Time left",
     "expired": "This order has expired",
-    "instructions": "Transfer the exact amount to the account below, then tap <paid>“I’ve paid”</paid>. We’ll send your points shortly.",
+    "instructions": "{direction, select, sell {Send the exact PLUS points to the ID number below, then tap <paid>“I’ve paid”</paid>. We’ll send your GEL shortly.} other {Transfer the exact amount to the account below, then tap <paid>“I’ve paid”</paid>. We’ll send your points shortly.}}",
     "bank": "Bank",
     "accountName": "Account name",
     "accountNumber": "Account number",

@@ -170,6 +170,7 @@ export function OrderView({
 
       <p className="text-sm text-foreground/70">
         {t.rich("instructions", {
+          direction: order.direction,
           paid: (chunks) => (
             <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
               {chunks}
