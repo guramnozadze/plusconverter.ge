@@ -18,6 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Header reads the auth cookie on every request (via `Header` -> `getUserProfile`).
+// Without this, Next's production build can serve a cached/prerendered shell for
+// a URL right after the OAuth redirect, showing stale "signed out" markup until a
+// manual reload forces a fresh render — invisible in dev, where caching is off.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
