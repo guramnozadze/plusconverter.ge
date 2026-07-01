@@ -168,7 +168,15 @@ export function OrderView({
         )}
       </div>
 
-      <p className="text-sm text-foreground/70">{t("instructions")}</p>
+      <p className="text-sm text-foreground/70">
+        {t.rich("instructions", {
+          paid: (chunks) => (
+            <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
+              {chunks}
+            </span>
+          ),
+        })}
+      </p>
 
       {/* Amounts */}
       <div className="grid grid-cols-2 gap-3">
@@ -231,6 +239,9 @@ export function OrderView({
       {(order.user_full_name || order.user_account_number) && (
         <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 space-y-2">
           <p className="text-sm font-medium">{t("yourAccount")}</p>
+          <p className="text-xs text-foreground/60">
+            {t("yourAccountHint", { direction: order.direction })}
+          </p>
           {order.user_full_name && (
             <div className="flex justify-between text-sm">
               <span className="text-foreground/60">{t("accountName")}</span>
@@ -246,15 +257,17 @@ export function OrderView({
         </div>
       )}
 
-      {/* Pay button */}
+      {/* Pay button — amber/warning styled (not the site's default black/white
+          button) since tapping it is an irreversible declaration that money
+          was actually sent, not just a "continue" action. */}
       <button
         type="button"
         onClick={pay}
         disabled={busy || confirmed}
-        className={`w-full rounded-lg py-3 font-medium transition-colors ${
+        className={`w-full rounded-lg py-3 font-bold transition-colors ${
           confirmed
-            ? "bg-amber-500 text-white"
-            : "bg-foreground text-background disabled:opacity-50"
+            ? "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
+            : "bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50"
         }`}
       >
         {confirmed ? t("paidConfirmed") : t("paid")}

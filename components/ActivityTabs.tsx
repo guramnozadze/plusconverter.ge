@@ -42,6 +42,7 @@ export function ActivityTabs({
   const locale = useLocale();
   const router = useRouter();
   const [tab, setTab] = useState<"community" | "mine">("community");
+  const hasPending = myOrders.some((o) => o.status === "pending");
 
   // Live community feed: refresh when any review row changes.
   useEffect(() => {
@@ -208,7 +209,18 @@ export function ActivityTabs({
               tab === tb ? "bg-background shadow-sm" : "text-foreground/60"
             }`}
           >
-            {tb === "community" ? t("communityTab") : t("myTab")}
+            {tb === "community" ? (
+              t("communityTab")
+            ) : (
+              <span className="inline-flex items-center justify-center gap-1.5">
+                {hasPending && (
+                  <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                )}
+                {myOrders.length > 0
+                  ? `${t("myTab")} (${myOrders.length})`
+                  : t("myTab")}
+              </span>
+            )}
           </button>
         ))}
       </div>
