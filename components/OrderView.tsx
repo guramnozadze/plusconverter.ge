@@ -265,12 +265,12 @@ export function OrderView({
         <p className="text-center text-sm text-foreground/60">
           {t("support")}{" "}
           <a
-            href="https://t.me/gntech"
+            href="https://t.me/plusconverter"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium underline"
           >
-            @gntech
+            @plusconverter
           </a>
         </p>
       )}

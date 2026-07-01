@@ -24,7 +24,7 @@ export async function Footer() {
               {t("footer.privacyLink")}
             </Link>
             <a
-              href="https://t.me/gntech"
+              href="https://t.me/plusconverter"
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground/70 hover:text-foreground"
