@@ -21,6 +21,7 @@ export function BankAccountsManager({ accounts }: { accounts: BankAccount[] }) {
     bank_name: "",
     account_name: "",
     account_number: "",
+    id_number: "",
   });
 
   async function add() {
@@ -28,12 +29,13 @@ export function BankAccountsManager({ accounts }: { accounts: BankAccount[] }) {
     setBusy(true);
     const res = await createBankAccount({
       ...form,
+      id_number: form.id_number || undefined,
       status: "available",
       sort_order: accounts.length + 1,
     });
     setBusy(false);
     if (res.ok) {
-      setForm({ bank_name: "", account_name: "", account_number: "" });
+      setForm({ bank_name: "", account_name: "", account_number: "", id_number: "" });
       router.refresh();
     }
   }
@@ -62,6 +64,7 @@ export function BankAccountsManager({ accounts }: { accounts: BankAccount[] }) {
               <p className="font-medium">{acc.bank_name}</p>
               <p className="text-foreground/60 font-mono text-xs">
                 {acc.account_number} · {acc.account_name}
+                {acc.id_number && ` · ${acc.id_number}`}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -90,7 +93,7 @@ export function BankAccountsManager({ accounts }: { accounts: BankAccount[] }) {
         ))}
       </ul>
 
-      <div className="grid sm:grid-cols-3 gap-2">
+      <div className="grid sm:grid-cols-4 gap-2">
         <input
           value={form.bank_name}
           onChange={(e) => setForm({ ...form, bank_name: e.target.value })}
@@ -107,6 +110,12 @@ export function BankAccountsManager({ accounts }: { accounts: BankAccount[] }) {
           value={form.account_number}
           onChange={(e) => setForm({ ...form, account_number: e.target.value })}
           placeholder={t("accountNumber")}
+          className="rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
+        />
+        <input
+          value={form.id_number}
+          onChange={(e) => setForm({ ...form, id_number: e.target.value })}
+          placeholder={t("idNumber")}
           className="rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-sm"
         />
       </div>

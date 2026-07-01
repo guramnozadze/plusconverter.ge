@@ -44,6 +44,7 @@ export type BankAccount = {
   bank_name: string;
   account_name: string;
   account_number: string;
+  id_number: string | null;
   status: BankAccountStatus;
   sort_order: number;
   created_at: string;

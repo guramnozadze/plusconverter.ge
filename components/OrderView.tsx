@@ -46,7 +46,7 @@ export function OrderView({
   const [confirmed, setConfirmed] = useState(order.user_confirmed);
   const remaining = useCountdown(expiresAt, confirmed);
   const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Live: reflect admin actions (completion/cancellation) without a manual
   // refresh. RLS scopes this to the caller's own order.
@@ -112,11 +112,11 @@ export function OrderView({
     setBusy(false);
   }
 
-  async function copy(value: string) {
+  async function copy(field: string, value: string) {
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField((f) => (f === field ? null : f)), 1500);
     } catch {
       /* clipboard unavailable */
     }
@@ -199,14 +199,30 @@ export function OrderView({
               <span className="font-mono">{assigned.account_number}</span>
               <button
                 type="button"
-                onClick={() => copy(assigned.account_number)}
+                onClick={() => copy("account_number", assigned.account_number)}
                 className="rounded-md border border-black/15 dark:border-white/20 px-2 py-0.5 text-xs"
                 aria-label={t("accountNumber")}
               >
-                {copied ? "✓" : "⧉"}
+                {copiedField === "account_number" ? "✓" : "⧉"}
               </button>
             </span>
           </div>
+          {assigned.id_number && (
+            <div className="flex items-center justify-between gap-2 text-sm">
+              <span className="text-foreground/60">{t("idNumber")}</span>
+              <span className="flex items-center gap-2">
+                <span className="font-mono">{assigned.id_number}</span>
+                <button
+                  type="button"
+                  onClick={() => copy("id_number", assigned.id_number!)}
+                  className="rounded-md border border-black/15 dark:border-white/20 px-2 py-0.5 text-xs"
+                  aria-label={t("idNumber")}
+                >
+                  {copiedField === "id_number" ? "✓" : "⧉"}
+                </button>
+              </span>
+            </div>
+          )}
         </div>
       )}
 

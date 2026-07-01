@@ -55,6 +55,7 @@ export async function createBankAccount(input: {
   bank_name: string;
   account_name: string;
   account_number: string;
+  id_number?: string;
   status: BankAccountStatus;
   sort_order: number;
 }): Promise<ActionResult> {
