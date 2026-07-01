@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { AuthReload } from "@/components/AuthReload";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -98,6 +99,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider>
+          <AuthReload />
           <Header />
           <main className="flex-1 w-full max-w-2xl mx-auto px-4 py-6">
             {children}

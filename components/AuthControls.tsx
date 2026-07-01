@@ -51,7 +51,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   return (
     <div className="flex items-center gap-2 text-sm">
       {displayName && (
-        <span className="hidden sm:inline max-w-[10rem] truncate text-foreground/70">
+        <span className="inline max-w-[6rem] sm:max-w-[10rem] truncate text-foreground/70">
           {displayName}
         </span>
       )}
