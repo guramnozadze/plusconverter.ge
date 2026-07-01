@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createOrder } from "@/lib/actions/orders";
-import { BankStatusBadge } from "./BankStatusBadge";
 import type { BankAccount, OrderDirection } from "@/lib/supabase/types";
 
 type Props = {
@@ -25,10 +24,11 @@ export function AccountPicker({
   const t = useTranslations("selectAccount");
   const router = useRouter();
 
-  const available = accounts.filter((a) => a.status === "available");
-  const others = accounts.filter((a) => a.status !== "available");
+  // No account is shown to the user for selection — the server assigns the
+  // first available one automatically (see createOrder's fallback). We only
+  // need this to know whether one exists at all, to block submission if not.
+  const hasAvailable = accounts.some((a) => a.status === "available");
 
-  const [selectedId, setSelectedId] = useState(available[0]?.id ?? "");
   // Prefilled from the user's profile defaults; editable for this order only.
   const [fullName, setFullName] = useState(defaultFullName);
   const [accountNumber, setAccountNumber] = useState(defaultAccountNumber);
@@ -40,13 +40,12 @@ export function AccountPicker({
     fullName.trim() !== "" && accountNumber.trim() !== "";
 
   async function confirm() {
-    if (!selectedId || !detailsProvided) return;
+    if (!hasAvailable || !detailsProvided) return;
     setError(null);
     setBusy(true);
     const result = await createOrder({
       direction,
       points,
-      bankAccountId: selectedId,
       fullName,
       accountNumber,
       comment,
@@ -61,43 +60,10 @@ export function AccountPicker({
 
   return (
     <div className="space-y-4">
-      {available.length === 0 ? (
+      {!hasAvailable && (
         <p className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm text-foreground/60">
           {t("noneAvailable")}
         </p>
-      ) : (
-        <ul className="space-y-2">
-          {available.map((acc) => {
-            const active = acc.id === selectedId;
-            return (
-              <li key={acc.id}>
-                <label
-                  className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 ${
-                    active
-                      ? "border-foreground ring-2 ring-foreground/30"
-                      : "border-black/10 dark:border-white/15"
-                  }`}
-                >
-                  <span className="min-w-0">
-                    <span className="block font-medium">{acc.bank_name}</span>
-                    <span className="block text-sm text-foreground/60">
-                      {acc.account_name} ·{" "}
-                      <span className="font-mono">{acc.account_number}</span>
-                    </span>
-                  </span>
-                  <input
-                    type="radio"
-                    name="account"
-                    value={acc.id}
-                    checked={active}
-                    onChange={() => setSelectedId(acc.id)}
-                    className="size-4 accent-foreground"
-                  />
-                </label>
-              </li>
-            );
-          })}
-        </ul>
       )}
 
       {/* The user's own bank details for this order (prefilled from profile,
@@ -157,34 +123,11 @@ export function AccountPicker({
       <button
         type="button"
         onClick={confirm}
-        disabled={!selectedId || busy || !detailsProvided}
+        disabled={!hasAvailable || busy || !detailsProvided}
         className="w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
       >
         {t("confirm")}
       </button>
-
-      {/* Other accounts shown for scarcity, not selectable. */}
-      {others.length > 0 && (
-        <div>
-          <p className="text-sm text-foreground/60 mb-2">{t("otherAccounts")}</p>
-          <ul className="space-y-2">
-            {others.map((acc) => (
-              <li
-                key={acc.id}
-                className="flex items-center justify-between rounded-xl border border-black/10 dark:border-white/15 px-3 py-2 text-sm opacity-60"
-              >
-                <span>
-                  {acc.bank_name} ·{" "}
-                  <span className="font-mono text-foreground/70">
-                    {acc.account_number}
-                  </span>
-                </span>
-                <BankStatusBadge status={acc.status} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

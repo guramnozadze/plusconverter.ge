@@ -51,8 +51,7 @@ export default async function NewOrderPage({
 
   return (
     <div>
-      <h1 className="text-base font-semibold mb-1">{summary}</h1>
-      <p className="text-sm text-foreground/60 mb-4">{t("subtitle")}</p>
+      <h1 className="text-base font-semibold mb-4">{summary}</h1>
       <AccountPicker
         direction={direction!}
         points={points}
