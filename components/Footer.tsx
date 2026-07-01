@@ -34,7 +34,7 @@ export async function Footer() {
               {t("footer.contactLabel")}
             </a>
             <a
-              href="https://www.facebook.com/profile.php?id=61591187956542"
+              href="https://www.facebook.com/profile.php?id=61591533212017"
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground/70 hover:text-foreground"
