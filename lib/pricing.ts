@@ -74,3 +74,24 @@ export function isDirectionEnabled(
 ): boolean {
   return direction === "buy" ? settings.buy_enabled : settings.sell_enabled;
 }
+
+// Minimum on the "give" leg (GEL for buy, points for sell). 0 = no minimum.
+export function minGive(
+  direction: OrderDirection,
+  settings: Pick<Settings, "buy_min_gel" | "sell_min_points">,
+): number {
+  return direction === "buy" ? settings.buy_min_gel : settings.sell_min_points;
+}
+
+// Cap on the points leg, shown to users. Buy: admin sets the points cap
+// directly (available inventory). Sell: admin sets a GEL budget (what they
+// can afford to pay sellers) and the points cap is derived from it at the
+// current sell rate, so it stays correct if the rate changes. 0 = no limit.
+export function maxPoints(
+  direction: OrderDirection,
+  settings: Pick<Settings, "buy_max_points" | "sell_max_gel" | "sell_multiplier">,
+): number {
+  if (direction === "buy") return settings.buy_max_points;
+  if (settings.sell_max_gel <= 0) return 0;
+  return pointsFromGel(settings.sell_max_gel, settings.sell_multiplier);
+}

@@ -14,6 +14,8 @@ export type Profile = {
   id: string;
   email: string | null;
   username: string | null;
+  full_name: string | null;
+  account_number: string | null;
   is_admin: boolean;
   created_at: string;
 };
@@ -26,6 +28,14 @@ export type Settings = {
   buy_enabled: boolean;
   sell_enabled: boolean;
   timer_minutes: number;
+  // Thresholds; 0 = no limit. Mins are on the "give" leg (GEL for buy, points
+  // for sell). Buy max is the points leg directly; sell max is a GEL budget
+  // (what the admin can afford to pay sellers) that the points cap is
+  // derived from at the current sell rate.
+  buy_min_gel: number;
+  buy_max_points: number;
+  sell_min_points: number;
+  sell_max_gel: number;
   updated_at: string;
 };
 
@@ -47,10 +57,26 @@ export type Order = {
   points_amount: number;
   rate_used: number;
   bank_account_id: string | null;
+  user_full_name: string | null;
+  user_account_number: string | null;
+  comment: string | null;
   status: OrderStatus;
   user_confirmed: boolean;
   created_at: string;
   completed_at: string | null;
+};
+
+// Public community-feed row. Denormalized on purpose: no user_id, snapshot name.
+export type Review = {
+  id: string;
+  order_id: string;
+  display_name: string;
+  direction: OrderDirection;
+  points_amount: number;
+  rating: number | null;
+  comment: string | null;
+  hidden: boolean;
+  created_at: string;
 };
 
 export type Database = {
@@ -90,6 +116,17 @@ export type Database = {
         Update: Partial<Order>;
         Relationships: [];
       };
+      reviews: {
+        Row: Review;
+        Insert: Partial<Review> & {
+          order_id: string;
+          display_name: string;
+          direction: OrderDirection;
+          points_amount: number;
+        };
+        Update: Partial<Review>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -99,6 +136,10 @@ export type Database = {
       };
       mark_order_paid: {
         Args: { p_order_id: string };
+        Returns: undefined;
+      };
+      submit_review: {
+        Args: { p_order_id: string; p_rating: number; p_comment: string | null };
         Returns: undefined;
       };
     };

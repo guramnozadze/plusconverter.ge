@@ -1,4 +1,4 @@
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/data";
@@ -12,7 +12,6 @@ export default async function OrderPage({
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("order");
 
   const supabase = await createClient();
 
@@ -27,17 +26,20 @@ export default async function OrderPage({
     notFound();
   }
 
-  const [accountsRes, settings] = await Promise.all([
+  const [accountsRes, settings, reviewRes, profileRes] = await Promise.all([
     supabase.from("bank_accounts").select("*").order("sort_order"),
     getSettings(),
+    supabase.from("reviews").select("rating").eq("order_id", id).maybeSingle(),
+    supabase.from("profiles").select("username").eq("id", order.user_id).maybeSingle(),
   ]);
   const accounts = (accountsRes.data ?? []) as BankAccount[];
+  const alreadyReviewed = reviewRes.data?.rating != null;
+  const hasUsername = Boolean(profileRes.data?.username?.trim());
 
   const assigned =
     accounts.find((a) => a.id === order.bank_account_id) ??
     accounts.find((a) => a.status === "available") ??
     null;
-  const others = accounts.filter((a) => a.id !== assigned?.id);
 
   const expiresAt = new Date(
     new Date(order.created_at).getTime() + settings.timer_minutes * 60_000,
@@ -45,12 +47,12 @@ export default async function OrderPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold mb-1">{t("title")}</h1>
       <OrderView
         order={order}
         assigned={assigned}
-        others={others}
         expiresAt={expiresAt}
+        alreadyReviewed={alreadyReviewed}
+        hasUsername={hasUsername}
       />
     </div>
   );

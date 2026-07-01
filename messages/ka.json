@@ -1,94 +1,241 @@
 {
+  "meta": {
+    "title": "PlusConverter.ge — PLUS ქულების ყიდვა და გაყიდვა საუკეთესო კურსით",
+    "description": "იყიდეთ და გაყიდეთ საქართველოს ბანკის PLUS ქულები სწრაფად და უსაფრთხოდ — გამჭვირვალე, სამართლიანი კურსით და დაუყოვნებელი საბანკო გადარიცხვით."
+  },
   "common": {
-    "appName": "PLUS Converter",
-    "tagline": "Buy & sell Bank of Georgia PLUS points",
-    "login": "Sign in with Google",
-    "logout": "Sign out",
-    "loading": "Loading…",
-    "cancel": "Cancel",
-    "copy": "Copy",
-    "copied": "Copied"
+    "appName": "PLUS კონვერტერი",
+    "tagline": "საქართველოს ბანკის PLUS ქულების ყიდვა და გაყიდვა",
+    "login": "შესვლა Google-ით",
+    "logout": "გასვლა",
+    "loading": "იტვირთება…",
+    "cancel": "გაუქმება",
+    "copy": "კოპირება",
+    "copied": "დაკოპირდა",
+    "ok": "კარგი"
   },
   "nav": {
-    "home": "Home",
-    "admin": "Admin"
+    "home": "მთავარი",
+    "admin": "ადმინი"
   },
   "converter": {
-    "title": "Convert PLUS Points",
-    "buy": "Buy points",
-    "sell": "Sell points",
-    "youPay": "You pay",
-    "youGet": "You get",
-    "gel": "GEL",
-    "points": "PLUS",
-    "multiplier": "Rate ×{mult}",
-    "worthInBank": "= {gel} GEL in bank",
-    "worthJuly": "≈ {gel} GEL on Jul 5 (2×)",
-    "buyDisabled": "Buying is currently unavailable",
-    "sellDisabled": "Selling is currently unavailable",
-    "continue": "Continue",
-    "loginToContinue": "Sign in to continue",
-    "enterAmount": "Enter an amount"
+    "title": "PLUS ქულების კონვერტაცია",
+    "buy": "PLUS ყიდვა",
+    "sell": "PLUS გაყიდვა",
+    "youPay": "თქვენ იხდით",
+    "youSend": "თქვენ აგზავნით",
+    "youGet": "თქვენ მიიღებთ",
+    "gel": "ლარი",
+    "points": "PLUS ქულები",
+    "multiplier": "კურსი ×{mult}",
+    "worthInBank": "= {gel} ლარი ბანკში",
+    "worthJuly": "≈ {gel} ლარი 5 ივლისს (2×)",
+    "sellBonus": "მიიღეთ +{gel} ლარით მეტი",
+    "buyDisabled": "ყიდვა დროებით შეუძლებელია",
+    "sellDisabled": "გაყიდვა დროებით შეუძლებელია",
+    "continue": "გაგრძელება",
+    "loginToContinue": "გასაგრძელებლად შედით სისტემაში",
+    "enterAmount": "შეიყვანეთ თანხა",
+    "available": "ხელმისაწვდომია: {amount} {unit}",
+    "sellMax": "გაყიდოთ მაქსიმუმ {amount} {unit}",
+    "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
+    "minPopupTitle": "მინიმალური თანხა",
+    "minPopupBody": "მინიმუმია {amount} {unit}."
   },
   "order": {
-    "title": "Complete your transfer",
-    "timeLeft": "Time left",
-    "expired": "This order has expired",
-    "instructions": "Transfer the exact amount to the account below, then tap “I’ve paid”. We’ll send your points shortly.",
-    "bank": "Bank",
-    "accountName": "Account name",
-    "accountNumber": "Account number",
-    "youSend": "You send",
-    "youReceive": "You receive",
-    "paid": "I’ve paid",
-    "paidConfirmed": "Payment reported — waiting for confirmation",
-    "otherAccounts": "Other accounts",
-    "notFound": "Order not found",
+    "title": "დაასრულეთ გადარიცხვა",
+    "timeLeft": "დარჩენილი დრო",
+    "expired": "ამ შეკვეთის ვადა გავიდა",
+    "instructions": "გადარიცხეთ ზუსტი თანხა ქვემოთ მითითებულ ანგარიშზე და შემდეგ დააჭირეთ 'გადავიხადე'. მალე გამოგიგზავნით ქულებს.",
+    "bank": "ბანკი",
+    "accountName": "ანგარიშის სახელი",
+    "accountNumber": "ანგარიშის ნომერი",
+    "yourAccount": "თქვენი ანგარიში",
+    "youSend": "თქვენ აგზავნით",
+    "youReceive": "თქვენ მიიღებთ",
+    "paid": "გადავიხადე",
+    "paidConfirmed": "გადახდის შესახებ შეტყობინება გაიგზავნა - ველოდებით დადასტურებას",
+    "processing": "თქვენი გადახდა მუშავდება…",
+    "support": "კითხვები გაქვთ? მოგვწერეთ ტელეგრამზე:",
+    "otherAccounts": "სხვა ანგარიშები",
+    "notFound": "შეკვეთა ვერ მოიძებნა",
     "status": {
-      "pending": "Pending",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
+      "pending": "მოლოდინში",
+      "completed": "დასრულებული",
+      "cancelled": "გაუქმებული"
     }
   },
-  "bankStatus": {
-    "available": "Available",
-    "unavailable": "Unavailable",
-    "sold_out": "Sold out"
+  "selectAccount": {
+    "title": "აირჩიეთ ანგარიში",
+    "subtitle": "აირჩიეთ, სად გსურთ გადარიცხვის გაგზავნა.",
+    "confirm": "დადასტურება",
+    "otherAccounts": "სხვა ანგარიშები",
+    "noneAvailable": "ამჟამად ხელმისაწვდომი ანგარიშები არ არის. გთხოვთ, მოგვიანებით შეამოწმოთ.",
+    "error": "ვერ მოხერხდა შეკვეთის შექმნა. გთხოვთ, სცადოთ თავიდან.",
+    "summaryBuy": "ყიდულობთ {points} PLUS ქულას {gel} ლარად",
+    "summarySell": "ყიდით {points} PLUS ქულას {gel} ლარად",
+    "yourDetails": "თქვენი საბანკო რეკვიზიტები",
+    "yourDetailsHint": "{direction, select, sell {ანგარიში, სადაც მიიღებთ ლარს.} other {ანგარიში, სადაც მიიღებთ PLUS ქულებს.}}",
+    "yourFullName": "სახელი და გვარი",
+    "yourAccountNumber": "პირადი ნომერი",
+    "comment": "კომენტარი",
+    "optional": "არასავალდებულო",
+    "commentPlaceholder": "მაგ. ანგარიშის ნომერი, ტელეფონის ნომერი, სხვა ინფო ან დატოვე ცარიელი."
   },
-  "username": {
-    "title": "Choose a username",
-    "subtitle": "Optional — you can skip this.",
-    "placeholder": "Username",
-    "save": "Save",
-    "skip": "Skip"
+  "bankStatus": {
+    "available": "ხელმისაწვდომია",
+    "unavailable": "მიუწვდომელია",
+    "sold_out": "ამოწურულია"
+  },
+  "profile": {
+    "title": "თქვენი ანგარიში",
+    "securityNote": "თქვენი მონაცემები უსაფრთხოდ ინახება — სხვებისთვის მხოლოდ მომხმარებლის სახელია ხილული.",
+    "fullName": "სახელი და გვარი",
+    "accountNumber": "პირადი ნომერი",
+    "username": "მომხმარებლის სახელი",
+    "usernameHint": "აირჩიეთ რამე შემთხვევითი და სახალისო კომენტარებისთვის - იყავით მხიარული, ნუ გამოიყენებთ ნამდვილ სახელს.",
+    "usernamePlaceholder": "მაგ. kvara777, erlingaHalandi, volkanovski, medea67",
+    "usernameTaken": "ეს მომხმარებლის სახელი უკვე დაკავებულია - სცადეთ სხვა.",
+    "usernameInvalid": "მომხმარებლის სახელი არ შეიძლება შეიცავდეს ჰარეებს.",
+    "save": "შენახვა",
+    "saved": "შენახულია",
+    "edit": "რედაქტირება",
+    "empty": "დაამატეთ თქვენი მონაცემები"
+  },
+  "reviews": {
+    "communityTab": "საზოგადოება",
+    "myTab": "ჩემი ტრანზაქციები",
+    "leaveReview": "დატოვეთ შეფასება",
+    "rating": "შეფასება",
+    "commentPlaceholder": "დაამატეთ კომენტარი (არასავალდებულო)",
+    "submit": "შეფასების გაგზავნა",
+    "submitted": "გმადლობთ შეფასებისთვის!",
+    "soldPoints": "გაყიდულია {points} PLUS ქულა",
+    "boughtPoints": "ნაყიდია {points} PLUS ქულა",
+    "noUsernameNudge": "შეფასების დასატოვებლად დააყენეთ მომხმარებლის სახელი.",
+    "setUsername": "დააყენეთ მომხმარებლის სახელი",
+    "alreadyReviewed": "თქვენ უკვე შეაფასეთ ეს შეკვეთა.",
+    "error": "ვერ მოხერხდა შეფასების გაგზავნა. გთხოვთ, სცადოთ თავიდან.",
+    "emptyFeed": "აქტივობა ჯერ არ არის.",
+    "emptyMine": "თქვენ ჯერ არ გაქვთ ტრანზაქციები.",
+    "prevPage": "წინა",
+    "nextPage": "შემდეგი",
+    "pageOf": "გვერდი {page} / {total}",
+    "adminTitle": "შეფასებები",
+    "hide": "დამალვა",
+    "unhide": "გამოჩენა"
   },
   "admin": {
-    "title": "Admin",
-    "rates": "Rates & availability",
-    "buyMultiplier": "Buy multiplier (×)",
-    "sellMultiplier": "Sell multiplier (×)",
-    "buyEnabled": "Buying enabled",
-    "sellEnabled": "Selling enabled",
-    "timerMinutes": "Order timer (minutes)",
-    "save": "Save",
-    "saved": "Saved",
-    "bankAccounts": "Bank accounts",
-    "addAccount": "Add account",
-    "bankName": "Bank",
-    "accountName": "Account name",
-    "accountNumber": "Account number",
-    "statusLabel": "Status",
-    "delete": "Delete",
-    "orders": "Orders",
-    "pendingTab": "Pending",
-    "historyTab": "History",
-    "markCompleted": "Mark completed",
-    "markCancelled": "Cancel order",
-    "noOrders": "No orders yet",
-    "notAuthorized": "You are not authorized to view this page.",
-    "direction": "Direction",
-    "amount": "Amount",
-    "user": "User",
-    "date": "Date"
+    "title": "ადმინი",
+    "rates": "კურსები და ხელმისაწვდომობა",
+    "buyMultiplier": "ყიდვის მამრავლი (×)",
+    "sellMultiplier": "გაყიდვის მამრავლი (×)",
+    "buyEnabled": "ყიდვა ჩართულია",
+    "sellEnabled": "გაყიდვა ჩართულია",
+    "timerMinutes": "შეკვეთის ტაიმერი (წუთი)",
+    "save": "შენახვა",
+    "saved": "შენახულია",
+    "bankAccounts": "საბანკო ანგარიშები",
+    "addAccount": "ანგარიშის დამატება",
+    "bankName": "ბანკი",
+    "accountName": "ანგარიშის სახელი",
+    "accountNumber": "ანგარიშის ნომერი",
+    "statusLabel": "სტატუსი",
+    "delete": "წაშლა",
+    "orders": "შეკვეთები",
+    "reviewsLink": "შეფასებები",
+    "ordersLink": "შეკვეთები",
+    "pendingTab": "მოლოდინში",
+    "historyTab": "ისტორია",
+    "markCompleted": "დასრულებულად მონიშვნა",
+    "markCancelled": "შეკვეთის გაუქმება",
+    "paidBadge": "💸 გადახდილი — დაადასტურეთ",
+    "noOrders": "შეკვეთები ჯერ არ არის",
+    "orderId": "შეკვეთის ID",
+    "username": "მომხმარებლის სახელი",
+    "rateUsed": "გამოყენებული კურსი",
+    "completedAt": "დასრულების დრო",
+    "notAuthorized": "თქვენ არ გაქვთ ამ გვერდის ნახვის უფლება.",
+    "direction": "მიმართულება",
+    "amount": "თანხა",
+    "user": "მომხმარებელი",
+    "date": "თარიღი",
+    "thresholds": "ყიდვა/გაყიდვის ლიმიტები",
+    "thresholdsHint": "0 ნიშნავს ლიმიტის გარეშე.",
+    "buyMinGel": "მინ. ყიდვის თანხა (ლარი)",
+    "buyMaxPoints": "მაქს. ხელმისაწვდომი ყიდვისთვის (PLUS ქულა)",
+    "sellMinPoints": "მინ. გაყიდვის თანხა (PLUS ქულა)",
+    "sellMaxGel": "მაქს. გადასახდელი ბიუჯეტი (ლარი) - თანხა, რომლის გადახდაც შეგიძლიათ გამყიდველებზე"
+  },
+  "footer": {
+    "termsLink": "წესები და პირობები",
+    "privacyLink": "კონფიდენციალურობის პოლიტიკა",
+    "contactLabel": "დაგვიკავშირდით ტელეგრამში",
+    "facebookLabel": "Facebook",
+    "disclaimer": "დამოუკიდებელი სერვისია, არ არის დაკავშირებული საქართველოს ბანკთან",
+    "copyright": "© {year} plusconverter.ge"
+  },
+  "notFound": {
+    "title": "გვერდი ვერ მოიძებნა",
+    "body": "თქვენ მიერ მოძებნილი გვერდი არ არსებობს ან შესაძლოა გადატანილია.",
+    "backHome": "კონვერტორზე დაბრუნება"
+  },
+  "privacy": {
+    "title": "კონფიდენციალურობის პოლიტიკა",
+    "metaDescription": "როგორ აგროვებს, იყენებს და ინახავს plusconverter.ge თქვენს მონაცემებს.",
+    "intro": "ეს გვერდი განმარტავს, თუ რა მონაცემებს აგროვებს plusconverter.ge სერვისის გამოყენებისას და როგორ გამოიყენება ისინი. ჩვენ ვაგროვებთ მხოლოდ იმ მინიმუმს, რაც საჭიროა შეკვეთების დასამუშავებლად.",
+    "sections": {
+      "dataCollected": {
+        "title": "რას ვაგროვებთ",
+        "body": "Google-ით შესვლისას ვინახავთ თქვენს ელფოსტას და სახელს. შეკვეთის გაფორმებისას ვინახავთ თქვენ მიერ მითითებულ საბანკო ან PLUS ანგარიშის დეტალებს, სახელს (username) და კომენტარს, ასევე შეკვეთის თანხებსა და სტატუსს."
+      },
+      "howUsed": {
+        "title": "როგორ გამოიყენება",
+        "body": "თქვენი მონაცემები გამოიყენება მხოლოდ შეკვეთების დასამუშავებლად — ქულების ან ლარის გასაგზავნად, თქვენი შეკვეთების ისტორიის საჩვენებლად და საჯარო შეფასებებში თქვენს მიერ არჩეული username-ის გამოსაჩენად."
+      },
+      "storage": {
+        "title": "შენახვა და უსაფრთხოება",
+        "body": "მონაცემები ინახება Supabase-ში (Postgres) ჩართული Row Level Security-ით, ასე რომ თქვენ წვდომა გაქვთ მხოლოდ საკუთარ ჩანაწერებზე. ჩვენ არ ვყიდით და არ ვუზიარებთ თქვენს მონაცემებს მესამე მხარეს."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "Cookie-ebს ვიყენებთ მხოლოდ ავტორიზაციისთვის (შესვლის შესანარჩუნებლად) და ენის პრეფერენციის დასამახსოვრებლად — არანაირი თვალთვალის ან სარეკლამო cookie."
+      },
+      "contact": {
+        "title": "კითხვები ან მონაცემების მოთხოვნა",
+        "body": "თქვენს მონაცემებზე კითხვების ან წაშლის მოთხოვნისთვის დაგვიკავშირდით ტელეგრამზე: @gntech."
+      }
+    }
+  },
+  "terms": {
+    "title": "წესები და პირობები",
+    "metaDescription": "წესები და პირობები საქართველოს ბანკის PLUS ქულების ყიდვა-გაყიდვისთვის plusconverter.ge-ზე.",
+    "intro": "plusconverter.ge-ს გამოყენებით PLUS ქულების საყიდ-გასაყიდად, თქვენ ეთანხმებით ქვემოთ მოცემულ პირობებს. ეს დამოუკიდებელი სერვისია — გთხოვთ, ყურადღებით წაიკითხოთ შეკვეთის გაფორმებამდე.",
+    "sections": {
+      "rates": {
+        "title": "კურსი",
+        "body": "გაცვლის კურსს ვადგენთ ჩვენ და შეიძლება ნებისმიერ დროს შეიცვალოს. შეკვეთის შექმნისას ნაჩვენები კურსი ფიქსირდება იმ კონკრეტული შეკვეთისთვის."
+      },
+      "finality": {
+        "title": "გადახდა საბოლოოა",
+        "body": "როგორც კი გაგზავნით PLUS ქულებს ან ლარს შეკვეთისთვის, ტრანზაქცია საბოლოოა. გაგზავნილი გადარიცხვის დაბრუნება შეუძლებელია, ამიტომ გადახდამდე გადაამოწმეთ შეკვეთის დეტალები."
+      },
+      "accountDetails": {
+        "title": "თქვენი რეკვიზიტები",
+        "body": "თქვენ ხართ პასუხისმგებელი სწორი საბანკო ან PLUS ანგარიშის მონაცემების მითითებაზე. არასწორად მითითებული რეკვიზიტების გამო დაკარგულ ქულებზე ან თანხაზე პასუხისმგებლობას არ ვიღებთ."
+      },
+      "orderExpiry": {
+        "title": "შეკვეთის ვადა",
+        "body": "თითოეული შეკვეთა უნდა გადაიხადოთ შეკვეთის გვერდზე ნაჩვენები დროის განმავლობაში. ვადაგასულ, გადაუხდელ ან საეჭვო შეკვეთებს ვიტოვებთ უფლებას გავაუქმოთ."
+      },
+      "disclaimer": {
+        "title": "არ ვართ დაკავშირებული საქართველოს ბანკთან",
+        "body": "plusconverter.ge დამოუკიდებელი სერვისია და არ არის აფილირებული, დამტკიცებული ან სპონსორირებული საქართველოს ბანკის მიერ. „PLUS“ საქართველოს ბანკის ლოიალობის პროგრამის სახელია, გამოყენებულია მხოლოდ აღწერითი მიზნით."
+      },
+      "contact": {
+        "title": "კითხვები და დავები",
+        "body": "შეკვეთასთან დაკავშირებული ნებისმიერი კითხვის ან პრობლემის შემთხვევაში მოგვწერეთ ტელეგრამზე: @gntech."
+      }
+    }
   }
 }

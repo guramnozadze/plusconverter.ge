@@ -37,6 +37,13 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   **Secret** key (`sb_secret_…`) must never reach the client — it's not used anywhere yet.
 - **Pricing is recomputed server-side.** `createOrder` ignores client-sent amounts and
   recomputes rate/amounts from the canonical `settings` row. Never trust client pricing.
+- **Checkout flow:** converter (`Converter.tsx`) → `/order/new?direction=&points=`
+  (`AccountPicker`, user picks a bank account) → `createOrder` → `/order/[id]`. The
+  **canonical order input is always PLUS `points`** (server derives the GEL leg); for *buy*
+  the client converts the entered GEL to points first. `createOrder`'s `bankAccountId` is
+  re-validated as `available` server-side (falls back to first available if omitted).
+- **The converter hides the rate.** It shows only the fixed 400-base face value on the
+  readonly side; the multiplier/rate is never rendered (only used to derive `points`).
 - User-side order mutations go through SECURITY DEFINER RPCs (e.g. `mark_order_paid`), not
   broad UPDATE policies, so users can't self-complete orders.
 
@@ -50,6 +57,10 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   them in lockstep, or the locale missing it throws `MISSING_MESSAGE`).
 - Use `Link`/`useRouter`/`redirect` from `@/i18n/navigation`, never raw `next/link` /
   `next/navigation`, so the locale prefix is preserved.
+- **next-intl v4 nav signatures** (not the v3 string form most tutorials show): the
+  server `redirect` takes an **object** — `redirect({ href: "/order/new", locale })` (add
+  `query` for params, e.g. `{ href: { pathname: "/order/new", query: { direction } }, locale }`).
+  `useRouter().push("/path")` still takes a string. Locales live in `i18n/routing.ts`.
 
 ## Commands
 

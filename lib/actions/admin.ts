@@ -15,6 +15,11 @@ export async function updateSettings(input: {
   buy_enabled: boolean;
   sell_enabled: boolean;
   timer_minutes: number;
+  // Thresholds; 0 = no limit.
+  buy_min_gel: number;
+  buy_max_points: number;
+  sell_min_points: number;
+  sell_max_gel: number;
 }): Promise<ActionResult> {
   if (
     !Number.isFinite(input.buy_multiplier) ||
@@ -22,7 +27,15 @@ export async function updateSettings(input: {
     !Number.isFinite(input.sell_multiplier) ||
     input.sell_multiplier <= 0 ||
     !Number.isInteger(input.timer_minutes) ||
-    input.timer_minutes <= 0
+    input.timer_minutes <= 0 ||
+    !Number.isFinite(input.buy_min_gel) ||
+    input.buy_min_gel < 0 ||
+    !Number.isFinite(input.buy_max_points) ||
+    input.buy_max_points < 0 ||
+    !Number.isFinite(input.sell_min_points) ||
+    input.sell_min_points < 0 ||
+    !Number.isFinite(input.sell_max_gel) ||
+    input.sell_max_gel < 0
   ) {
     return { ok: false, error: "invalid_input" };
   }
@@ -91,5 +104,21 @@ export async function setOrderStatus(
     .eq("id", orderId);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  return { ok: true };
+}
+
+// Hide/unhide a community review. RLS (`reviews_update_admin`) enforces admin.
+export async function setReviewHidden(
+  reviewId: string,
+  hidden: boolean,
+): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("reviews")
+    .update({ hidden })
+    .eq("id", reviewId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/admin");
+  revalidatePath("/", "layout");
   return { ok: true };
 }

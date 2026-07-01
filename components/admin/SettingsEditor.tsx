@@ -15,6 +15,10 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
     buy_enabled: settings.buy_enabled,
     sell_enabled: settings.sell_enabled,
     timer_minutes: String(settings.timer_minutes),
+    buy_min_gel: String(settings.buy_min_gel),
+    buy_max_points: String(settings.buy_max_points),
+    sell_min_points: String(settings.sell_min_points),
+    sell_max_gel: String(settings.sell_max_gel),
   });
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -28,6 +32,10 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
       buy_enabled: form.buy_enabled,
       sell_enabled: form.sell_enabled,
       timer_minutes: Number(form.timer_minutes),
+      buy_min_gel: Number(form.buy_min_gel),
+      buy_max_points: Number(form.buy_max_points),
+      sell_min_points: Number(form.sell_min_points),
+      sell_max_gel: Number(form.sell_max_gel),
     });
     setBusy(false);
     if (res.ok) {
@@ -38,7 +46,14 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
   }
 
   const numberField = (
-    key: "buy_multiplier" | "sell_multiplier" | "timer_minutes",
+    key:
+      | "buy_multiplier"
+      | "sell_multiplier"
+      | "timer_minutes"
+      | "buy_min_gel"
+      | "buy_max_points"
+      | "sell_min_points"
+      | "sell_max_gel",
     label: string,
   ) => (
     <label className="block">
@@ -75,6 +90,15 @@ export function SettingsEditor({ settings }: { settings: Settings }) {
         {toggle("buy_enabled", t("buyEnabled"))}
         {toggle("sell_enabled", t("sellEnabled"))}
         {numberField("timer_minutes", t("timerMinutes"))}
+      </div>
+
+      <h2 className="font-semibold mt-6 mb-1">{t("thresholds")}</h2>
+      <p className="text-sm text-foreground/60 mb-4">{t("thresholdsHint")}</p>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {numberField("buy_min_gel", t("buyMinGel"))}
+        {numberField("buy_max_points", t("buyMaxPoints"))}
+        {numberField("sell_min_points", t("sellMinPoints"))}
+        {numberField("sell_max_gel", t("sellMaxGel"))}
       </div>
       <div className="mt-4 flex items-center gap-3">
         <button

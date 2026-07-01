@@ -3,39 +3,72 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { markOrderPaid } from "@/lib/actions/orders";
-import { BankStatusBadge } from "./BankStatusBadge";
+import { PlusBadge } from "./PlusBadge";
+import { ReviewForm } from "./ReviewForm";
 import type { BankAccount, Order } from "@/lib/supabase/types";
 
 type Props = {
   order: Order;
   assigned: BankAccount | null;
-  others: BankAccount[];
   expiresAt: string;
+  alreadyReviewed: boolean;
+  hasUsername: boolean;
 };
 
-function useCountdown(expiresAt: string) {
+function useCountdown(expiresAt: string, paused: boolean) {
   const [remaining, setRemaining] = useState(() =>
     Math.max(0, new Date(expiresAt).getTime() - Date.now()),
   );
   useEffect(() => {
+    if (paused) return;
     const tick = () =>
       setRemaining(Math.max(0, new Date(expiresAt).getTime() - Date.now()));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [expiresAt]);
+  }, [expiresAt, paused]);
   return remaining;
 }
 
-export function OrderView({ order, assigned, others, expiresAt }: Props) {
+export function OrderView({
+  order,
+  assigned,
+  expiresAt,
+  alreadyReviewed,
+  hasUsername,
+}: Props) {
   const t = useTranslations("order");
+  const tc = useTranslations("converter");
   const locale = useLocale();
   const router = useRouter();
-  const remaining = useCountdown(expiresAt);
   const [confirmed, setConfirmed] = useState(order.user_confirmed);
+  const remaining = useCountdown(expiresAt, confirmed);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Live: reflect admin actions (completion/cancellation) without a manual
+  // refresh. RLS scopes this to the caller's own order.
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`order-${order.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "orders",
+          filter: `id=eq.${order.id}`,
+        },
+        () => router.refresh(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [order.id, router]);
 
   const gelFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
@@ -46,14 +79,24 @@ export function OrderView({ order, assigned, others, expiresAt }: Props) {
     [locale],
   );
 
+  const gelNode = (amount: number) => (
+    <>
+      {gelFmt.format(amount)} {tc("gel")}
+    </>
+  );
+  const plusNode = (amount: number) => (
+    <>
+      {pointsFmt.format(amount)} <PlusBadge />
+    </>
+  );
   const sendLabel =
     order.direction === "buy"
-      ? `${gelFmt.format(order.gel_amount)} GEL`
-      : `${pointsFmt.format(order.points_amount)} PLUS`;
+      ? gelNode(order.gel_amount)
+      : plusNode(order.points_amount);
   const receiveLabel =
     order.direction === "buy"
-      ? `${pointsFmt.format(order.points_amount)} PLUS`
-      : `${gelFmt.format(order.gel_amount)} GEL`;
+      ? plusNode(order.points_amount)
+      : gelNode(order.gel_amount);
 
   const expired = remaining <= 0;
   const minutes = Math.floor(remaining / 60_000);
@@ -81,28 +124,47 @@ export function OrderView({ order, assigned, others, expiresAt }: Props) {
 
   if (order.status !== "pending") {
     return (
-      <div className="rounded-2xl border border-black/10 dark:border-white/15 p-6 text-center">
-        <p className="text-lg font-medium">{t(`status.${order.status}`)}</p>
-        <p className="mt-2 text-sm text-foreground/60">
-          {receiveLabel} · {sendLabel}
-        </p>
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold mb-1">{t("title")}</h1>
+        <div className="rounded-2xl border border-black/10 dark:border-white/15 p-6 text-center">
+          <p className="text-lg font-medium">{t(`status.${order.status}`)}</p>
+          <p className="mt-2 text-sm text-foreground/60">
+            {receiveLabel} · {sendLabel}
+          </p>
+        </div>
+        {order.status === "completed" && !alreadyReviewed && (
+          <ReviewForm orderId={order.id} hasUsername={hasUsername} />
+        )}
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {!confirmed && (
+        <h1 className="text-xl font-semibold mb-1">{t("title")}</h1>
+      )}
+
       {/* Timer */}
       <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 text-center">
-        <p className="text-sm text-foreground/60">{t("timeLeft")}</p>
-        {expired ? (
-          <p className="text-lg font-semibold text-red-600 dark:text-red-400">
-            {t("expired")}
+        {confirmed ? (
+          <p className="flex items-center justify-center gap-2 text-lg font-semibold text-amber-600 dark:text-amber-400">
+            <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+            {t("processing")}
           </p>
         ) : (
-          <p className="text-3xl font-semibold tabular-nums">
-            {minutes}:{String(seconds).padStart(2, "0")}
-          </p>
+          <>
+            <p className="text-sm text-foreground/60">{t("timeLeft")}</p>
+            {expired ? (
+              <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+                {t("expired")}
+              </p>
+            ) : (
+              <p className="text-3xl font-semibold tabular-nums">
+                {minutes}:{String(seconds).padStart(2, "0")}
+              </p>
+            )}
+          </>
         )}
       </div>
 
@@ -148,37 +210,53 @@ export function OrderView({ order, assigned, others, expiresAt }: Props) {
         </div>
       )}
 
+      {/* The user's own account (snapshotted at order time): where they send
+          from / receive to. Shown to the owner and, for sell orders, the admin. */}
+      {(order.user_full_name || order.user_account_number) && (
+        <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 space-y-2">
+          <p className="text-sm font-medium">{t("yourAccount")}</p>
+          {order.user_full_name && (
+            <div className="flex justify-between text-sm">
+              <span className="text-foreground/60">{t("accountName")}</span>
+              <span>{order.user_full_name}</span>
+            </div>
+          )}
+          {order.user_account_number && (
+            <div className="flex justify-between text-sm">
+              <span className="text-foreground/60">{t("accountNumber")}</span>
+              <span className="font-mono">{order.user_account_number}</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Pay button */}
       <button
         type="button"
         onClick={pay}
         disabled={busy || confirmed}
-        className="w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
+        className={`w-full rounded-lg py-3 font-medium transition-colors ${
+          confirmed
+            ? "bg-amber-500 text-white"
+            : "bg-foreground text-background disabled:opacity-50"
+        }`}
       >
         {confirmed ? t("paidConfirmed") : t("paid")}
       </button>
 
-      {/* Other accounts (scarcity) */}
-      {others.length > 0 && (
-        <div>
-          <p className="text-sm text-foreground/60 mb-2">{t("otherAccounts")}</p>
-          <ul className="space-y-2">
-            {others.map((acc) => (
-              <li
-                key={acc.id}
-                className="flex items-center justify-between rounded-xl border border-black/10 dark:border-white/15 px-3 py-2 text-sm"
-              >
-                <span>
-                  {acc.bank_name} ·{" "}
-                  <span className="font-mono text-foreground/70">
-                    {acc.account_number}
-                  </span>
-                </span>
-                <BankStatusBadge status={acc.status} />
-              </li>
-            ))}
-          </ul>
-        </div>
+      {/* Support contact — only surfaces once the user has reported payment */}
+      {confirmed && (
+        <p className="text-center text-sm text-foreground/60">
+          {t("support")}{" "}
+          <a
+            href="https://t.me/gntech"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium underline"
+          >
+            @gntech
+          </a>
+        </p>
       )}
     </div>
   );

@@ -8,6 +8,10 @@ const DEFAULT_SETTINGS: Settings = {
   buy_enabled: true,
   sell_enabled: true,
   timer_minutes: 30,
+  buy_min_gel: 0,
+  buy_max_points: 0,
+  sell_min_points: 0,
+  sell_max_gel: 0,
   updated_at: new Date(0).toISOString(),
 };
 

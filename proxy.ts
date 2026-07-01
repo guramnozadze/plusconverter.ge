@@ -16,6 +16,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Run on everything except API routes, the non-localized /auth callback,
-  // Next internals, and files with an extension (e.g. favicon.ico).
-  matcher: "/((?!api|auth|_next|_vercel|.*\\..*).*)",
+  // Next internals, generated icon routes (app/icon.tsx, app/apple-icon.tsx —
+  // these live outside app/[locale], so i18n rewriting them to /ka/icon etc.
+  // 404s), and files with an extension (e.g. favicon.ico).
+  matcher: "/((?!api|auth|_next|_vercel|icon|apple-icon|.*\\..*).*)",
 };

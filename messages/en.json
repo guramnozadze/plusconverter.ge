@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "PlusConverter.ge — Buy & Sell Bank of Georgia PLUS Points",
+    "description": "Buy and sell Bank of Georgia PLUS points quickly and securely, at a transparent, fair rate — with instant bank transfers."
+  },
   "common": {
     "appName": "PLUS Converter",
     "tagline": "Buy & sell Bank of Georgia PLUS points",
@@ -7,7 +11,8 @@
     "loading": "Loading…",
     "cancel": "Cancel",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "ok": "OK"
   },
   "nav": {
     "home": "Home",
@@ -15,20 +20,27 @@
   },
   "converter": {
     "title": "Convert PLUS Points",
-    "buy": "Buy points",
-    "sell": "Sell points",
+    "buy": "Buy PLUS Points",
+    "sell": "Sell PLUS Points",
     "youPay": "You pay",
+    "youSend": "You send",
     "youGet": "You get",
     "gel": "GEL",
-    "points": "PLUS",
+    "points": "PLUS Points",
     "multiplier": "Rate ×{mult}",
     "worthInBank": "= {gel} GEL in bank",
     "worthJuly": "≈ {gel} GEL on Jul 5 (2×)",
+    "sellBonus": "You earn +{gel} GEL more than face value",
     "buyDisabled": "Buying is currently unavailable",
     "sellDisabled": "Selling is currently unavailable",
     "continue": "Continue",
     "loginToContinue": "Sign in to continue",
-    "enterAmount": "Enter an amount"
+    "enterAmount": "Enter an amount",
+    "available": "Available: {amount} {unit}",
+    "sellMax": "You can sell up to {amount} {unit}",
+    "exceedsMax": "This exceeds the available amount",
+    "minPopupTitle": "Minimum amount",
+    "minPopupBody": "The minimum is {amount} {unit}."
   },
   "order": {
     "title": "Complete your transfer",
@@ -38,10 +50,13 @@
     "bank": "Bank",
     "accountName": "Account name",
     "accountNumber": "Account number",
+    "yourAccount": "Your account",
     "youSend": "You send",
     "youReceive": "You receive",
     "paid": "I’ve paid",
     "paidConfirmed": "Payment reported — waiting for confirmation",
+    "processing": "Processing your payment…",
+    "support": "Questions? Message us on Telegram:",
     "otherAccounts": "Other accounts",
     "notFound": "Order not found",
     "status": {
@@ -50,17 +65,65 @@
       "cancelled": "Cancelled"
     }
   },
+  "selectAccount": {
+    "title": "Choose an account",
+    "subtitle": "Pick where you'll send your transfer.",
+    "confirm": "Confirm",
+    "otherAccounts": "Other accounts",
+    "noneAvailable": "No accounts are available right now. Please check back soon.",
+    "error": "Couldn't create your order. Please try again.",
+    "summaryBuy": "Buying {points} PLUS Points for {gel} GEL",
+    "summarySell": "Selling {points} PLUS Points for {gel} GEL",
+    "yourDetails": "Your bank details",
+    "yourDetailsHint": "{direction, select, sell {The account where you'll receive your GEL.} other {The account where you'll receive your PLUS Points.}}",
+    "yourFullName": "Full name",
+    "yourAccountNumber": "ID number",
+    "comment": "Comment",
+    "optional": "optional",
+    "commentPlaceholder": "Anything you'd like us to know — e.g. a phone number to reach you"
+  },
   "bankStatus": {
     "available": "Available",
     "unavailable": "Unavailable",
     "sold_out": "Sold out"
   },
-  "username": {
-    "title": "Choose a username",
-    "subtitle": "Optional — you can skip this.",
-    "placeholder": "Username",
+  "profile": {
+    "title": "Your account",
+    "securityNote": "Your details are stored securely — only your username is visible to others.",
+    "fullName": "Full name",
+    "accountNumber": "ID number",
+    "username": "Username",
+    "usernameHint": "Pick something random and fun for comments — keep it playful, not your real name.",
+    "usernamePlaceholder": "e.g. kvara777, erlingaHalandi, volkanovski, medea67",
+    "usernameTaken": "That username is already taken — try another.",
+    "usernameInvalid": "Usernames can't contain spaces.",
     "save": "Save",
-    "skip": "Skip"
+    "saved": "Saved",
+    "edit": "Edit",
+    "empty": "Add your details"
+  },
+  "reviews": {
+    "communityTab": "Community",
+    "myTab": "My Transactions",
+    "leaveReview": "Leave a review",
+    "rating": "Rating",
+    "commentPlaceholder": "Add a comment (optional)",
+    "submit": "Submit review",
+    "submitted": "Thanks for your review!",
+    "soldPoints": "Sold {points} PLUS Points",
+    "boughtPoints": "Bought {points} PLUS Points",
+    "noUsernameNudge": "Set a username to leave a review.",
+    "setUsername": "Set username",
+    "alreadyReviewed": "You've already reviewed this order.",
+    "error": "Couldn't submit your review. Please try again.",
+    "emptyFeed": "No activity yet.",
+    "emptyMine": "You have no transactions yet.",
+    "prevPage": "Prev",
+    "nextPage": "Next",
+    "pageOf": "Page {page} of {total}",
+    "adminTitle": "Reviews",
+    "hide": "Hide",
+    "unhide": "Unhide"
   },
   "admin": {
     "title": "Admin",
@@ -70,6 +133,12 @@
     "buyEnabled": "Buying enabled",
     "sellEnabled": "Selling enabled",
     "timerMinutes": "Order timer (minutes)",
+    "thresholds": "Buy/sell limits",
+    "thresholdsHint": "0 means no limit.",
+    "buyMinGel": "Min buy amount (GEL)",
+    "buyMaxPoints": "Max available to buy (PLUS Points)",
+    "sellMinPoints": "Min sell amount (PLUS Points)",
+    "sellMaxGel": "Max payout budget (GEL) — cash you can afford to pay sellers",
     "save": "Save",
     "saved": "Saved",
     "bankAccounts": "Bank accounts",
@@ -80,15 +149,93 @@
     "statusLabel": "Status",
     "delete": "Delete",
     "orders": "Orders",
+    "reviewsLink": "Reviews",
+    "ordersLink": "Orders",
     "pendingTab": "Pending",
     "historyTab": "History",
     "markCompleted": "Mark completed",
     "markCancelled": "Cancel order",
+    "paidBadge": "💸 Paid — confirm",
     "noOrders": "No orders yet",
+    "orderId": "Order ID",
+    "username": "Username",
+    "rateUsed": "Rate used",
+    "completedAt": "Completed at",
     "notAuthorized": "You are not authorized to view this page.",
     "direction": "Direction",
     "amount": "Amount",
     "user": "User",
     "date": "Date"
+  },
+  "footer": {
+    "termsLink": "Terms & Conditions",
+    "privacyLink": "Privacy Policy",
+    "contactLabel": "Contact us on Telegram",
+    "facebookLabel": "Facebook",
+    "disclaimer": "Independent service, not affiliated with Bank of Georgia",
+    "copyright": "© {year} plusconverter.ge"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you're looking for doesn't exist or may have moved.",
+    "backHome": "Back to converter"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "metaDescription": "How plusconverter.ge collects, uses, and stores your data.",
+    "intro": "This page explains what data plusconverter.ge collects when you use the service, and how it's used. We collect the minimum needed to process your orders.",
+    "sections": {
+      "dataCollected": {
+        "title": "What we collect",
+        "body": "When you sign in with Google, we store your email and name. When you place an order, we store the bank or PLUS account details, username, and comment you provide, along with order amounts and status."
+      },
+      "howUsed": {
+        "title": "How it's used",
+        "body": "Your data is used only to process your orders — to send you points or GEL, show your order history, and display your chosen username on public reviews."
+      },
+      "storage": {
+        "title": "Storage & security",
+        "body": "Data is stored in Supabase (Postgres) with Row Level Security enabled, so you can only access your own records. We don't sell or share your data with third parties."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "body": "We use cookies only for authentication (keeping you signed in) and remembering your language preference — no tracking or advertising cookies."
+      },
+      "contact": {
+        "title": "Questions or data requests",
+        "body": "To ask about your data or request deletion, contact us on Telegram: @gntech."
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "metaDescription": "Terms and conditions for buying and selling Bank of Georgia PLUS points on plusconverter.ge.",
+    "intro": "By using plusconverter.ge to buy or sell Bank of Georgia PLUS points, you agree to the terms below. This is an independent, informal service — please read carefully before placing an order.",
+    "sections": {
+      "rates": {
+        "title": "Rates",
+        "body": "The exchange rate is set by us and can change at any time. The rate shown when you start an order is locked in for that order."
+      },
+      "finality": {
+        "title": "No refunds",
+        "body": "Once you have sent PLUS points or GEL for an order, the transaction is final. We cannot reverse a transfer once it has been sent, so double-check the order details before paying."
+      },
+      "accountDetails": {
+        "title": "Your account details",
+        "body": "You are responsible for entering your correct bank account or PLUS account details. We are not liable for points or funds lost because of incorrect details you provided."
+      },
+      "orderExpiry": {
+        "title": "Order timer",
+        "body": "Each order must be paid within the countdown shown on the order page. Orders that expire, go unpaid, or appear fraudulent may be cancelled by us."
+      },
+      "disclaimer": {
+        "title": "Not affiliated with Bank of Georgia",
+        "body": "plusconverter.ge is an independent service and is not affiliated with, endorsed by, or sponsored by Bank of Georgia. \"PLUS\" refers to Bank of Georgia's loyalty points program, used here descriptively."
+      },
+      "contact": {
+        "title": "Questions or disputes",
+        "body": "For any questions or issues with an order, contact us on Telegram: @gntech."
+      }
+    }
   }
 }
