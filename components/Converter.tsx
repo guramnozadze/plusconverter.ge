@@ -60,6 +60,7 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
   const [get, setGet] = useState("");
   const anchor = useRef<"give" | "get">("give");
   const [busy, setBusy] = useState(false);
+  const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
 
   // Flashes a field green/red for a beat when a live settings update moves it,
@@ -253,6 +254,7 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
     }
     // Canonical order input is always PLUS points (server derives the GEL leg):
     // for buy that's the `get` leg, for sell the `give` leg.
+    setNavigating(true);
     router.push(`/order/new?direction=${direction}&points=${pointsAmount}`);
   }
 
@@ -406,9 +408,10 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
         <button
           type="button"
           onClick={onContinue}
-          disabled={!hasAmount || !enabled || aboveMax}
-          className="mt-5 w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
+          disabled={!hasAmount || !enabled || aboveMax || navigating}
+          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
         >
+          {navigating && <Spinner />}
           {t("continue")}
         </button>
       ) : (

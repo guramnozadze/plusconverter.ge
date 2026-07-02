@@ -1,12 +1,15 @@
+import { cache } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/supabase/types";
 
 // Resolves the current authenticated user and their profile row (or nulls).
-export async function getUserProfile(): Promise<{
+// Wrapped in React's `cache` so the Header and a page rendered below it share
+// one auth round-trip per request instead of each calling Supabase separately.
+export const getUserProfile = cache(async (): Promise<{
   user: User | null;
   profile: Profile | null;
-}> {
+}> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -21,4 +24,4 @@ export async function getUserProfile(): Promise<{
     .single();
 
   return { user, profile: profile ?? null };
-}
+});

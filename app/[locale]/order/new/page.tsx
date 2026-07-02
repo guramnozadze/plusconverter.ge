@@ -25,15 +25,17 @@ export default async function NewOrderPage({
   }
 
   // Selecting an account creates an order, so require a signed-in user here too.
-  const { user, profile } = await getUserProfile();
-  if (!user) {
-    redirect({ href: "/", locale });
-  }
-
-  const [accounts, settings] = await Promise.all([
+  // Fetched in parallel with the bank accounts/settings — none of these depend
+  // on each other, and `getUserProfile` is memoized so this reuses the Header's
+  // auth call rather than making a second round-trip.
+  const [{ user, profile }, accounts, settings] = await Promise.all([
+    getUserProfile(),
     getBankAccounts(),
     getSettings(),
   ]);
+  if (!user) {
+    redirect({ href: "/", locale });
+  }
   const t = await getTranslations("selectAccount");
 
   // Transaction summary headline (e.g. "Selling 1,000 PLUS Points for 3.75 GEL").
