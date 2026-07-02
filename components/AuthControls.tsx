@@ -32,6 +32,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
     setBusy(true);
     const supabase = createClient();
     await supabase.auth.signOut();
+    router.push("/");
     router.refresh();
     setBusy(false);
   }

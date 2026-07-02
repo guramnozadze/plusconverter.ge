@@ -153,7 +153,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
               />
               {(error === "username_taken" || error === "username_invalid") && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                  {t(error)}
+                  {t(error === "username_taken" ? "usernameTaken" : "usernameInvalid")}
                 </p>
               )}
             </label>

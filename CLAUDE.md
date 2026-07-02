@@ -67,6 +67,8 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
 - `npm run dev` — Turbopack dev server (http://localhost:3000)
 - `npm run build` — production build (also full typecheck)
 - `npm run lint`
+- The working directory is already this project's root — use relative paths (e.g.
+  `app/[locale]/order/[id]/page.tsx`), not long absolute ones.
 
 ## Conventions
 
