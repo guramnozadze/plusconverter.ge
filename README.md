@@ -1,88 +1,127 @@
-# PLUS Converter (plusconverter.ge)
+# PLUS Converter
 
-A mobile-first web app for buying & selling Bank of Georgia **PLUS points**. Visitors
-sign in with Google, use a live converter (Buy GEL → points / Sell points → GEL), submit
-an order, and pay to a bank account shown with a countdown timer. The owner controls
-pricing and bank-account availability in realtime and tracks every order.
+![PLUS Converter](public/plusoncverter-cover.png)
 
-Bilingual: **Georgian (default), English**.
+**Live at [plusconverter.ge](https://plusconverter.ge)** — a mobile-first exchange for
+Bank of Georgia **PLUS loyalty points**, running as a real single-operator business.
+Users sign in with Google, get a live quote, place a buy or sell order, and settle by
+bank transfer against a countdown timer; the operator manages pricing, inventory, and
+the order queue from a realtime admin panel.
 
-## Stack
+Bilingual (Georgian default / English) · **Next.js 16** · **Supabase** · **TypeScript** · **Tailwind v4**
 
-- **Next.js 16** (App Router, TypeScript, Turbopack) + **Tailwind CSS v4**
-- **Supabase** — Postgres, Google OAuth, Realtime, Row Level Security
-- **next-intl** for i18n (`/` = ka, `/en`)
+## Engineering highlights
 
-## Setup
+This is a small production system, not a tutorial build. The parts worth reading:
 
-1. **Install**
+- **Server-authoritative pricing, with defense in depth.** The client-side converter is
+  a preview only. `createOrder` ([`lib/actions/orders.ts`](lib/actions/orders.ts))
+  ignores client-sent amounts and recomputes the rate and both legs from the canonical
+  `settings` row — [`lib/pricing.ts`](lib/pricing.ts) is shared by the preview and the
+  server so the math can't drift. Then a Postgres `BEFORE INSERT` trigger
+  ([`0008_order_insert_guard.sql`](supabase/migrations/0008_order_insert_guard.sql))
+  re-validates thresholds and recomputes the same fields *again*, so even a direct
+  PostgREST call that bypasses the server action can't store a forged price. The trigger
+  also caps each user at 4 concurrent pending orders.
+- **RLS-first security model.** Every table has Row Level Security; the browser only
+  ever holds the publishable key. Users can't self-complete orders: the state
+  transitions they're allowed to make (`mark_order_paid`, `submit_review`) are narrow
+  `SECURITY DEFINER` RPCs rather than broad `UPDATE` policies, so the allowed writes are
+  exactly enumerated in SQL.
+- **Realtime by default.** Pricing, per-direction min/max thresholds, and enable toggles
+  live in a singleton `settings` row the converter subscribes to via Supabase Realtime —
+  when the operator reprices, open sessions update without a refresh. The admin order
+  queue and bank-account availability update the same way.
+- **Current-generation Next.js.** App Router on Next 16: Server Components by default,
+  mutations through server actions, and [`proxy.ts`](proxy.ts) (Next 16's successor to
+  `middleware.ts`) composing next-intl locale routing and Supabase session refresh into
+  a single Node-runtime response.
+- **Locale-routed i18n.** `/` is Georgian, `/en` is English (next-intl v4). Every
+  user-facing string lives in ICU message catalogs (`messages/{ka,en}.json`) with
+  English as the source of truth for keys; navigation goes through locale-aware wrappers
+  so links never drop the prefix.
 
-   ```bash
-   npm install
-   ```
+## How it works
 
-2. **Create a Supabase project** and copy its API credentials into `.env.local`
-   (see `.env.example`):
+PLUS points have a fixed bank face value of **400 points = 1 GEL**. The operator sets a
+buy and a sell multiplier on top of that base; a quote is `gel = points / 400 ×
+multiplier`. The canonical order input is always **points** — for buy orders the client
+converts the entered GEL amount to points first, and the server derives the GEL leg. The
+converter deliberately shows only the face value, never the multiplier.
+
+Order lifecycle:
+
+1. **Converter** (`Converter.tsx`) — live quote, direction toggle, threshold validation.
+2. **Account picker** (`/order/new`) — user chooses a payout/deposit bank account;
+   accounts carry `available` / `unavailable` / `sold_out` states the operator flips in
+   realtime. The chosen account is re-validated as available server-side.
+3. **Order page** (`/order/[id]`) — payment instructions with a countdown timer; the
+   user confirms payment via the `mark_order_paid` RPC.
+4. **Admin queue** (`/admin`) — the operator completes or cancels; completion fires a
+   trigger that auto-creates a **review** row the customer can rate once. The public
+   review feed is post-then-moderate (hide/unhide from `/admin/reviews`).
+
+## Architecture
+
+```
+app/[locale]/          Locale-routed pages: converter, order/new, order/[id], admin
+app/auth/callback/     Non-localized OAuth code exchange
+proxy.ts               next-intl routing + Supabase session refresh (Node runtime)
+components/            Client components (Converter, AccountPicker, OrderView, admin/*)
+lib/actions/           Server actions: orders, admin, profile, reviews
+lib/pricing.ts         Canonical conversion math (shared client/server)
+lib/supabase/          Browser/server/middleware clients + hand-maintained DB types
+i18n/ · messages/      Routing config and ICU message catalogs (ka, en)
+supabase/migrations/   Numbered schema: tables, RLS, triggers, RPCs, Realtime, seed
+```
+
+### Data model
+
+| Table | Purpose | Writes |
+|---|---|---|
+| `profiles` | User rows auto-created on signup (`handle_new_user` trigger); `is_admin` flag | Own row; admin via policy |
+| `settings` | Singleton: multipliers, thresholds, toggles, order timer | Admin only |
+| `bank_accounts` | Operator accounts with availability states | Admin only |
+| `orders` | Snapshotted rate + both legs; status machine | Insert guarded by trigger; user transitions via RPC; admin via policy |
+| `reviews` | Auto-created on completion; one rating per order | `submit_review` RPC; moderation via policy |
+
+## Running locally
+
+1. `npm install`
+2. Create a [Supabase](https://supabase.com) project and copy its credentials into
+   `.env.local` (see `.env.example`):
 
    ```
    NEXT_PUBLIC_SUPABASE_URL=...
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    ```
 
-3. **Apply the schema** — run the migrations in `supabase/migrations/` in order (or
-   `supabase db push`). `0001_init.sql` creates the tables, RLS policies, the new-user
-   trigger, the `is_admin()` / `mark_order_paid()` functions, enables Realtime, and seeds
-   default settings + sample bank accounts; `0002`–`0008` layer on the multiplier pricing
-   model, user bank details, reviews, buy/sell thresholds, order comments, unique
-   usernames, and the order-insert guard trigger.
-
-4. **Enable Google OAuth** in Supabase → Authentication → Providers → Google. Add a
-   Google Cloud OAuth client and set the authorized redirect URL Supabase shows you.
-   Allow your app origins (`http://localhost:3000`, `https://plusconverter.ge`).
-
-5. **Run**
-
-   ```bash
-   npm run dev
-   ```
-
-6. **Make yourself admin** — sign in once with Google, then in the SQL editor:
+3. Apply `supabase/migrations/` in order (or `supabase db push`). `0001_init.sql`
+   creates tables, RLS policies, triggers, and RPCs, enables Realtime, and seeds default
+   settings; later migrations layer on the multiplier pricing model, reviews,
+   thresholds, and the order-insert guard.
+4. Enable **Google OAuth** in Supabase → Authentication → Providers, backed by a Google
+   Cloud OAuth client with the redirect URL Supabase shows you.
+5. `npm run dev`, sign in once, then promote yourself in the SQL editor:
 
    ```sql
    update public.profiles set is_admin = true where email = 'you@example.com';
    ```
 
-   The **Admin** link appears in the header; manage rates, bank accounts and orders at
-   `/admin`.
+   The **Admin** link appears in the header.
 
-## How it works
+`npm run build` doubles as the full typecheck; `npm run lint` for ESLint.
 
-- **Pricing**: PLUS points have a fixed bank face value of 400 points per GEL. The
-  singleton `settings` row holds `buy_multiplier` / `sell_multiplier` applied on top of
-  that base rate, plus enable toggles, per-direction min/max thresholds, and the order
-  timer. The converter subscribes to it via Realtime, so price changes appear live.
-- **Orders**: created server-side (`lib/actions/orders.ts`), where the rate, amounts, and
-  thresholds are recomputed from canonical settings — clients cannot forge a favorable
-  rate. A database trigger (`0008_order_insert_guard.sql`) re-validates and recomputes the
-  same fields on every insert, so this holds even against a direct API call that bypasses
-  the server action, and also caps each user to 4 concurrent pending orders. Owners mark
-  orders completed/cancelled in the admin orders queue (also live via Realtime).
-- **Scarcity**: bank accounts have `available` / `unavailable` / `sold_out` states shown
-  to users to drive urgency — there's a single real account in practice; the rest are
-  marketing placeholders.
-- **Reviews**: completing an order auto-creates a review row the buyer/seller can rate
-  and comment on once; the public feed is post-then-moderate (admins hide/unhide from
-  `/admin/reviews`).
-- **Auth boundary**: `proxy.ts` (Next 16's renamed middleware) composes next-intl locale
-  routing with Supabase session refresh in a single Node-runtime response.
+## Deployment
 
-## i18n
+Vercel (Node 20.9+). Set the two `NEXT_PUBLIC_SUPABASE_*` env vars and register the
+production domain with both Supabase Auth redirect URLs and the Google OAuth client.
 
-All UI strings live in `messages/{ka,en}.json`. Both are fully translated — English is
-the source of truth for keys/structure; add a new string to both files at the same path
-(same key set, same nesting) or the locale missing it will throw `MISSING_MESSAGE`.
+## Trade-offs, deliberately made
 
-## Deploy
-
-Vercel (Node 20.9+). Set the two `NEXT_PUBLIC_SUPABASE_*` env vars and add the production
-domain to both Supabase Auth redirect URLs and the Google OAuth client.
+- **Hand-maintained DB types** (`lib/supabase/types.ts`) instead of codegen — the schema
+  is small and the types double as documentation; kept in lockstep with migrations.
+- **Manual bank-transfer settlement** instead of a payment provider — matches how this
+  market actually operates and keeps the operator in the loop on every order.
+- **No secret-key server path yet** — everything runs through RLS with the publishable
+  key, which keeps the security story auditable in one place: the migration files.
