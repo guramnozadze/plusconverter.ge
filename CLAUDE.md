@@ -12,14 +12,14 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   `admin`. `app/auth/callback/route.ts` is **non-localized** (OAuth code exchange).
 - `proxy.ts` — Next 16's renamed middleware. Composes next-intl routing **and** Supabase
   session refresh into one response.
-- `i18n/` — `routing.ts` (locales `ka`/`en`/`ru`, default `ka`, `as-needed` prefix),
+- `i18n/` — `routing.ts` (locales `ka`/`en`, default `ka`),
   `request.ts`, `navigation.ts` (locale-aware `Link`/`useRouter`/etc).
-- `messages/{ka,en,ru}.json` — all UI strings (ICU). English is source of truth.
+- `messages/{ka,en}.json` — all UI strings (ICU). English is source of truth.
 - `lib/supabase/` — `client.ts` (browser), `server.ts` (RSC/actions), `middleware.ts`
   (`updateSession`), `types.ts` (hand-maintained DB types).
 - `lib/actions/` — server actions (`orders.ts`, `admin.ts`). `lib/data.ts`, `lib/auth.ts`,
   `lib/pricing.ts` (canonical conversion math).
-- `supabase/migrations/0001_init.sql` — schema, RLS, triggers, RPCs, Realtime, seed.
+- `supabase/migrations/` — schema, RLS, triggers, RPCs, Realtime, seed.
 
 ## Rules / gotchas (these bit us — keep them true)
 
