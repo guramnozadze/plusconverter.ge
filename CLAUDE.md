@@ -12,9 +12,9 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   `admin`. `app/auth/callback/route.ts` is **non-localized** (OAuth code exchange).
 - `proxy.ts` — Next 16's renamed middleware. Composes next-intl routing **and** Supabase
   session refresh into one response.
-- `i18n/` — `routing.ts` (locales `ka`/`en`, default `ka`),
+- `i18n/` — `routing.ts` (locales `ka`/`en`/`ru`, default `ka`),
   `request.ts`, `navigation.ts` (locale-aware `Link`/`useRouter`/etc).
-- `messages/{ka,en}.json` — all UI strings (ICU). English is source of truth.
+- `messages/{ka,en,ru}.json` — all UI strings (ICU). English is source of truth.
 - `lib/supabase/` — `client.ts` (browser), `server.ts` (RSC/actions), `middleware.ts`
   (`updateSession`), `types.ts` (hand-maintained DB types).
 - `lib/actions/` — server actions (`orders.ts`, `admin.ts`). `lib/data.ts`, `lib/auth.ts`,
@@ -51,8 +51,8 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
 
 - **No hardcoded user-facing text** — every string via `useTranslations()` /
   `getTranslations()` with a key in `messages/*.json`.
-- `ka.json` and `ru.json` currently **mirror English** (placeholders). Real Georgian/Russian
-  translations are a pending task; `ka` is the default locale.
+- `ka.json` and `ru.json` are real, hand-translated catalogs (not placeholders); `ka` is
+  the default locale, `en` is the source of truth for keys.
 - Adding a string = add the key to **all three** catalogs at the same path (keep
   them in lockstep, or the locale missing it throws `MISSING_MESSAGE`).
 - Use `Link`/`useRouter`/`redirect` from `@/i18n/navigation`, never raw `next/link` /

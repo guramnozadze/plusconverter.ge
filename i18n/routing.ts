@@ -1,9 +1,9 @@
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  // Georgian is the default (served without a prefix), English is available
-  // at /en.
-  locales: ["ka", "en"],
+  // Georgian is the default (served without a prefix), English and Russian
+  // are available at /en and /ru.
+  locales: ["ka", "en", "ru"],
   defaultLocale: "ka",
   localePrefix: "as-needed",
   // Without this, the middleware re-detects locale from the NEXT_LOCALE
