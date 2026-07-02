@@ -36,7 +36,7 @@
     "continue": "Continue",
     "loginToContinue": "Sign in to continue",
     "enterAmount": "Enter an amount",
-    "totalSold": "{amount} {unit} sold so far",
+    "totalSold": "In total, {amount} {unit} sold",
     "available": "Available: {amount} {unit}",
     "sellMax": "You can sell up to {amount} {unit}",
     "exceedsMax": "This exceeds the available amount",

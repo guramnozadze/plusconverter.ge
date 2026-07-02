@@ -316,7 +316,7 @@ export function Converter({
       <div className="mb-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
         {totalPointsSold > 0 && (
-          <p className="text-sm text-foreground/60">
+          <p className="text-sm text-orange-600 dark:text-orange-400">
             {t("totalSold", {
               amount: gelFmt.format(totalPointsSold),
               unit: t("points"),

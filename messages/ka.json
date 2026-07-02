@@ -36,7 +36,7 @@
     "continue": "გაგრძელება",
     "loginToContinue": "გასაგრძელებლად შედით სისტემაში",
     "enterAmount": "შეიყვანეთ თანხა",
-    "totalSold": "გაყიდულია: {amount} {unit}",
+    "totalSold": "ჯამში გაყიდულია {amount} {unit}",
     "available": "ხელმისაწვდომია: {amount} {unit}",
     "sellMax": "ხელმისაწვდომია გასაყიდად: {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
