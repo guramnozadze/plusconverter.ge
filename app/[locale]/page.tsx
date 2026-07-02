@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { getSettings } from "@/lib/data";
+import { getSettings, getTotalPointsSold } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
@@ -21,8 +21,13 @@ export default async function HomePage({
 
   const supabase = await createClient();
 
-  const [settings, { user, profile }, { reviewsPage: reviewsPageRaw }] =
-    await Promise.all([getSettings(), getUserProfile(), searchParams]);
+  const [settings, totalPointsSold, { user, profile }, { reviewsPage: reviewsPageRaw }] =
+    await Promise.all([
+      getSettings(),
+      getTotalPointsSold(),
+      getUserProfile(),
+      searchParams,
+    ]);
 
   const reviewsPage = Math.max(1, Number(reviewsPageRaw) || 1);
   const rangeStart = (reviewsPage - 1) * REVIEWS_PER_PAGE;
@@ -65,7 +70,11 @@ export default async function HomePage({
   return (
     <div>
       {user && profile && <ProfileCard profile={profile} />}
-      <Converter initialSettings={settings} isAuthenticated={Boolean(user)} />
+      <Converter
+        initialSettings={settings}
+        isAuthenticated={Boolean(user)}
+        totalPointsSold={totalPointsSold}
+      />
       <ActivityTabs
         feed={feed}
         reviewsPage={reviewsPage}

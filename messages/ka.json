@@ -36,8 +36,9 @@
     "continue": "გაგრძელება",
     "loginToContinue": "გასაგრძელებლად შედით სისტემაში",
     "enterAmount": "შეიყვანეთ თანხა",
+    "totalSold": "გაყიდულია: {amount} {unit}",
     "available": "ხელმისაწვდომია: {amount} {unit}",
-    "sellMax": "გაყიდოთ მაქსიმუმ {amount} {unit}",
+    "sellMax": "ხელმისაწვდომია გასაყიდად: {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
     "minPopupTitle": "მინიმალური თანხა",
     "minPopupBody": "მინიმუმია {amount} {unit}."

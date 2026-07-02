@@ -21,6 +21,7 @@ import { Spinner } from "./Spinner";
 type Props = {
   initialSettings: Settings;
   isAuthenticated: boolean;
+  totalPointsSold: number;
 };
 
 type FlashDir = "up" | "down" | null;
@@ -45,7 +46,11 @@ function sanitizeNumeric(raw: string): string {
   return cleaned.slice(0, dot + 1) + cleaned.slice(dot + 1).replace(/\./g, "");
 }
 
-export function Converter({ initialSettings, isAuthenticated }: Props) {
+export function Converter({
+  initialSettings,
+  isAuthenticated,
+  totalPointsSold,
+}: Props) {
   const t = useTranslations("converter");
   const tCommon = useTranslations("common");
   const locale = useLocale();
@@ -308,7 +313,17 @@ export function Converter({ initialSettings, isAuthenticated }: Props) {
 
   return (
     <div className="rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6">
-      <h1 className="text-xl font-semibold mb-4">{t("title")}</h1>
+      <div className="mb-4">
+        <h1 className="text-xl font-semibold">{t("title")}</h1>
+        {totalPointsSold > 0 && (
+          <p className="text-sm text-foreground/60">
+            {t("totalSold", {
+              amount: gelFmt.format(totalPointsSold),
+              unit: t("points"),
+            })}
+          </p>
+        )}
+      </div>
 
       {/* Direction toggle */}
       <div className="grid grid-cols-2 gap-1 rounded-lg bg-black/5 dark:bg-white/10 p-1 mb-5">

@@ -1,5 +1,7 @@
+import { unstable_cache } from "next/cache";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import type { BankAccount, Settings } from "@/lib/supabase/types";
+import type { BankAccount, Database, Settings } from "@/lib/supabase/types";
 
 const DEFAULT_SETTINGS: Settings = {
   id: 1,
@@ -35,3 +37,19 @@ export async function getBankAccounts(): Promise<BankAccount[]> {
     .order("sort_order", { ascending: true });
   return data ?? [];
 }
+
+// Cached across all requests for an hour — `unstable_cache` can't read the
+// per-request auth cookies, so this uses a plain anon client, which is fine
+// since get_total_points_sold() is a public, cookie-free RPC.
+export const getTotalPointsSold = unstable_cache(
+  async (): Promise<number> => {
+    const supabase = createSupabaseClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data } = await supabase.rpc("get_total_points_sold");
+    return data ?? 0;
+  },
+  ["total-points-sold"],
+  { revalidate: 3600 },
+);

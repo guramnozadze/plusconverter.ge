@@ -36,6 +36,7 @@
     "continue": "Продолжить",
     "loginToContinue": "Войдите, чтобы продолжить",
     "enterAmount": "Введите сумму",
+    "totalSold": "Продано: {amount} {unit}",
     "available": "Доступно: {amount} {unit}",
     "sellMax": "Вы можете продать до {amount} {unit}",
     "exceedsMax": "Это превышает доступную сумму",

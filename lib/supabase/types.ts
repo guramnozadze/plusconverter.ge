@@ -135,6 +135,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      get_total_points_sold: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
       mark_order_paid: {
         Args: { p_order_id: string };
         Returns: undefined;
