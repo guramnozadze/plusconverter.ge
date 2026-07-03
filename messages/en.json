@@ -95,7 +95,7 @@
     "yourAccountNumber": "ID number",
     "comment": "Comment",
     "optional": "optional",
-    "commentPlaceholder": "Anything you'd like us to know — e.g. a phone number to reach you"
+    "commentPlaceholder": "e.g. mobile phone, account number"
   },
   "bankStatus": {
     "available": "Available",
