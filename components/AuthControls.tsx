@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Spinner } from "./Spinner";
-import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
+import { GoogleIcon } from "./icons/ProviderIcons";
 
 type Props = {
   isAuthenticated: boolean;
@@ -42,15 +42,6 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   if (!isAuthenticated) {
     return (
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={() => signIn("facebook")}
-          disabled={busy}
-          className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
-        >
-          {busy ? <Spinner /> : <FacebookIcon className="h-4 w-4 shrink-0" />}
-          {t("facebook")}
-        </button>
         <button
           type="button"
           onClick={() => signIn("google")}
