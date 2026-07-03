@@ -65,9 +65,9 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex min-w-0 items-center gap-2 text-sm">
       {displayName && (
-        <span className="inline max-w-[6rem] sm:max-w-[10rem] truncate text-foreground/70">
+        <span className="min-w-0 shrink truncate text-foreground/70">
           {displayName}
         </span>
       )}
@@ -75,7 +75,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         type="button"
         onClick={signOut}
         disabled={busy}
-        className="inline-flex items-center gap-2 rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 disabled:opacity-50"
+        className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 disabled:opacity-50"
       >
         {busy && <Spinner />}
         {t("logout")}

@@ -14,16 +14,16 @@ export async function Header() {
   return (
     <header className="border-b border-black/10 dark:border-white/10">
       <div className="w-full max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
-        <Link href="/" className="font-semibold tracking-tight">
+        <Link href="/" className="shrink-0 font-semibold tracking-tight">
           <span className="text-orange-500">Plus</span>converter.ge
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           {user && (
             <a
               href="http://m.me/61591533212017"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-foreground/70 hover:text-foreground"
+              className="shrink-0 text-sm text-foreground/70 hover:text-foreground"
             >
               {t("nav.help")}
             </a>
@@ -31,7 +31,7 @@ export async function Header() {
           {profile?.is_admin && (
             <Link
               href="/admin"
-              className="text-sm text-foreground/70 hover:text-foreground"
+              className="shrink-0 text-sm text-foreground/70 hover:text-foreground"
             >
               {t("nav.admin")}
             </Link>
