@@ -22,6 +22,9 @@ export function ProfileCard({ profile }: { profile: Profile }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [editing, setEditing] = useState(false);
+  // Only the ?editUsername=1 deep link should autofocus/scroll to the
+  // username field — a plain click on "Edit" should just expand the card.
+  const [focusUsername, setFocusUsername] = useState(false);
   const [fullName, setFullName] = useState(profile.full_name ?? "");
   const [accountNumber, setAccountNumber] = useState(
     profile.account_number ?? "",
@@ -38,16 +41,18 @@ export function ProfileCard({ profile }: { profile: Profile }) {
   useEffect(() => {
     if (searchParams.get(PROFILE_USERNAME_PARAM) !== "1") return;
     setEditing(true);
+    setFocusUsername(true);
     const query = Object.fromEntries(searchParams.entries());
     delete query[PROFILE_USERNAME_PARAM];
     router.replace({ pathname, query }, { scroll: false });
   }, [searchParams, pathname, router]);
 
   useEffect(() => {
-    if (!editing) return;
+    if (!editing || !focusUsername) return;
     usernameRef.current?.focus();
     usernameRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [editing]);
+    setFocusUsername(false);
+  }, [editing, focusUsername]);
 
   async function save() {
     setBusy(true);
