@@ -90,7 +90,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
                   setShowOpenInBrowserHint(false);
                   signIn("facebook");
                 }}
-                className="relative flex w-full items-center justify-center rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
+                className="relative flex w-full items-center justify-center rounded-lg border border-transparent bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5] dark:border-white/20 dark:bg-[#1877F2]/80 dark:hover:bg-[#1877F2]/90"
               >
                 <FacebookIcon
                   className="absolute left-4 h-5 w-5 shrink-0"
