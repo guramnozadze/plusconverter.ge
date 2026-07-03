@@ -12,6 +12,7 @@ import type { Provider } from "@supabase/supabase-js";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { useConverterDirection } from "./ConverterDirection";
 import {
   bankValueGel,
@@ -77,6 +78,7 @@ export function Converter({
   const [busy, setBusy] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
+  const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const giveInputRef = useRef<HTMLInputElement>(null);
 
   // Only the promo banner's "sell now" click should jump focus here — bumping
@@ -287,6 +289,13 @@ export function Converter({
   }
 
   async function signIn(provider: Provider) {
+    // Google refuses to complete OAuth inside embedded webviews (Messenger,
+    // Instagram, etc.) and shows its own confusing block page — head that
+    // off with an in-locale instruction instead.
+    if (provider === "google" && isInAppBrowser()) {
+      setShowOpenInBrowserHint(true);
+      return;
+    }
     setBusy(true);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
@@ -502,6 +511,47 @@ export function Converter({
               className="w-full rounded-lg bg-foreground text-background py-2 font-medium"
             >
               {tCommon("ok")}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showOpenInBrowserHint && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowOpenInBrowserHint(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-background p-5 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg font-semibold mb-2">
+              {tCommon("openInBrowserTitle")}
+            </h2>
+            <p className="text-sm text-foreground/70 mb-2">
+              {tCommon("openInBrowserIntro")}
+            </p>
+            <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
+              <li>{tCommon("openInBrowserBullet1")}</li>
+              <li>{tCommon("openInBrowserBullet2")}</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => {
+                setShowOpenInBrowserHint(false);
+                signIn("facebook");
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
+            >
+              <FacebookIcon className="h-5 w-5 shrink-0" />
+              {tCommon("signInWithFacebook")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowOpenInBrowserHint(false)}
+              className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
+            >
+              {tCommon("cancel")}
             </button>
           </div>
         </div>
