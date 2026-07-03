@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import type { Provider } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Spinner } from "./Spinner";
+import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
 
 type Props = {
   isAuthenticated: boolean;
@@ -16,12 +18,12 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
 
-  async function signIn() {
+  async function signIn(provider: Provider) {
     setBusy(true);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
     await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
@@ -39,15 +41,26 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
 
   if (!isAuthenticated) {
     return (
-      <button
-        type="button"
-        onClick={signIn}
-        disabled={busy}
-        className="inline-flex items-center gap-2 rounded-md bg-foreground text-background px-3 py-1.5 text-sm font-medium disabled:opacity-50"
-      >
-        {busy && <Spinner />}
-        {t("login")}
-      </button>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => signIn("facebook")}
+          disabled={busy}
+          className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
+        >
+          {busy ? <Spinner /> : <FacebookIcon className="h-4 w-4 shrink-0" />}
+          {t("facebook")}
+        </button>
+        <button
+          type="button"
+          onClick={() => signIn("google")}
+          disabled={busy}
+          className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
+        >
+          {busy ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
+          {t("google")}
+        </button>
+      </div>
     );
   }
 

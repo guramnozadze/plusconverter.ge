@@ -8,6 +8,7 @@ import {
   useState,
   type RefObject,
 } from "react";
+import type { Provider } from "@supabase/supabase-js";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ import {
 import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
+import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
 
 type Props = {
   initialSettings: Settings;
@@ -284,12 +286,12 @@ export function Converter({
     router.push(`/order/new?direction=${direction}&points=${pointsAmount}`);
   }
 
-  async function signIn() {
+  async function signIn(provider: Provider) {
     setBusy(true);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
     await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
@@ -456,15 +458,29 @@ export function Converter({
           {t("continue")}
         </button>
       ) : (
-        <button
-          type="button"
-          onClick={signIn}
-          disabled={busy}
-          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
-        >
-          {busy && <Spinner />}
-          {t("loginToContinue")}
-        </button>
+        <div className="mt-5 space-y-2">
+          <p className="text-center text-sm text-foreground/60">
+            {t("loginToContinue")}
+          </p>
+          <button
+            type="button"
+            onClick={() => signIn("facebook")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
+          >
+            {busy ? <Spinner /> : <FacebookIcon className="h-5 w-5 shrink-0" />}
+            {t("continueWithFacebook")}
+          </button>
+          <button
+            type="button"
+            onClick={() => signIn("google")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
+          >
+            {busy ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
+            {t("continueWithGoogle")}
+          </button>
+        </div>
       )}
 
       {showMinPopup && (

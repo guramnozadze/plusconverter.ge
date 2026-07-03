@@ -18,14 +18,16 @@ export async function Header() {
           <span className="text-orange-500">Plus</span>converter.ge
         </Link>
         <div className="flex items-center gap-3">
-          <a
-            href="http://m.me/61591533212017"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-foreground/70 hover:text-foreground"
-          >
-            {t("nav.help")}
-          </a>
+          {user && (
+            <a
+              href="http://m.me/61591533212017"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-foreground/70 hover:text-foreground"
+            >
+              {t("nav.help")}
+            </a>
+          )}
           {profile?.is_admin && (
             <Link
               href="/admin"

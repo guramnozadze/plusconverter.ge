@@ -6,7 +6,8 @@
   "common": {
     "appName": "PLUS კონვერტერი",
     "tagline": "საქართველოს ბანკის PLUS ქულების ყიდვა და გაყიდვა",
-    "login": "შესვლა Google",
+    "google": "Google",
+    "facebook": "Facebook",
     "logout": "გასვლა",
     "loading": "იტვირთება…",
     "cancel": "გაუქმება",
@@ -43,6 +44,8 @@
     "sellDisabled": "გაყიდვა დროებით შეუძლებელია",
     "continue": "გაგრძელება",
     "loginToContinue": "გასაგრძელებლად შედით სისტემაში",
+    "continueWithGoogle": "გაგრძელება Google-ით",
+    "continueWithFacebook": "გაგრძელება Facebook-ით",
     "enterAmount": "შეიყვანეთ თანხა",
     "totalSold": "ჯამში გაყიდულია {amount} {unit}",
     "available": "ხელმისაწვდომია: {amount} {unit}",

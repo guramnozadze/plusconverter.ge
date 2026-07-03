@@ -6,7 +6,8 @@
   "common": {
     "appName": "PLUS Converter",
     "tagline": "Buy & sell Bank of Georgia PLUS points",
-    "login": "Sign in with Google",
+    "google": "Google",
+    "facebook": "Facebook",
     "logout": "Sign out",
     "loading": "Loading…",
     "cancel": "Cancel",
@@ -43,6 +44,8 @@
     "sellDisabled": "Selling is currently unavailable",
     "continue": "Continue",
     "loginToContinue": "Sign in to continue",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
     "enterAmount": "Enter an amount",
     "totalSold": "In total, {amount} {unit} sold",
     "available": "Available: {amount} {unit}",

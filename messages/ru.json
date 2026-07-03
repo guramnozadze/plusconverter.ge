@@ -6,7 +6,8 @@
   "common": {
     "appName": "PLUS Converter",
     "tagline": "Купить и продать PLUS баллы Bank of Georgia",
-    "login": "Войти Google",
+    "google": "Google",
+    "facebook": "Facebook",
     "logout": "Выйти",
     "loading": "Загрузка…",
     "cancel": "Отмена",
@@ -43,6 +44,8 @@
     "sellDisabled": "Продажа временно недоступна",
     "continue": "Продолжить",
     "loginToContinue": "Войдите, чтобы продолжить",
+    "continueWithGoogle": "Продолжить с Google",
+    "continueWithFacebook": "Продолжить с Facebook",
     "enterAmount": "Введите сумму",
     "totalSold": "Всего продано {amount} {unit}",
     "available": "Доступно: {amount} {unit}",
