@@ -42,6 +42,9 @@ export async function generateMetadata({
       template: "%s · plusconverter.ge",
     },
     description,
+    other: {
+      "facebook-domain-verification": "ku8i4se7tw87ah7ktgkfhats1mqe2n",
+    },
     alternates: {
       canonical: locale === "ka" ? "/" : `/${locale}`,
       languages: {
