@@ -518,7 +518,7 @@ export function Converter({
 
       {showOpenInBrowserHint && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/[62%] p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
           onClick={() => setShowOpenInBrowserHint(false)}
         >
           <div
@@ -541,7 +541,7 @@ export function Converter({
                 setShowOpenInBrowserHint(false);
                 signIn("facebook");
               }}
-              className="relative flex w-full items-center justify-center rounded-lg border border-transparent bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5] dark:border-white/15 dark:bg-[#1877F2]/45 dark:hover:bg-[#1877F2]/55"
+              className="relative flex w-full items-center justify-center rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
             >
               <FacebookIcon
                 className="absolute left-4 h-5 w-5 shrink-0"
