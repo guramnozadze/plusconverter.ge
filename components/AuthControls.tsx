@@ -19,7 +19,6 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   async function signIn(provider: Provider) {
     // Google refuses to complete OAuth inside embedded webviews (Messenger,
@@ -38,12 +37,6 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
-  }
-
-  async function copyLink() {
-    await navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }
 
   async function signOut() {
@@ -86,23 +79,28 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-lg font-semibold mb-2">{t("openInBrowserTitle")}</h2>
-              <p className="text-sm text-foreground/70 mb-4">{t("openInBrowserBody")}</p>
+              <p className="text-sm text-foreground/70 mb-2">{t("openInBrowserIntro")}</p>
+              <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
+                <li>{t("openInBrowserBullet1")}</li>
+                <li>{t("openInBrowserBullet2")}</li>
+              </ul>
               <button
                 type="button"
                 onClick={() => {
                   setShowOpenInBrowserHint(false);
                   signIn("facebook");
                 }}
-                className="w-full rounded-lg bg-foreground text-background py-2 font-medium"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
               >
-                {t("continueWithFacebook")}
+                <FacebookIcon className="h-5 w-5 shrink-0" />
+                {t("signInWithFacebook")}
               </button>
               <button
                 type="button"
-                onClick={copyLink}
+                onClick={() => setShowOpenInBrowserHint(false)}
                 className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
               >
-                {copied ? t("copied") : t("copy")}
+                {t("cancel")}
               </button>
             </div>
           </div>
