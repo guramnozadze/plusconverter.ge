@@ -95,7 +95,7 @@
     "yourAccountNumber": "ID-номер",
     "comment": "Комментарий",
     "optional": "необязательно",
-    "commentPlaceholder": "напр., номер мобильного, номер счёта"
+    "commentPlaceholder": "Всё, что хотите нам сообщить — напр., номер мобильного, номер счёта, или оставьте пустым"
   },
   "bankStatus": {
     "available": "Доступен",

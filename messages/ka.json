@@ -95,7 +95,7 @@
     "yourAccountNumber": "პირადი ნომერი",
     "comment": "კომენტარი",
     "optional": "არასავალდებულო",
-    "commentPlaceholder": "მაგ. მობილურის ნომერი, ანგარიშის ნომერი"
+    "commentPlaceholder": "მაგ. მობილურის ნომერი, ანგარიშის ნომერი, სხვა ინფო ან დატოვე ცარიელი"
   },
   "bankStatus": {
     "available": "ხელმისაწვდომია",
