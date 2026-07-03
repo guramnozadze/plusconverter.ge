@@ -9,7 +9,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-4 border-t border-black/10 dark:border-white/10">
-      <div className="w-full max-w-2xl mx-auto px-4 pt-8 pb-6 text-sm">
+      <div className="w-full max-w-2xl mx-auto px-4 pt-6 pb-6 text-sm">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/40">
             {t("footer.contactTitle")}
