@@ -5,6 +5,7 @@ import type { Provider } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
 import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
 
@@ -17,8 +18,17 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const t = useTranslations("common");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   async function signIn(provider: Provider) {
+    // Google refuses to complete OAuth inside embedded webviews (Messenger,
+    // Instagram, etc.) and shows its own confusing block page — head that
+    // off with an in-locale instruction instead.
+    if (provider === "google" && isInAppBrowser()) {
+      setShowOpenInBrowserHint(true);
+      return;
+    }
     setBusy(true);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
@@ -28,6 +38,12 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
+  }
+
+  async function copyLink() {
+    await navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   async function signOut() {
@@ -60,6 +76,30 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           {busy ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
           {t("google")}
         </button>
+        {showOpenInBrowserHint && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div className="w-full max-w-sm rounded-lg bg-background p-4 text-sm shadow-lg">
+              <p className="font-medium">{t("openInBrowserTitle")}</p>
+              <p className="mt-2 text-foreground/70">{t("openInBrowserBody")}</p>
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowOpenInBrowserHint(false)}
+                  className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 font-medium"
+                >
+                  {t("cancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={copyLink}
+                  className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 font-medium"
+                >
+                  {copied ? t("copied") : t("copy")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
