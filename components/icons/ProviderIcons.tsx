@@ -21,11 +21,17 @@ export function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-export function FacebookIcon({ className }: { className?: string }) {
+export function FacebookIcon({
+  className,
+  color = "#1877F2",
+}: {
+  className?: string;
+  color?: string;
+}) {
   return (
     <svg viewBox="0 0 18 18" className={className} aria-hidden="true">
       <path
-        fill="#1877F2"
+        fill={color}
         d="M18 9a9 9 0 1 0-10.406 8.89v-6.29H5.309V9h2.285V7.017c0-2.256 1.343-3.504 3.403-3.504.986 0 2.017.176 2.017.176v2.219h-1.136c-1.119 0-1.469.694-1.469 1.406V9h2.5l-.4 2.6h-2.1v6.29A9.002 9.002 0 0 0 18 9z"
       />
     </svg>

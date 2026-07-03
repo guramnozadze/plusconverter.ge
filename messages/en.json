@@ -16,7 +16,7 @@
     "ok": "OK",
     "openInBrowserTitle": "Open in browser or sign in with Facebook",
     "openInBrowserIntro": "Google doesn't work in Facebook's browser. To continue:",
-    "openInBrowserBullet1": "Tap the three dots (•••) in the top right and choose \"Open in external browser\"",
+    "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
     "openInBrowserBullet2": "Or sign in with Facebook instead",
     "signInWithFacebook": "Sign in with Facebook"
   },
