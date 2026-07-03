@@ -6,7 +6,7 @@
   "common": {
     "appName": "PLUS Converter",
     "tagline": "Купить и продать PLUS баллы Bank of Georgia",
-    "login": "Войти через Google",
+    "login": "Войти Google",
     "logout": "Выйти",
     "loading": "Загрузка…",
     "cancel": "Отмена",

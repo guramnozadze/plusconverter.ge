@@ -6,7 +6,7 @@
   "common": {
     "appName": "PLUS კონვერტერი",
     "tagline": "საქართველოს ბანკის PLUS ქულების ყიდვა და გაყიდვა",
-    "login": "შესვლა Google-ით",
+    "login": "შესვლა Google",
     "logout": "გასვლა",
     "loading": "იტვირთება…",
     "cancel": "გაუქმება",
