@@ -52,7 +52,6 @@
     "continueWithGoogle": "გაგრძელება Google-ით",
     "continueWithFacebook": "გაგრძელება Facebook-ით",
     "enterAmount": "შეიყვანეთ თანხა",
-    "totalSold": "ჯამში გაყიდულია {amount} {unit}",
     "available": "ხელმისაწვდომია: {amount} {unit}",
     "sellMax": "ხელმისაწვდომია გასაყიდად: {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",

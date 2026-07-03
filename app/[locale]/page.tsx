@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { getSettings, getTotalPointsSold } from "@/lib/data";
+import { getSettings } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
@@ -23,10 +23,9 @@ export default async function HomePage({
 
   const supabase = await createClient();
 
-  const [settings, totalPointsSold, { user, profile }, { reviewsPage: reviewsPageRaw }] =
+  const [settings, { user, profile }, { reviewsPage: reviewsPageRaw }] =
     await Promise.all([
       getSettings(),
-      getTotalPointsSold(),
       getUserProfile(),
       searchParams,
     ]);
@@ -75,7 +74,6 @@ export default async function HomePage({
         <Converter
           initialSettings={settings}
           isAuthenticated={Boolean(user)}
-          totalPointsSold={totalPointsSold}
         />
       </ConverterDirectionProvider>
       <ActivityTabs

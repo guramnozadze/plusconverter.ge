@@ -32,7 +32,6 @@ import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
 type Props = {
   initialSettings: Settings;
   isAuthenticated: boolean;
-  totalPointsSold: number;
 };
 
 type FlashDir = "up" | "down" | null;
@@ -60,7 +59,6 @@ function sanitizeNumeric(raw: string): string {
 export function Converter({
   initialSettings,
   isAuthenticated,
-  totalPointsSold,
 }: Props) {
   const t = useTranslations("converter");
   const tCommon = useTranslations("common");
@@ -352,14 +350,6 @@ export function Converter({
     >
       <div className="mb-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
-        {totalPointsSold > 0 && (
-          <p className="text-sm text-orange-600 dark:text-orange-400">
-            {t("totalSold", {
-              amount: gelFmt.format(totalPointsSold),
-              unit: t("points"),
-            })}
-          </p>
-        )}
       </div>
 
       {/* Direction toggle */}

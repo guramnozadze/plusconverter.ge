@@ -19,8 +19,8 @@ const EXAMPLE_POINTS = 100000;
 // Illustrative "last 24h" activity line — not a live query (deliberately: a
 // real aggregate would mean summing the reviews table on every page load).
 // Bump these by hand occasionally so the copy doesn't go stale.
-const ACTIVITY_TRADERS = 15;
-const ACTIVITY_POINTS = 356893;
+const ACTIVITY_TRADERS = 31;
+const ACTIVITY_POINTS = 434734;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

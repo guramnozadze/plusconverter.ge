@@ -52,7 +52,6 @@
     "continueWithGoogle": "Продолжить с Google",
     "continueWithFacebook": "Продолжить с Facebook",
     "enterAmount": "Введите сумму",
-    "totalSold": "Всего продано {amount} {unit}",
     "available": "Доступно: {amount} {unit}",
     "sellMax": "Вы можете продать до {amount} {unit}",
     "exceedsMax": "Это превышает доступную сумму",

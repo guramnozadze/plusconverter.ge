@@ -52,7 +52,6 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithFacebook": "Continue with Facebook",
     "enterAmount": "Enter an amount",
-    "totalSold": "In total, {amount} {unit} sold",
     "available": "Available: {amount} {unit}",
     "sellMax": "You can sell up to {amount} {unit}",
     "exceedsMax": "This exceeds the available amount",
