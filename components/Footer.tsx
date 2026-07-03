@@ -36,29 +36,28 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/40">
-            {t("footer.legalTitle")}
-          </p>
-          <nav className="flex flex-col items-start gap-1.5">
-            <Link
-              href="/terms"
-              prefetch={false}
-              className="text-foreground/70 hover:text-foreground"
-            >
-              {t("footer.termsLink")}
-            </Link>
-            <Link
-              href="/privacy"
-              prefetch={false}
-              className="text-foreground/70 hover:text-foreground"
-            >
-              {t("footer.privacyLink")}
-            </Link>
-          </nav>
-        </div>
-
-        <div className="mt-5 flex justify-center">
+        <div className="mt-5 mb-8 flex items-end justify-between gap-3">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/40">
+              {t("footer.legalTitle")}
+            </p>
+            <nav className="flex flex-col items-start gap-1.5">
+              <Link
+                href="/terms"
+                prefetch={false}
+                className="text-foreground/70 hover:text-foreground"
+              >
+                {t("footer.termsLink")}
+              </Link>
+              <Link
+                href="/privacy"
+                prefetch={false}
+                className="text-foreground/70 hover:text-foreground"
+              >
+                {t("footer.privacyLink")}
+              </Link>
+            </nav>
+          </div>
           <LanguageSwitcher />
         </div>
 

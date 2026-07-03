@@ -101,9 +101,9 @@
     "yourDetailsHint": "{direction, select, sell {The account where you'll receive your GEL.} other {The account where you'll receive your PLUS Points.}}",
     "yourFullName": "Full name",
     "yourAccountNumber": "ID number",
-    "comment": "Comment",
+    "comment": "Mobile number / account",
     "optional": "optional",
-    "commentPlaceholder": "Anything you'd like us to know — e.g. mobile phone, account number, or leave it blank"
+    "commentPlaceholder": "We can already find you by your ID number — feel free to add a mobile number or account number, or leave this blank"
   },
   "bankStatus": {
     "available": "Available",
