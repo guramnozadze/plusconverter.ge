@@ -8,14 +8,13 @@ type ActionResult = { ok: boolean; error?: string };
 // Error tokens raised by the submit_review RPC (`raise exception '<token>'`).
 const KNOWN_ERRORS = new Set([
   "order_not_reviewable",
-  "no_username",
   "invalid_rating",
   "already_reviewed",
 ]);
 
 // Submit a one-time rating (+ optional comment) for the caller's own completed
-// order. Ownership, completion, username and immutability are all enforced by
-// the SECURITY DEFINER RPC; RLS is defense-in-depth.
+// order. Ownership, completion, and immutability are all enforced by the
+// SECURITY DEFINER RPC; RLS is defense-in-depth.
 export async function submitReview(input: {
   orderId: string;
   rating: number;

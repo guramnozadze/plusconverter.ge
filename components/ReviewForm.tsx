@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter, Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { submitReview } from "@/lib/actions/reviews";
-import { PROFILE_USERNAME_PARAM } from "@/components/ProfileCard";
 
-// Leave a one-time rating (+ optional comment) for a completed order. Requires a
-// username; if missing, nudges the user to set one on the home profile card.
-export function ReviewForm({
-  orderId,
-  hasUsername,
-}: {
-  orderId: string;
-  hasUsername: boolean;
-}) {
+// Leave a one-time rating (+ optional comment) for a completed order.
+export function ReviewForm({ orderId }: { orderId: string }) {
   const t = useTranslations("reviews");
   const router = useRouter();
   const [rating, setRating] = useState(0);
@@ -29,21 +21,6 @@ export function ReviewForm({
       <p className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-center text-sm text-green-600 dark:text-green-400">
         {t("submitted")}
       </p>
-    );
-  }
-
-  if (!hasUsername) {
-    return (
-      <div className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-center text-sm">
-        <p className="text-foreground/70">{t("noUsernameNudge")}</p>
-        <Link
-          href={{ pathname: "/", query: { [PROFILE_USERNAME_PARAM]: "1" } }}
-          scroll={false}
-          className="mt-2 inline-block font-medium text-foreground underline"
-        >
-          {t("setUsername")}
-        </Link>
-      </div>
     );
   }
 

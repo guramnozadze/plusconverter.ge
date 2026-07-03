@@ -67,8 +67,6 @@ export default async function HomePage({
     }
   }
 
-  const hasUsername = Boolean(profile?.username && profile.username.trim());
-
   return (
     <div>
       <ConverterDirectionProvider>
@@ -87,7 +85,6 @@ export default async function HomePage({
         myOrders={myOrders}
         reviewByOrder={reviewByOrder}
         isAuthenticated={Boolean(user)}
-        hasUsername={hasUsername}
       />
     </div>
   );

@@ -152,7 +152,7 @@ export function OrderView({
           </p>
         </div>
         {order.status === "completed" && !alreadyReviewed && (
-          <ReviewForm orderId={order.id} hasUsername={hasUsername} />
+          <ReviewForm orderId={order.id} />
         )}
       </div>
     );

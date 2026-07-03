@@ -15,7 +15,6 @@ type Props = {
   myOrders: Order[];
   reviewByOrder: Record<string, number | null>;
   isAuthenticated: boolean;
-  hasUsername: boolean;
 };
 
 // Read-only star row.
@@ -35,7 +34,6 @@ export function ActivityTabs({
   myOrders,
   reviewByOrder,
   isAuthenticated,
-  hasUsername,
 }: Props) {
   const t = useTranslations("reviews");
   const tOrder = useTranslations("order");
@@ -177,7 +175,7 @@ export function ActivityTabs({
                 (reviewed ? (
                   <Stars value={rating as number} />
                 ) : (
-                  <ReviewForm orderId={o.id} hasUsername={hasUsername} />
+                  <ReviewForm orderId={o.id} />
                 ))}
             </li>
           );

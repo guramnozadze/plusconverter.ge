@@ -135,8 +135,6 @@
     "submitted": "Thanks for your review!",
     "soldPoints": "Sold {points} PLUS Points",
     "boughtPoints": "Bought {points} PLUS Points",
-    "noUsernameNudge": "Set a username to leave a review.",
-    "setUsername": "Set username",
     "alreadyReviewed": "You've already reviewed this order.",
     "error": "Couldn't submit your review. Please try again.",
     "emptyFeed": "No activity yet.",
