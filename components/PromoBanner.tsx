@@ -3,17 +3,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { bankValueGel, gelFromPoints, round, GEL_DECIMALS } from "@/lib/pricing";
+import { useConverterDirection } from "./ConverterDirection";
+import { gelFromPoints } from "@/lib/pricing";
 import type { Settings } from "@/lib/supabase/types";
 
 // Next campaign: edit this constant (UTC). Currently 2026-07-05 11:00 Tbilisi
 // time (UTC+4).
 const PROMO_DEADLINE = "2026-07-05T07:00:00Z";
 
-// Illustrative example amount, in PLUS points — the payout and gain below are
-// computed live from the real pricing helpers, so they can never drift from
-// what the converter itself would quote.
-const EXAMPLE_POINTS = 40000;
+// Illustrative example amount, in PLUS points — the payout below is computed
+// live from the real pricing helper, so it can never drift from what the
+// converter itself would quote.
+const EXAMPLE_POINTS = 100000;
+
+// Illustrative "last 24h" activity line — not a live query (deliberately: a
+// real aggregate would mean summing the reviews table on every page load).
+// Bump these by hand occasionally so the copy doesn't go stale.
+const ACTIVITY_TRADERS = 15;
+const ACTIVITY_POINTS = 356893;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -43,6 +50,7 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
   const locale = useLocale();
   const [settings, setSettings] = useState(initialSettings);
   const days = useDaysRemaining(PROMO_DEADLINE);
+  const { focusSell } = useConverterDirection();
 
   // Live price: stay in sync if the owner adjusts the multiplier again,
   // same realtime channel pattern as Converter.
@@ -65,37 +73,51 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
     [locale],
   );
+  const pointsFmt = useMemo(
+    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }),
+    [locale],
+  );
 
   const payout = gelFromPoints(EXAMPLE_POINTS, settings.sell_multiplier);
-  // Clamp for display only — the banner always shows, but never claims a
-  // negative gain if the multiplier is ever at/below face value.
-  const delta = Math.max(0, round(payout - bankValueGel(EXAMPLE_POINTS), GEL_DECIMALS));
 
   return (
-    <div className="mb-4 rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6">
-      <span className="inline-block rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
-        {t("badge")}
-      </span>
-      <p className="mt-3 text-lg sm:text-xl font-semibold leading-tight">
-        {t("headline", {
-          points: gelFmt.format(EXAMPLE_POINTS),
-          payout: gelFmt.format(payout),
-        })}
-      </p>
-
-      {/* The gain is the whole pitch — biggest, boldest thing on the banner. */}
-      <div className="mt-3 rounded-lg bg-green-50 dark:bg-green-900/20 px-4 py-3 text-center">
-        <p className="text-3xl sm:text-4xl font-extrabold text-green-700 dark:text-green-300">
-          {t("deltaAmount", { delta: gelFmt.format(delta) })}
-        </p>
-        <p className="mt-1 text-sm font-medium text-green-700/80 dark:text-green-300/80">
-          {t("deltaCaption")}
-        </p>
+    <button
+      type="button"
+      onClick={focusSell}
+      className="mb-4 block w-full text-left rounded-2xl border border-orange-200 dark:border-orange-500/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-500/15 dark:via-amber-500/10 dark:to-transparent p-5 sm:p-6 transition-transform hover:scale-[1.01] active:scale-[0.99]"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-block rounded-full bg-orange-500 px-2.5 py-1 text-xs font-semibold text-white">
+          {t("badge")}
+        </span>
+        <span className="text-xs font-medium text-foreground/50">
+          {t("endsIn", { days })}
+        </span>
       </div>
 
-      <p className="mt-3 text-sm text-foreground/60">
-        {t("endsIn", { days })}
+      <p className="mt-3 text-lg sm:text-xl font-semibold leading-tight">
+        {t("headline", { points: pointsFmt.format(EXAMPLE_POINTS) })}
       </p>
-    </div>
+
+      {/* The payout is the whole pitch — biggest, boldest thing on the banner. */}
+      <p className="mt-1 text-4xl sm:text-5xl font-extrabold tracking-tight text-orange-600 dark:text-orange-400">
+        {gelFmt.format(payout)} <span className="text-2xl sm:text-3xl">GEL</span>
+      </p>
+
+      <div className="mt-4 flex items-center gap-2 text-sm font-medium text-foreground/70">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+        </span>
+        {t("activity", {
+          traders: ACTIVITY_TRADERS,
+          points: pointsFmt.format(ACTIVITY_POINTS),
+        })}
+      </div>
+
+      <p className="mt-3 text-sm font-semibold text-orange-700 dark:text-orange-300">
+        {t("cta")}
+      </p>
+    </button>
   );
 }

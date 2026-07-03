@@ -20,11 +20,11 @@
     "help": "Помощь"
   },
   "promoBanner": {
-    "badge": "Ограниченное предложение",
-    "headline": "Продайте {points} PLUS баллов, получите {payout} лари",
-    "deltaAmount": "+{delta} лари",
-    "deltaCaption": "больше, чем сегодня стоит на самом деле",
-    "endsIn": "Предложение заканчивается через {days, plural, one {# день} few {# дня} many {# дней} other {# дней}}"
+    "badge": "🔥 Активно сейчас",
+    "headline": "Продайте {points} PLUS баллов и получите деньги мгновенно",
+    "activity": "За последние 24 часа {traders} человек обменяли {points} PLUS баллов",
+    "cta": "Нажмите, чтобы продать →",
+    "endsIn": "Заканчивается через {days, plural, one {# день} few {# дня} many {# дней} other {# дней}}"
   },
   "converter": {
     "title": "Конвертировать PLUS баллы",

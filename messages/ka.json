@@ -20,11 +20,11 @@
     "help": "დახმარება"
   },
   "promoBanner": {
-    "badge": "შეზღუდული დროით",
-    "headline": "გაყიდეთ {points} PLUS ქულა და მიიღეთ {payout} ლარი",
-    "deltaAmount": "+{delta} ლარი",
-    "deltaCaption": "მეტი, ვიდრე დღეს ღირს",
-    "endsIn": "შეთავაზება სრულდება {days, plural, one {# დღეში} other {# დღეში}}"
+    "badge": "🔥 ახლავე აქტიურია",
+    "headline": "გაყიდეთ {points} PLUS ქულა და დაუყოვნებლივ მიიღეთ თანხა",
+    "activity": "ბოლო 24 საათში {traders} ადამიანმა გაცვალა {points} PLUS ქულა",
+    "cta": "დააჭირეთ გასაყიდად →",
+    "endsIn": "სრულდება {days, plural, one {# დღეში} other {# დღეში}}"
   },
   "converter": {
     "title": "PLUS ქულების კონვერტაცია",

@@ -20,11 +20,11 @@
     "help": "Help"
   },
   "promoBanner": {
-    "badge": "Limited time",
-    "headline": "Sell {points} PLUS Points, get {payout} GEL",
-    "deltaAmount": "+{delta} GEL",
-    "deltaCaption": "more than it's worth today",
-    "endsIn": "Offer ends in {days, plural, one {# day} other {# days}}"
+    "badge": "🔥 Live now",
+    "headline": "Sell {points} PLUS Points, get paid instantly",
+    "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 24 hours",
+    "cta": "Tap to sell now →",
+    "endsIn": "Ends in {days, plural, one {# day} other {# days}}"
   },
   "converter": {
     "title": "Convert PLUS Points",

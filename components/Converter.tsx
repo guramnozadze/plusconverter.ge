@@ -1,10 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useConverterDirection } from "./ConverterDirection";
 import {
   bankValueGel,
   gelFromPoints,
@@ -15,7 +22,7 @@ import {
   multiplierFor,
   pointsFromGel,
 } from "@/lib/pricing";
-import type { OrderDirection, Settings } from "@/lib/supabase/types";
+import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
 
@@ -56,14 +63,9 @@ export function Converter({
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { direction, setDirection, sellFocusToken } = useConverterDirection();
 
   const [settings, setSettings] = useState(initialSettings);
-  // Sell is the default tab (the current promo push); ?direction=buy can
-  // still override it (e.g. a future buy-focused link).
-  const [direction, setDirection] = useState<OrderDirection>(
-    searchParams.get("direction") === "buy" ? "buy" : "sell",
-  );
   // Two editable legs. `give` is what the user puts in (GEL when buying, PLUS
   // when selling); `get` is the rate-adjusted amount they receive. Either can be
   // edited — the other is recomputed (reverse pricing).
@@ -73,6 +75,19 @@ export function Converter({
   const [busy, setBusy] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
+  const giveInputRef = useRef<HTMLInputElement>(null);
+
+  // Only the promo banner's "sell now" click should jump focus here — bumping
+  // sellFocusToken is how it signals that (a plain tab click must not).
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    giveInputRef.current?.focus();
+    giveInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [sellFocusToken]);
 
   // Flashes a field green/red for a beat when a live settings update moves it,
   // since the rate itself is never shown — this is the only visible cue.
@@ -300,9 +315,11 @@ export function Converter({
     onChange: (v: string) => void,
     currency: string,
     flash: FlashDir = null,
+    inputRef?: RefObject<HTMLInputElement | null>,
   ) => (
     <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/20 px-3 focus-within:ring-2 focus-within:ring-foreground/30">
       <input
+        ref={inputRef}
         type="text"
         inputMode="decimal"
         autoComplete="off"
@@ -383,7 +400,7 @@ export function Converter({
       {direction === "sell" ? (
         // PLUS in  =  GEL face value
         <div className="flex items-center gap-2">
-          {numField(give, onGiveChange, giveCurrency, flashGive)}
+          {numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)}
           <span className="text-lg text-foreground/40">=</span>
           <div className="flex flex-1 items-center rounded-lg border border-black/10 dark:border-white/15 bg-black/5 dark:bg-white/10 px-3">
             <span className="w-full py-3 text-lg tabular-nums text-foreground/70">
@@ -393,7 +410,7 @@ export function Converter({
           </div>
         </div>
       ) : (
-        numField(give, onGiveChange, giveCurrency, flashGive)
+        numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)
       )}
 
       {/* You get: editable rate-adjusted amount (reverse pricing) */}

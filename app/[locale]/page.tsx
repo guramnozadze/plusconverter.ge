@@ -4,6 +4,7 @@ import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
 import { PromoBanner } from "@/components/PromoBanner";
+import { ConverterDirectionProvider } from "@/components/ConverterDirection";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ActivityTabs } from "@/components/ActivityTabs";
 import type { Order, Review } from "@/lib/supabase/types";
@@ -70,13 +71,15 @@ export default async function HomePage({
 
   return (
     <div>
-      <PromoBanner initialSettings={settings} />
-      {user && profile && <ProfileCard profile={profile} />}
-      <Converter
-        initialSettings={settings}
-        isAuthenticated={Boolean(user)}
-        totalPointsSold={totalPointsSold}
-      />
+      <ConverterDirectionProvider>
+        <PromoBanner initialSettings={settings} />
+        {user && profile && <ProfileCard profile={profile} />}
+        <Converter
+          initialSettings={settings}
+          isAuthenticated={Boolean(user)}
+          totalPointsSold={totalPointsSold}
+        />
+      </ConverterDirectionProvider>
       <ActivityTabs
         feed={feed}
         reviewsPage={reviewsPage}
