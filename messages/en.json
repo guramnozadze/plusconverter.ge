@@ -16,7 +16,8 @@
   },
   "nav": {
     "home": "Home",
-    "admin": "Admin"
+    "admin": "Admin",
+    "help": "Help"
   },
   "promoBanner": {
     "badge": "Limited time",
