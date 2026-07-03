@@ -5,7 +5,15 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin", "/en/admin", "/order", "/en/order", "/auth"],
+      disallow: [
+        "/admin",
+        "/en/admin",
+        "/ru/admin",
+        "/order",
+        "/en/order",
+        "/ru/order",
+        "/auth",
+      ],
     },
     sitemap: "https://plusconverter.ge/sitemap.xml",
   };

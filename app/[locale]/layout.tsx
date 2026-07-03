@@ -42,10 +42,18 @@ export async function generateMetadata({
       template: "%s · plusconverter.ge",
     },
     description,
+    alternates: {
+      canonical: locale === "ka" ? "/" : `/${locale}`,
+      languages: {
+        ka: "/",
+        en: "/en",
+        ru: "/ru",
+      },
+    },
     openGraph: {
       title,
       description,
-      url: "https://plusconverter.ge",
+      url: locale === "ka" ? "https://plusconverter.ge" : `https://plusconverter.ge/${locale}`,
       siteName: "plusconverter.ge",
       type: "website",
       locale,

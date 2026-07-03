@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       languages: {
         ka: `${BASE_URL}${path}`,
         en: `${BASE_URL}/en${path}`,
+        ru: `${BASE_URL}/ru${path}`,
       },
     },
   }));
