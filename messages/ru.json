@@ -192,9 +192,11 @@
     "date": "Дата"
   },
   "footer": {
+    "contactTitle": "Помощь и контакты",
+    "legalTitle": "Юридическая информация",
     "termsLink": "Условия использования",
     "privacyLink": "Политика конфиденциальности",
-    "contactLabel": "Свяжитесь с нами в Telegram",
+    "contactLabel": "Telegram",
     "facebookLabel": "Facebook",
     "disclaimer": "Независимый сервис, не аффилирован с Bank of Georgia",
     "copyright": "© {year} plusconverter.ge"

@@ -6,9 +6,9 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
 const LABELS: Record<string, string> = {
-  ka: "ქარ",
-  en: "EN",
-  ru: "РУ",
+  ka: "ქართული",
+  en: "English",
+  ru: "Русский",
 };
 
 export function LanguageSwitcher() {
@@ -27,27 +27,18 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <div
-      className="flex items-center gap-1 text-sm"
-      aria-busy={isPending}
-      role="group"
+    <select
+      value={locale}
+      onChange={(e) => switchTo(e.target.value)}
+      disabled={isPending}
       aria-label="Language"
+      className="rounded-md border border-black/15 dark:border-white/20 bg-transparent px-2 py-1 text-sm disabled:opacity-50"
     >
       {routing.locales.map((loc) => (
-        <button
-          key={loc}
-          type="button"
-          onClick={() => switchTo(loc)}
-          className={`px-2 py-1 rounded-md transition-colors ${
-            loc === locale
-              ? "bg-foreground text-background font-medium"
-              : "hover:bg-black/5 dark:hover:bg-white/10"
-          }`}
-          aria-pressed={loc === locale}
-        >
+        <option key={loc} value={loc}>
           {LABELS[loc] ?? loc}
-        </button>
+        </option>
       ))}
-    </div>
+    </select>
   );
 }

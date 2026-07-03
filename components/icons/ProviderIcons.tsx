@@ -21,6 +21,18 @@ export function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
+export function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="12" fill="#26A5E4" />
+      <path
+        fill="#fff"
+        d="M17.75 7.318 15.79 16.99c-.148.655-.534.816-1.083.508l-2.992-2.205-1.443 1.389c-.16.16-.294.294-.602.294l.215-3.05 5.55-5.014c.241-.215-.053-.334-.373-.12l-6.86 4.32-2.955-.924c-.642-.2-.654-.642.134-.951l11.55-4.454c.535-.196 1.003.128.83.884z"
+      />
+    </svg>
+  );
+}
+
 export function FacebookIcon({
   className,
   color = "#1877F2",
