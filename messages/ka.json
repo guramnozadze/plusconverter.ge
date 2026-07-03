@@ -14,8 +14,9 @@
     "copy": "კოპირება",
     "copied": "დაკოპირდა",
     "ok": "კარგი",
-    "openInBrowserTitle": "გასაგრძელებლად გახსენით ბრაუზერში",
-    "openInBrowserBody": "Google-ით შესვლა არ მუშაობს ამ აპლიკაციის ჩაშენებულ ბრაუზერში. დააჭირეთ მენიუს (•••) და აირჩიეთ „გახსნა Safari-ში\" ან „გახსნა Chrome-ში\", ან დააკოპირეთ ბმული ქვემოთ და ჩასვით იქ."
+    "openInBrowserTitle": "Google Facebook-იდან არ მუშაობს",
+    "openInBrowserBody": "ახლა Facebook-ის ბრაუზერში ხართ და Google აქედან შესვლას ბლოკავს. გააგრძელეთ Facebook-ით, ან დააკოპირეთ ბმული და გახსენით Safari-ში ან Chrome-ში.",
+    "continueWithFacebook": "გაგრძელება Facebook-ით"
   },
   "nav": {
     "home": "მთავარი",

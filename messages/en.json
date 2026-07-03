@@ -14,8 +14,9 @@
     "copy": "Copy",
     "copied": "Copied",
     "ok": "OK",
-    "openInBrowserTitle": "Open in your browser to continue",
-    "openInBrowserBody": "Google sign-in doesn't work inside this in-app browser. Tap the menu (•••) and choose \"Open in Safari\" or \"Open in Chrome\", or copy the link below and paste it there."
+    "openInBrowserTitle": "Google doesn't work from Facebook",
+    "openInBrowserBody": "You're in Facebook's browser, and Google blocks sign-in from here. Continue with Facebook instead, or copy the link and open it in Safari or Chrome.",
+    "continueWithFacebook": "Continue with Facebook"
   },
   "nav": {
     "home": "Home",

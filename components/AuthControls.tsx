@@ -77,26 +77,33 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           {t("google")}
         </button>
         {showOpenInBrowserHint && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-sm rounded-lg bg-background p-4 text-sm shadow-lg">
-              <p className="font-medium">{t("openInBrowserTitle")}</p>
-              <p className="mt-2 text-foreground/70">{t("openInBrowserBody")}</p>
-              <div className="mt-4 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowOpenInBrowserHint(false)}
-                  className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 font-medium"
-                >
-                  {t("cancel")}
-                </button>
-                <button
-                  type="button"
-                  onClick={copyLink}
-                  className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 font-medium"
-                >
-                  {copied ? t("copied") : t("copy")}
-                </button>
-              </div>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            onClick={() => setShowOpenInBrowserHint(false)}
+          >
+            <div
+              className="w-full max-w-sm rounded-2xl bg-background p-5 shadow-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-lg font-semibold mb-2">{t("openInBrowserTitle")}</h2>
+              <p className="text-sm text-foreground/70 mb-4">{t("openInBrowserBody")}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOpenInBrowserHint(false);
+                  signIn("facebook");
+                }}
+                className="w-full rounded-lg bg-foreground text-background py-2 font-medium"
+              >
+                {t("continueWithFacebook")}
+              </button>
+              <button
+                type="button"
+                onClick={copyLink}
+                className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
+              >
+                {copied ? t("copied") : t("copy")}
+              </button>
             </div>
           </div>
         )}

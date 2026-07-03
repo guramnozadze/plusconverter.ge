@@ -14,8 +14,9 @@
     "copy": "Копировать",
     "copied": "Скопировано",
     "ok": "ОК",
-    "openInBrowserTitle": "Откройте в браузере, чтобы продолжить",
-    "openInBrowserBody": "Вход через Google не работает во встроенном браузере приложения. Нажмите на меню (•••) и выберите «Открыть в Safari» или «Открыть в Chrome», либо скопируйте ссылку ниже и вставьте её там."
+    "openInBrowserTitle": "Google не работает из Facebook",
+    "openInBrowserBody": "Вы находитесь в браузере Facebook, и Google блокирует вход отсюда. Продолжите через Facebook, либо скопируйте ссылку и откройте её в Safari или Chrome.",
+    "continueWithFacebook": "Продолжить через Facebook"
   },
   "nav": {
     "home": "Главная",
