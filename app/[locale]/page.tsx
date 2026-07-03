@@ -3,6 +3,7 @@ import { getSettings, getTotalPointsSold } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
+import { PromoBanner } from "@/components/PromoBanner";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ActivityTabs } from "@/components/ActivityTabs";
 import type { Order, Review } from "@/lib/supabase/types";
@@ -69,6 +70,7 @@ export default async function HomePage({
 
   return (
     <div>
+      <PromoBanner initialSettings={settings} />
       {user && profile && <ProfileCard profile={profile} />}
       <Converter
         initialSettings={settings}

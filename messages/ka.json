@@ -18,6 +18,13 @@
     "home": "მთავარი",
     "admin": "ადმინი"
   },
+  "promoBanner": {
+    "badge": "შეზღუდული დროით",
+    "headline": "გაყიდეთ {points} PLUS ქულა და მიიღეთ {payout} ლარი",
+    "deltaAmount": "+{delta} ლარი",
+    "deltaCaption": "მეტი, ვიდრე დღეს ღირს",
+    "endsIn": "შეთავაზება სრულდება {days, plural, one {# დღეში} other {# დღეში}}"
+  },
   "converter": {
     "title": "PLUS ქულების კონვერტაცია",
     "buy": "PLUS ყიდვა",

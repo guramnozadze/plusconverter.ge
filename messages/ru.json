@@ -18,6 +18,13 @@
     "home": "Главная",
     "admin": "Админ"
   },
+  "promoBanner": {
+    "badge": "Ограниченное предложение",
+    "headline": "Продайте {points} PLUS баллов, получите {payout} лари",
+    "deltaAmount": "+{delta} лари",
+    "deltaCaption": "больше, чем сегодня стоит на самом деле",
+    "endsIn": "Предложение заканчивается через {days, plural, one {# день} few {# дня} many {# дней} other {# дней}}"
+  },
   "converter": {
     "title": "Конвертировать PLUS баллы",
     "buy": "Купить PLUS баллы",

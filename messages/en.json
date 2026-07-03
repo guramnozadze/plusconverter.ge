@@ -18,6 +18,13 @@
     "home": "Home",
     "admin": "Admin"
   },
+  "promoBanner": {
+    "badge": "Limited time",
+    "headline": "Sell {points} PLUS Points, get {payout} GEL",
+    "deltaAmount": "+{delta} GEL",
+    "deltaCaption": "more than it's worth today",
+    "endsIn": "Offer ends in {days, plural, one {# day} other {# days}}"
+  },
   "converter": {
     "title": "Convert PLUS Points",
     "buy": "Buy PLUS Points",

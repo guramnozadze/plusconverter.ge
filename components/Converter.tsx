@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -55,9 +56,14 @@ export function Converter({
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [settings, setSettings] = useState(initialSettings);
-  const [direction, setDirection] = useState<OrderDirection>("buy");
+  // Sell is the default tab (the current promo push); ?direction=buy can
+  // still override it (e.g. a future buy-focused link).
+  const [direction, setDirection] = useState<OrderDirection>(
+    searchParams.get("direction") === "buy" ? "buy" : "sell",
+  );
   // Two editable legs. `give` is what the user puts in (GEL when buying, PLUS
   // when selling); `get` is the rate-adjusted amount they receive. Either can be
   // edited — the other is recomputed (reverse pricing).
@@ -312,7 +318,10 @@ export function Converter({
   );
 
   return (
-    <div className="rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6">
+    <div
+      id="converter"
+      className="rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6"
+    >
       <div className="mb-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
         {totalPointsSold > 0 && (
