@@ -26,7 +26,7 @@ import {
 import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
-import { GoogleIcon } from "./icons/ProviderIcons";
+import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
 
 type Props = {
   initialSettings: Settings;
@@ -462,6 +462,15 @@ export function Converter({
           <p className="text-center text-sm text-foreground/60">
             {t("loginToContinue")}
           </p>
+          <button
+            type="button"
+            onClick={() => signIn("facebook")}
+            disabled={busy}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
+          >
+            {busy ? <Spinner /> : <FacebookIcon className="h-5 w-5 shrink-0" />}
+            {t("continueWithFacebook")}
+          </button>
           <button
             type="button"
             onClick={() => signIn("google")}
