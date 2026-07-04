@@ -452,7 +452,7 @@ export function Converter({
                 key={value}
                 type="button"
                 onClick={() => onGiveChange(String(value))}
-                className={`whitespace-nowrap rounded-full border bg-clip-padding px-2.5 py-0.5 text-[11px] font-medium transition-all sm:px-3.5 sm:py-1 sm:text-xs ${
+                className={`whitespace-nowrap rounded-full border bg-clip-padding px-[11px] py-[3px] text-[11px] font-medium transition-all sm:px-3.5 sm:py-1 sm:text-xs ${
                   selected
                     ? selectedClassName
                     : "border-black/15 dark:border-white/20 text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
