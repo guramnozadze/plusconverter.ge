@@ -164,30 +164,7 @@ export function OrderView({
         <h1 className="text-xl font-semibold mb-2.5">{t("title")}</h1>
       )}
 
-      {/* Timer */}
-      <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 text-center">
-        {confirmed ? (
-          <p className="flex items-center justify-center gap-2 text-lg font-semibold text-amber-600 dark:text-amber-400">
-            <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-            {t("processing")}
-          </p>
-        ) : (
-          <>
-            <p className="text-sm text-foreground/60">{t("timeLeft")}</p>
-            {expired ? (
-              <p className="text-lg font-semibold text-red-600 dark:text-red-400">
-                {t("expired")}
-              </p>
-            ) : (
-              <p className="text-3xl font-semibold tabular-nums">
-                {minutes}:{String(seconds).padStart(2, "0")}
-              </p>
-            )}
-          </>
-        )}
-      </div>
-
-      <p className="text-sm text-foreground/70">
+      <p className="text-base text-foreground/70">
         {t.rich("instructions", {
           direction: order.direction,
           paid: (chunks) => (
@@ -197,6 +174,29 @@ export function OrderView({
           ),
         })}
       </p>
+
+      {/* Timer */}
+      <div className="rounded-2xl border border-black/10 dark:border-white/15 p-3 text-center">
+        {confirmed ? (
+          <p className="flex items-center justify-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+            <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+            {t("processing")}
+          </p>
+        ) : (
+          <>
+            <p className="text-xs text-foreground/60">{t("timeLeft")}</p>
+            {expired ? (
+              <p className="text-base font-semibold text-red-600 dark:text-red-400">
+                {t("expired")}
+              </p>
+            ) : (
+              <p className="text-xl font-semibold tabular-nums">
+                {minutes}:{String(seconds).padStart(2, "0")}
+              </p>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Big, easy-to-copy ID number card — sell orders only. Sellers transfer
           PLUS points to this ID, not a bank account number, so it gets top
