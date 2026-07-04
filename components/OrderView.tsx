@@ -164,16 +164,22 @@ export function OrderView({
         <h1 className="text-xl font-semibold mb-2.5">{t("title")}</h1>
       )}
 
-      <p className="text-base text-foreground/70">
-        {t.rich("instructions", {
-          direction: order.direction,
-          paid: (chunks) => (
-            <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
-              {chunks}
-            </span>
-          ),
-        })}
-      </p>
+      {confirmed ? (
+        <p className="text-base text-foreground/70">
+          {t("confirmedMessage", { direction: order.direction })}
+        </p>
+      ) : (
+        <p className="text-base text-foreground/70">
+          {t.rich("instructions", {
+            direction: order.direction,
+            paid: (chunks) => (
+              <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
+                {chunks}
+              </span>
+            ),
+          })}
+        </p>
+      )}
 
       {/* Timer */}
       <div className="rounded-2xl border border-black/10 dark:border-white/15 p-3 text-center">

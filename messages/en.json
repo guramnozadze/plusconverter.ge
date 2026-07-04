@@ -64,6 +64,7 @@
     "timeLeft": "Time left",
     "expired": "This order has expired",
     "instructions": "{direction, select, sell {Open the Bank of Georgia app and send the exact PLUS points to the ID number below. Once it's sent, tap <paid>“Transfer sent”</paid> — we’ll send your GEL shortly.} other {Using your banking app, transfer the exact amount to the account below. Once it's sent, tap <paid>“Transfer sent”</paid> — we’ll send your points shortly.}}",
+    "confirmedMessage": "{direction, select, sell {We'll send your GEL shortly.} other {We'll send your points shortly.}}",
     "bank": "Bank",
     "accountName": "Account name",
     "accountNumber": "Account number",
