@@ -72,7 +72,7 @@ const QUICK_BUY_AMOUNTS = [
   {
     value: 199,
     selectedClassName:
-      "border-purple-500 dark:border-purple-400/50 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white shadow-md motion-safe:animate-pulse",
+      "border-purple-500 dark:border-purple-400/50 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white shadow-md !font-bold motion-safe:animate-pulse-soft",
   },
 ] as const;
 
@@ -452,7 +452,7 @@ export function Converter({
                 key={value}
                 type="button"
                 onClick={() => onGiveChange(String(value))}
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
+                className={`whitespace-nowrap rounded-full border bg-clip-padding px-3.5 py-1 text-xs font-medium transition-all ${
                   selected
                     ? selectedClassName
                     : "border-black/15 dark:border-white/20 text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
