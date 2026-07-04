@@ -58,8 +58,7 @@
     "continueWithFacebook": "გაგრძელება Facebook-ით",
     "enterAmount": "შეიყვანეთ თანხა",
     "available": "დარჩა {amount} {unit}",
-    "sellMax": "მაქს. გასაყიდად {amount} {unit}",
-    "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
+    "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას ({amount} {unit})",
     "minPopupTitle": "მინიმალური თანხა",
     "minPopupBody": "მინიმუმია {amount} {unit}."
   },

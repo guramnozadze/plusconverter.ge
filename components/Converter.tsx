@@ -402,7 +402,7 @@ export function Converter({
         ))}
       </div>
 
-      {/* Buy: points currently available to buy. Sell: max points accepted. */}
+      {/* Buy: points currently available to buy — implies limited stock. */}
       {direction === "buy" && max > 0 && (
         <p
           className={`mb-3 text-sm transition-colors duration-300 ${
@@ -410,15 +410,6 @@ export function Converter({
           }`}
         >
           {t("available", { amount: gelFmt.format(max), unit: t("points") })}
-        </p>
-      )}
-      {direction === "sell" && max > 0 && (
-        <p
-          className={`mb-3 text-sm transition-colors duration-300 ${
-            flashMax ? flashClass[flashMax] : "text-foreground/60"
-          }`}
-        >
-          {t("sellMax", { amount: gelFmt.format(max), unit: t("points") })}
         </p>
       )}
 
@@ -493,7 +484,7 @@ export function Converter({
 
       {enabled && aboveMax && (
         <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
-          {t("exceedsMax")}
+          {t("exceedsMax", { amount: gelFmt.format(max), unit: t("points") })}
         </p>
       )}
 

@@ -58,8 +58,7 @@
     "continueWithFacebook": "Continue with Facebook",
     "enterAmount": "Enter an amount",
     "available": "Available: {amount} {unit}",
-    "sellMax": "You can sell up to {amount} {unit}",
-    "exceedsMax": "This exceeds the available amount",
+    "exceedsMax": "This exceeds the available amount ({amount} {unit})",
     "minPopupTitle": "Minimum amount",
     "minPopupBody": "The minimum is {amount} {unit}."
   },

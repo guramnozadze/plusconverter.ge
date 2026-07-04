@@ -58,8 +58,7 @@
     "continueWithFacebook": "Продолжить с Facebook",
     "enterAmount": "Введите сумму",
     "available": "Доступно: {amount} {unit}",
-    "sellMax": "Вы можете продать до {amount} {unit}",
-    "exceedsMax": "Это превышает доступную сумму",
+    "exceedsMax": "Это превышает доступную сумму ({amount} {unit})",
     "minPopupTitle": "Минимальная сумма",
     "minPopupBody": "Минимум — {amount} {unit}."
   },
