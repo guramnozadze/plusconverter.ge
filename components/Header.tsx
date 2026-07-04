@@ -15,10 +15,13 @@ export async function Header() {
   return (
     <header className="border-b border-black/10 dark:border-white/10">
       <div className="w-full max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
-        <Link href="/" className="shrink-0 font-semibold tracking-tight">
+        <Link
+          href="/"
+          className="min-w-0 truncate text-sm sm:text-base font-semibold tracking-tight"
+        >
           <span className="text-orange-500">Plus</span>converter.ge
         </Link>
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           {profile?.is_admin && (
             <Link
               href="/admin"
