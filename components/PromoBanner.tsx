@@ -121,10 +121,6 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
           points: pointsFmt.format(ACTIVITY_POINTS),
         })}
       </div>
-
-      <p className="mt-3 text-sm font-semibold text-orange-700 dark:text-orange-300">
-        {t("cta")}
-      </p>
     </button>
   );
 }

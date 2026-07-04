@@ -26,8 +26,8 @@
     "help": "Help"
   },
   "promoBanner": {
-    "badge": "🔥 Live now",
-    "headline": "The fastest PLUS points exchange site — get your exchange done in under 5 minutes",
+    "badge": "🔥 We're online",
+    "headline": "The fastest PLUS points exchange site - get your exchange done in under 5 minutes",
     "exampleLabel": "{points} PLUS Points is worth",
     "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 24 hours",
     "cta": "Tap to sell now →",
@@ -217,6 +217,10 @@
       "howUsed": {
         "title": "How it's used",
         "body": "Your data is used only to process your orders — to send you points or GEL, show your order history, and display your chosen username on public reviews."
+      },
+      "visibility": {
+        "title": "Visibility to others",
+        "body": "Your email, name, surname, ID number, and bank account details are never visible to other users. This information is used only by the site to identify you and send you your PLUS points or GEL."
       },
       "storage": {
         "title": "Storage & security",

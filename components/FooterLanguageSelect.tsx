@@ -13,7 +13,7 @@ const LABELS: Record<string, string> = {
 
 const FLAGS: Record<string, string> = {
   ka: "🇬🇪",
-  en: "EN",
+  en: "🇺🇸",
   ru: "🇷🇺",
 };
 

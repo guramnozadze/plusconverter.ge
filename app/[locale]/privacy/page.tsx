@@ -4,6 +4,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 const SECTION_KEYS = [
   "dataCollected",
   "howUsed",
+  "visibility",
   "storage",
   "cookies",
   "contact",
