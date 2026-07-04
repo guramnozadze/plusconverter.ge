@@ -25,19 +25,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Calmer, less-transparent alternative to Tailwind's built-in animate-pulse
-   (which dips to 50% opacity every 2s) — used on the 199 GEL quick-amount
-   chip so the "special" tier pulses gently instead of flickering hard. */
-@keyframes pulse-soft {
+/* Shifting-gradient animation for the 199 GEL quick-amount chip — the
+   background-size overshoot gives the position animation room to move, so
+   the pink/fuchsia/purple gradient visibly flows instead of just fading.
+   Declared via @utility (not a plain class) so Tailwind v4 actually
+   generates the motion-safe: variant we apply it with in Converter.tsx —
+   a plain .animate-gradient class is invisible to Tailwind's variant
+   system and silently does nothing when prefixed. */
+@keyframes gradient-shift {
   0%,
   100% {
-    opacity: 1;
+    background-position: 0% 50%;
   }
   50% {
-    opacity: 0.7;
+    background-position: 100% 50%;
   }
 }
 
-.animate-pulse-soft {
-  animation: pulse-soft 2.4s ease-in-out infinite;
+@utility animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
 }
