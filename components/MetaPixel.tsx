@@ -23,8 +23,8 @@ function SignInLead() {
 }
 
 export function MetaPixel() {
-  // Production only: `npm run dev` sessions must not feed the real dataset.
-  if (!META_PIXEL_ID || process.env.NODE_ENV !== "production") return null;
+  // Gated on the env var alone: local envs simply don't define it.
+  if (!META_PIXEL_ID) return null;
   return (
     <>
       <Script id="meta-pixel" strategy="afterInteractive">
