@@ -30,7 +30,7 @@ export function LanguageSwitcher() {
       aria-label={next === "ka" ? "ქართულად გადართვა" : "Switch to English"}
       className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-sm font-medium disabled:opacity-50"
     >
-      {next === "ka" ? "🇬🇪" : "EN"}
+      {next === "ka" ? "კა" : "EN"}
     </button>
   );
 }
