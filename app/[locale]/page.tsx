@@ -9,7 +9,7 @@ import { ProfileCard } from "@/components/ProfileCard";
 import { ActivityTabs } from "@/components/ActivityTabs";
 import type { Order, Review } from "@/lib/supabase/types";
 
-const REVIEWS_PER_PAGE = 10;
+const REVIEWS_PER_PAGE = 15;
 
 export default async function HomePage({
   params,
@@ -31,20 +31,25 @@ export default async function HomePage({
     ]);
 
   const reviewsPage = Math.max(1, Number(reviewsPageRaw) || 1);
-  const rangeStart = (reviewsPage - 1) * REVIEWS_PER_PAGE;
 
-  // Public community feed (RLS: non-hidden rows are world-readable).
-  const { data: feedData, count: feedCount } = await supabase
+  // Public community feed (RLS: non-hidden rows are world-readable). Ranked so
+  // rows with a written comment come first, then star-only ratings, then plain
+  // completed-transaction rows - newest first within each tier.
+  const { data: feedData } = await supabase
     .from("reviews")
-    .select("*", { count: "exact" })
+    .select("*")
     .eq("hidden", false)
-    .order("created_at", { ascending: false })
-    .range(rangeStart, rangeStart + REVIEWS_PER_PAGE - 1);
-  const feed = (feedData ?? []) as Review[];
+    .order("created_at", { ascending: false });
+  const feedTier = (r: Review) => (r.comment ? 0 : r.rating != null ? 1 : 2);
+  const sortedFeed = ((feedData ?? []) as Review[]).sort(
+    (a, b) => feedTier(a) - feedTier(b),
+  );
   const reviewsTotalPages = Math.max(
     1,
-    Math.ceil((feedCount ?? 0) / REVIEWS_PER_PAGE),
+    Math.ceil(sortedFeed.length / REVIEWS_PER_PAGE),
   );
+  const rangeStart = (reviewsPage - 1) * REVIEWS_PER_PAGE;
+  const feed = sortedFeed.slice(rangeStart, rangeStart + REVIEWS_PER_PAGE);
 
   // The signed-in user's own orders + the review status of each (rating is null
   // until they leave one). RLS scopes both reads to the caller.
