@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { FacebookIcon, TelegramIcon } from "./icons/ProviderIcons";
 
 export async function Footer() {
@@ -36,29 +35,26 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-5 mb-8 flex items-end justify-between gap-3">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/40">
-              {t("footer.legalTitle")}
-            </p>
-            <nav className="flex flex-col items-start gap-1.5">
-              <Link
-                href="/terms"
-                prefetch={false}
-                className="text-foreground/70 hover:text-foreground"
-              >
-                {t("footer.termsLink")}
-              </Link>
-              <Link
-                href="/privacy"
-                prefetch={false}
-                className="text-foreground/70 hover:text-foreground"
-              >
-                {t("footer.privacyLink")}
-              </Link>
-            </nav>
-          </div>
-          <LanguageSwitcher />
+        <div className="mt-5 mb-8">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/40">
+            {t("footer.legalTitle")}
+          </p>
+          <nav className="flex flex-col items-start gap-1.5">
+            <Link
+              href="/terms"
+              prefetch={false}
+              className="text-foreground/70 hover:text-foreground"
+            >
+              {t("footer.termsLink")}
+            </Link>
+            <Link
+              href="/privacy"
+              prefetch={false}
+              className="text-foreground/70 hover:text-foreground"
+            >
+              {t("footer.privacyLink")}
+            </Link>
+          </nav>
         </div>
 
         <div className="mt-5 flex flex-col items-center gap-1 text-center">

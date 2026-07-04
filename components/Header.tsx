@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getUserProfile } from "@/lib/auth";
 import { AuthControls } from "./AuthControls";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export async function Header() {
   const t = await getTranslations();
@@ -40,6 +41,7 @@ export async function Header() {
             isAuthenticated={Boolean(user)}
             displayName={displayName}
           />
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
