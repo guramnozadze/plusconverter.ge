@@ -49,8 +49,31 @@ function fmtField(n: number): string {
 }
 
 // Quick-fill shortcuts for the buy GEL input — only shown to signed-in users,
-// since guests hit the login prompt before an amount matters anyway.
-const QUICK_BUY_AMOUNTS = [10, 20, 50, 199];
+// since guests hit the login prompt before an amount matters anyway. Styling
+// escalates with the amount (plain -> gradient -> richer gradient -> animated)
+// so the higher tiers read as more exciting, not just bigger numbers.
+const QUICK_BUY_AMOUNTS = [
+  {
+    value: 10,
+    className:
+      "border border-orange-200 dark:border-orange-500/30 bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300",
+  },
+  {
+    value: 20,
+    className:
+      "border border-orange-300 dark:border-orange-400/40 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-500/20 dark:to-amber-500/20 text-orange-800 dark:text-orange-200",
+  },
+  {
+    value: 50,
+    className:
+      "border border-orange-400 dark:border-orange-400/50 bg-gradient-to-r from-orange-300 via-amber-300 to-yellow-300 dark:from-orange-500/30 dark:via-amber-500/30 dark:to-yellow-500/25 text-orange-900 dark:text-orange-100 shadow-sm",
+  },
+  {
+    value: 199,
+    className:
+      "border border-transparent bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-md motion-safe:animate-pulse",
+  },
+] as const;
 
 // Keep only digits and a single decimal point — no commas, signs, or letters.
 function sanitizeNumeric(raw: string): string {
@@ -421,16 +444,23 @@ export function Converter({
       {/* Quick-fill shortcuts — buy only, signed-in users only */}
       {direction === "buy" && isAuthenticated && (
         <div className="mt-2 flex flex-wrap gap-2">
-          {QUICK_BUY_AMOUNTS.map((amount) => (
-            <button
-              key={amount}
-              type="button"
-              onClick={() => onGiveChange(String(amount))}
-              className="rounded-full border border-black/15 dark:border-white/20 px-3 py-1 text-xs font-medium text-foreground/70 transition-colors hover:border-black/30 hover:text-foreground dark:hover:border-white/40"
-            >
-              {amount} {t("gel")}
-            </button>
-          ))}
+          {QUICK_BUY_AMOUNTS.map(({ value, className }) => {
+            const selected = giveNum === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => onGiveChange(String(value))}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${className} ${
+                  selected
+                    ? "scale-105 font-semibold ring-2 ring-offset-2 ring-offset-background ring-orange-600 dark:ring-orange-400"
+                    : ""
+                }`}
+              >
+                {value} {t("gel")}
+              </button>
+            );
+          })}
         </div>
       )}
 
