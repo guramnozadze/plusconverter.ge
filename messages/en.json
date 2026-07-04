@@ -150,7 +150,8 @@
     "pageOf": "Page {page} of {total}",
     "adminTitle": "Reviews",
     "hide": "Hide",
-    "unhide": "Unhide"
+    "unhide": "Unhide",
+    "carouselTitle": "What people are saying"
   },
   "admin": {
     "title": "Admin",

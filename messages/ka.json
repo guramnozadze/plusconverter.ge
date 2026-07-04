@@ -150,7 +150,8 @@
     "pageOf": "გვერდი {page} / {total}",
     "adminTitle": "შეფასებები",
     "hide": "დამალვა",
-    "unhide": "გამოჩენა"
+    "unhide": "გამოჩენა",
+    "carouselTitle": "რას წერენ ჩვენი მომხმარებლები"
   },
   "admin": {
     "title": "ადმინი",

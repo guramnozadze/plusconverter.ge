@@ -150,7 +150,8 @@
     "pageOf": "Страница {page} из {total}",
     "adminTitle": "Отзывы",
     "hide": "Скрыть",
-    "unhide": "Показать"
+    "unhide": "Показать",
+    "carouselTitle": "Что говорят наши пользователи"
   },
   "admin": {
     "title": "Админ",

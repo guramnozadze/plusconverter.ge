@@ -7,9 +7,12 @@ import { PromoBanner } from "@/components/PromoBanner";
 import { ConverterDirectionProvider } from "@/components/ConverterDirection";
 import { ProfileCard } from "@/components/ProfileCard";
 import { ActivityTabs } from "@/components/ActivityTabs";
+import { ReviewsCarousel } from "@/components/ReviewsCarousel";
 import type { Order, Review } from "@/lib/supabase/types";
 
 const REVIEWS_PER_PAGE = 15;
+const CAROUSEL_MIN_RATING = 4;
+const CAROUSEL_MAX_ITEMS = 10;
 
 export default async function HomePage({
   params,
@@ -51,6 +54,12 @@ export default async function HomePage({
   const rangeStart = (reviewsPage - 1) * REVIEWS_PER_PAGE;
   const feed = sortedFeed.slice(rangeStart, rangeStart + REVIEWS_PER_PAGE);
 
+  // "Latest and greatest" for the logged-out carousel: newest highly-rated
+  // written reviews (sortedFeed is already newest-first within its comment tier).
+  const carouselReviews = sortedFeed
+    .filter((r) => r.comment && (r.rating ?? 0) >= CAROUSEL_MIN_RATING)
+    .slice(0, CAROUSEL_MAX_ITEMS);
+
   // The signed-in user's own orders + the review status of each (rating is null
   // until they leave one). RLS scopes both reads to the caller.
   let myOrders: Order[] = [];
@@ -74,7 +83,12 @@ export default async function HomePage({
   return (
     <div>
       <ConverterDirectionProvider>
-        {!user && <PromoBanner initialSettings={settings} />}
+        {!user && (
+          <>
+            <ReviewsCarousel reviews={carouselReviews} locale={locale} />
+            <PromoBanner initialSettings={settings} />
+          </>
+        )}
         {user && profile && <ProfileCard profile={profile} />}
         <Converter
           initialSettings={settings}
