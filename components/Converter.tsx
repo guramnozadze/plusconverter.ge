@@ -77,7 +77,7 @@ export function Converter({
   const [give, setGive] = useState("");
   const [get, setGet] = useState("");
   const anchor = useRef<"give" | "get">("give");
-  const [busy, setBusy] = useState(false);
+  const [busyProvider, setBusyProvider] = useState<Provider | null>(null);
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
@@ -298,7 +298,7 @@ export function Converter({
       setShowOpenInBrowserHint(true);
       return;
     }
-    setBusy(true);
+    setBusyProvider(provider);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
     await supabase.auth.signInWithOAuth({
@@ -484,19 +484,19 @@ export function Converter({
           <button
             type="button"
             onClick={() => signIn("facebook")}
-            disabled={busy}
+            disabled={busyProvider !== null}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
           >
-            {busy ? <Spinner /> : <FacebookIcon className="h-5 w-5 shrink-0" />}
+            {busyProvider === "facebook" ? <Spinner /> : <FacebookIcon className="h-5 w-5 shrink-0" />}
             {t("continueWithFacebook")}
           </button>
           <button
             type="button"
             onClick={() => signIn("google")}
-            disabled={busy}
+            disabled={busyProvider !== null}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
           >
-            {busy ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
+            {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
             {t("continueWithGoogle")}
           </button>
         </div>

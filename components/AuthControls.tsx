@@ -18,6 +18,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const t = useTranslations("common");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [busyProvider, setBusyProvider] = useState<Provider | null>(null);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
 
   async function signIn(provider: Provider) {
@@ -28,7 +29,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
       setShowOpenInBrowserHint(true);
       return;
     }
-    setBusy(true);
+    setBusyProvider(provider);
     const supabase = createClient();
     const next = window.location.pathname + window.location.search;
     await supabase.auth.signInWithOAuth({
@@ -54,19 +55,19 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         <button
           type="button"
           onClick={() => signIn("facebook")}
-          disabled={busy}
+          disabled={busyProvider !== null}
           className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
         >
-          {busy ? <Spinner /> : <FacebookIcon className="h-4 w-4 shrink-0" />}
+          {busyProvider === "facebook" ? <Spinner /> : <FacebookIcon className="h-4 w-4 shrink-0" />}
           {t("facebook")}
         </button>
         <button
           type="button"
           onClick={() => signIn("google")}
-          disabled={busy}
+          disabled={busyProvider !== null}
           className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
         >
-          {busy ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
+          {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
           {t("google")}
         </button>
         {showOpenInBrowserHint && (
