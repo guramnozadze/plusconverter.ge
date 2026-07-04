@@ -311,6 +311,11 @@ export function OrderView({
       {/* Pay button — amber/warning styled (not the site's default black/white
           button) since tapping it is an irreversible declaration that money
           was actually sent, not just a "continue" action. */}
+      {!confirmed && (
+        <p className="text-center text-xs text-foreground/60">
+          {t("paidHint")}
+        </p>
+      )}
       <button
         type="button"
         onClick={pay}
