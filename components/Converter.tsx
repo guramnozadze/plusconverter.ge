@@ -49,29 +49,30 @@ function fmtField(n: number): string {
 }
 
 // Quick-fill shortcuts for the buy GEL input — only shown to signed-in users,
-// since guests hit the login prompt before an amount matters anyway. No
-// border/fill until the input matches the chip's amount — the fill itself
-// (plain -> gradient -> richer gradient -> animated) is the selected state,
-// escalating so bigger amounts feel more exciting, not just bigger numbers.
+// since guests hit the login prompt before an amount matters anyway. Fill
+// only appears once the input matches the chip's amount; each tier jumps to
+// a clearly different hue (not just a lighter/darker shade of the last one)
+// so the escalation from plain to exciting actually reads at a glance.
 const QUICK_BUY_AMOUNTS = [
   {
     value: 10,
-    selectedClassName: "bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300",
+    selectedClassName:
+      "border-slate-300 dark:border-slate-400/30 bg-slate-100 dark:bg-slate-500/15 text-slate-700 dark:text-slate-200",
   },
   {
     value: 20,
     selectedClassName:
-      "bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-500/20 dark:to-amber-500/20 text-orange-800 dark:text-orange-200",
+      "border-amber-400 dark:border-amber-400/40 bg-amber-200 dark:bg-amber-500/25 text-amber-900 dark:text-amber-100",
   },
   {
     value: 50,
     selectedClassName:
-      "bg-gradient-to-r from-orange-300 via-amber-300 to-yellow-300 dark:from-orange-500/30 dark:via-amber-500/30 dark:to-yellow-500/25 text-orange-900 dark:text-orange-100 shadow-sm",
+      "border-red-400 dark:border-red-400/40 bg-gradient-to-r from-orange-400 to-red-400 dark:from-orange-500/50 dark:to-red-500/40 text-white shadow-sm",
   },
   {
     value: 199,
     selectedClassName:
-      "bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white shadow-md motion-safe:animate-pulse",
+      "border-purple-500 dark:border-purple-400/50 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white shadow-md motion-safe:animate-pulse",
   },
 ] as const;
 
@@ -451,10 +452,10 @@ export function Converter({
                 key={value}
                 type="button"
                 onClick={() => onGiveChange(String(value))}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-all ${
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
                   selected
                     ? selectedClassName
-                    : "text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
+                    : "border-black/15 dark:border-white/20 text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
                 }`}
               >
                 {value} {t("gel")}
