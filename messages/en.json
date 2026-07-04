@@ -59,6 +59,7 @@
     "enterAmount": "Enter an amount",
     "available": "Available: {amount} {unit}",
     "exceedsMax": "This exceeds the available amount ({amount} {unit})",
+    "exceedsMaxBuy": "This exceeds the available amount",
     "minPopupTitle": "Minimum amount",
     "minPopupBody": "The minimum is {amount} {unit}."
   },

@@ -59,6 +59,7 @@
     "enterAmount": "შეიყვანეთ თანხა",
     "available": "დარჩა {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას ({amount} {unit})",
+    "exceedsMaxBuy": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
     "minPopupTitle": "მინიმალური თანხა",
     "minPopupBody": "მინიმუმია {amount} {unit}."
   },

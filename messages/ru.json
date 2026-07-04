@@ -59,6 +59,7 @@
     "enterAmount": "Введите сумму",
     "available": "Доступно: {amount} {unit}",
     "exceedsMax": "Это превышает доступную сумму ({amount} {unit})",
+    "exceedsMaxBuy": "Это превышает доступную сумму",
     "minPopupTitle": "Минимальная сумма",
     "minPopupBody": "Минимум — {amount} {unit}."
   },

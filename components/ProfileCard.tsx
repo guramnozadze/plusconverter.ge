@@ -69,11 +69,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
     }
   }
 
-  const summary = [
-    fullName,
-    accountNumber,
-    username ? `@${username}` : "",
-  ]
+  const summary = [fullName, username ? `@${username}` : ""]
     .filter(Boolean)
     .join(" · ");
 

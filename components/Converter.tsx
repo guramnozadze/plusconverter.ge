@@ -484,7 +484,9 @@ export function Converter({
 
       {enabled && aboveMax && (
         <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
-          {t("exceedsMax", { amount: gelFmt.format(max), unit: t("points") })}
+          {direction === "sell"
+            ? t("exceedsMax", { amount: gelFmt.format(max), unit: t("points") })
+            : t("exceedsMaxBuy")}
         </p>
       )}
 
