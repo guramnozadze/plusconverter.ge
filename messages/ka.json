@@ -57,7 +57,7 @@
     "continueWithGoogle": "გაგრძელება Google-ით",
     "continueWithFacebook": "გაგრძელება Facebook-ით",
     "enterAmount": "შეიყვანეთ თანხა",
-    "available": "ხელმისაწვდომია: {amount} {unit}",
+    "available": "დარჩა {amount} {unit}",
     "sellMax": "ხელმისაწვდომია გასაყიდად: {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
     "minPopupTitle": "მინიმალური თანხა",
