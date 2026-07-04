@@ -29,7 +29,7 @@
     "badge": "🔥 We're online",
     "headline": "The fastest PLUS points exchange site - get your exchange done in under 5 minutes",
     "exampleLabel": "{points} PLUS Points is worth",
-    "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 24 hours",
+    "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 36 hours",
     "cta": "Tap to sell now →",
     "endsIn": "Ends in {days, plural, one {# day} other {# days}}"
   },
@@ -127,7 +127,7 @@
     "empty": "Add your details"
   },
   "reviews": {
-    "communityTab": "Community",
+    "communityTab": "Reviews",
     "myTab": "My Transactions",
     "leaveReview": "Leave a review",
     "rating": "Rating",

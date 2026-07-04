@@ -29,7 +29,7 @@
     "badge": "🔥 Мы онлайн",
     "headline": "Самый быстрый сайт для обмена PLUS баллов - обмен менее чем за 5 минут",
     "exampleLabel": "{points} PLUS баллов стоят",
-    "activity": "За последние 24 часа {traders} человек обменяли {points} PLUS баллов",
+    "activity": "За последние 36 часов {traders} человек обменяли {points} PLUS баллов",
     "cta": "Нажмите, чтобы продать →",
     "endsIn": "Заканчивается через {days, plural, one {# день} few {# дня} many {# дней} other {# дней}}"
   },
@@ -127,7 +127,7 @@
     "empty": "Добавьте свои данные"
   },
   "reviews": {
-    "communityTab": "Сообщество",
+    "communityTab": "Отзывы",
     "myTab": "Мои транзакции",
     "leaveReview": "Оставить отзыв",
     "rating": "Оценка",
