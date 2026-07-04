@@ -25,6 +25,10 @@
     "admin": "Admin",
     "help": "Help"
   },
+  "signin": {
+    "title": "Signing you in",
+    "body": "We're opening {provider} so you can sign in securely. This should only take a moment."
+  },
   "promoBanner": {
     "badge": "🔥 We're online",
     "headline": "The fastest PLUS points exchange site - get your exchange done in under 5 minutes",
