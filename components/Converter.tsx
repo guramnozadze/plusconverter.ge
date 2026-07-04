@@ -67,7 +67,7 @@ const QUICK_BUY_AMOUNTS = [
   {
     value: 50,
     selectedClassName:
-      "border-red-400 dark:border-red-400/40 bg-gradient-to-r from-orange-400 to-red-400 dark:from-orange-500/50 dark:to-red-500/40 text-white shadow-sm",
+      "border-rose-400 dark:border-rose-400/40 bg-rose-200 dark:bg-rose-500/25 text-rose-900 dark:text-rose-100",
   },
   {
     value: 199,
@@ -442,8 +442,8 @@ export function Converter({
         numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)
       )}
 
-      {/* Quick-fill shortcuts — buy only, signed-in users only */}
-      {direction === "buy" && isAuthenticated && (
+      {/* Quick-fill shortcuts — buy only */}
+      {direction === "buy" && (
         <div className="mt-2 flex flex-wrap gap-2">
           {QUICK_BUY_AMOUNTS.map(({ value, selectedClassName }) => {
             const selected = giveNum === value;
