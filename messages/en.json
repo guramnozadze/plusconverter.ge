@@ -27,7 +27,7 @@
   },
   "promoBanner": {
     "badge": "🔥 Live now",
-    "headline": "Sell {points} PLUS Points, get paid instantly",
+    "headline": "The fastest PLUS exchange site — get your exchange done in under 5 minutes",
     "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 24 hours",
     "cta": "Tap to sell now →",
     "endsIn": "Ends in {days, plural, one {# day} other {# days}}"
