@@ -45,7 +45,7 @@
     "youSend": "თქვენ აგზავნით",
     "youGet": "თქვენ მიიღებთ",
     "gel": "ლარი",
-    "points": "PLUS ქულები",
+    "points": "PLUS ქულა",
     "multiplier": "კურსი ×{mult}",
     "worthInBank": "= {gel} ლარი ბანკში",
     "worthJuly": "≈ {gel} ლარი 5 ივლისს (2×)",
@@ -58,7 +58,7 @@
     "continueWithFacebook": "გაგრძელება Facebook-ით",
     "enterAmount": "შეიყვანეთ თანხა",
     "available": "დარჩა {amount} {unit}",
-    "sellMax": "ხელმისაწვდომია გასაყიდად: {amount} {unit}",
+    "sellMax": "მაქს. გასაყიდად {amount} {unit}",
     "exceedsMax": "ეს აღემატება ხელმისაწვდომ რაოდენობას",
     "minPopupTitle": "მინიმალური თანხა",
     "minPopupBody": "მინიმუმია {amount} {unit}."
