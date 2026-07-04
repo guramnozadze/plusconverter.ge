@@ -28,9 +28,9 @@ export function LanguageSwitcher() {
       onClick={toggle}
       disabled={isPending}
       aria-label={next === "ka" ? "ქართულად გადართვა" : "Switch to English"}
-      className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-xs font-medium disabled:opacity-50"
+      className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-base leading-none disabled:opacity-50"
     >
-      {next === "ka" ? "კა" : "EN"}
+      {next === "ka" ? "🇬🇪" : "🇺🇸"}
     </button>
   );
 }

@@ -1,4 +1,4 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getUserProfile } from "@/lib/auth";
 import { AuthControls } from "./AuthControls";
@@ -6,7 +6,6 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export async function Header() {
   const t = await getTranslations();
-  const locale = await getLocale();
   const { user, profile } = await getUserProfile();
 
   const displayName = profile?.username
@@ -20,16 +19,6 @@ export async function Header() {
           <span className="text-orange-500">Plus</span>converter.ge
         </Link>
         <div className="flex min-w-0 items-center gap-3">
-          {user && (
-            <a
-              href="http://m.me/61591533212017"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 text-sm text-foreground/70 hover:text-foreground"
-            >
-              {t("nav.help")}
-            </a>
-          )}
           {profile?.is_admin && (
             <Link
               href="/admin"
@@ -42,7 +31,7 @@ export async function Header() {
             isAuthenticated={Boolean(user)}
             displayName={displayName}
           />
-          {locale === "en" && <LanguageSwitcher />}
+          <LanguageSwitcher />
         </div>
       </div>
     </header>
