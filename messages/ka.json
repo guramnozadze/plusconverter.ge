@@ -27,7 +27,8 @@
   },
   "promoBanner": {
     "badge": "🔥 ახლავე აქტიურია",
-    "headline": "ყველაზე სწრაფი PLUS გაცვლის საიტი — გაცვალეთ 5 წუთში",
+    "headline": "ყველაზე სწრაფი PLUS ქულების გაცვლის საიტი — გაცვალეთ 5 წუთში",
+    "exampleLabel": "{points} PLUS ქულა ღირს",
     "activity": "ბოლო 24 საათში {traders} ადამიანმა გაცვალა {points} PLUS ქულა",
     "cta": "დააჭირეთ გასაყიდად →",
     "endsIn": "სრულდება {days, plural, one {# დღეში} other {# დღეში}}"

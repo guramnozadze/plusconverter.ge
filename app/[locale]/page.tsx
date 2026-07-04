@@ -69,7 +69,7 @@ export default async function HomePage({
   return (
     <div>
       <ConverterDirectionProvider>
-        {!user && <PromoBanner />}
+        {!user && <PromoBanner initialSettings={settings} />}
         {user && profile && <ProfileCard profile={profile} />}
         <Converter
           initialSettings={settings}
