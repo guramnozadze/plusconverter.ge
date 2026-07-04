@@ -104,7 +104,7 @@
     "yourAccountNumber": "ID number",
     "comment": "Mobile number / account",
     "optional": "optional",
-    "commentPlaceholder": "We can already find you by your ID number — feel free to add a mobile number or account number, or leave this blank"
+    "commentPlaceholder": "Feel free to add a mobile number or account number, or leave this blank"
   },
   "bankStatus": {
     "available": "Available",
