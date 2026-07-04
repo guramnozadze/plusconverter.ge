@@ -25,24 +25,41 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Shifting-gradient animation for the 199 GEL quick-amount chip — the
-   background-size overshoot gives the position animation room to move, so
-   the pink/fuchsia/purple gradient visibly flows instead of just fading.
-   Declared via @utility (not a plain class) so Tailwind v4 actually
-   generates the motion-safe: variant we apply it with in Converter.tsx —
-   a plain .animate-gradient class is invisible to Tailwind's variant
-   system and silently does nothing when prefixed. */
-@keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
+/* Sweeping highlight + soft glow for the 199 GEL quick-amount chip. Declared
+   via @utility (not a plain class) so Tailwind v4 actually generates the
+   class — a plain .animate-shimmer class defined outside @utility can still
+   be used directly, but @utility keeps it consistent with the rest of the
+   generated utilities and available to variants if we need them later.
+   The sweep runs at a constant `linear` pace (not ease-in-out) and keeps the
+   highlight fully off-screen at both loop endpoints, so the reset from 100%
+   back to 0% is invisible instead of reading as a stutter. */
+@keyframes shimmer-sweep {
+  0% {
+    background-position: 130% 0;
   }
-  50% {
-    background-position: 100% 50%;
+  100% {
+    background-position: -130% 0;
   }
 }
 
-@utility animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
+@utility animate-shimmer {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 10px 2px rgba(217, 70, 239, 0.35),
+    0 0 20px 5px rgba(168, 85, 247, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 60%
+    );
+    background-size: 250% 100%;
+    animation: shimmer-sweep 2.8s linear infinite;
+  }
 }
