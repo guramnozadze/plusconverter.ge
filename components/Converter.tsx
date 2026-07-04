@@ -28,6 +28,7 @@ import {
 import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
+import { OpenInBrowserModal } from "./OpenInBrowserModal";
 import { GoogleIcon } from "./icons/ProviderIcons";
 
 type Props = {
@@ -548,32 +549,7 @@ export function Converter({
       )}
 
       {showOpenInBrowserHint && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
-          onClick={() => setShowOpenInBrowserHint(false)}
-        >
-          <div
-            className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-lg font-semibold mb-2">
-              {tCommon("openInBrowserTitle")}
-            </h2>
-            <p className="text-sm text-foreground/70 mb-2">
-              {tCommon("openInBrowserIntro")}
-            </p>
-            <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
-              <li>{tCommon("openInBrowserBullet1")}</li>
-            </ul>
-            <button
-              type="button"
-              onClick={() => setShowOpenInBrowserHint(false)}
-              className="w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
-            >
-              {tCommon("cancel")}
-            </button>
-          </div>
-        </div>
+        <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
       )}
     </div>
   );

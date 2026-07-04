@@ -6,16 +6,17 @@
   "common": {
     "appName": "PLUS Converter",
     "tagline": "Buy & sell Bank of Georgia PLUS points",
-    "google": "Google",
+    "signInWithGoogle": "Sign in with Google",
     "logout": "Sign out",
     "loading": "Loading…",
     "cancel": "Cancel",
     "copy": "Copy",
     "copied": "Copied",
     "ok": "OK",
-    "openInBrowserTitle": "Open in browser",
-    "openInBrowserIntro": "Google doesn't work in Facebook's browser. To continue:",
-    "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\""
+    "openInBrowserTitle": "Can't sign in from here",
+    "openInBrowserIntro": "This isn't a problem with your account - this in-app browser just blocks Google sign-in. Here's how to continue:",
+    "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
+    "openInBrowserBullet2": "Or copy this link and open it in your browser instead"
   },
   "nav": {
     "home": "Home",

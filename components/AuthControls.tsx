@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
+import { OpenInBrowserModal } from "./OpenInBrowserModal";
 import { GoogleIcon, FacebookIcon, TelegramIcon } from "./icons/ProviderIcons";
 
 function UserIcon({ className }: { className?: string }) {
@@ -102,31 +103,10 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
         >
           {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
-          {t("google")}
+          {t("signInWithGoogle")}
         </button>
         {showOpenInBrowserHint && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
-            onClick={() => setShowOpenInBrowserHint(false)}
-          >
-            <div
-              className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 className="text-lg font-semibold mb-2">{t("openInBrowserTitle")}</h2>
-              <p className="text-sm text-foreground/70 mb-2">{t("openInBrowserIntro")}</p>
-              <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
-                <li>{t("openInBrowserBullet1")}</li>
-              </ul>
-              <button
-                type="button"
-                onClick={() => setShowOpenInBrowserHint(false)}
-                className="w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
-              >
-                {t("cancel")}
-              </button>
-            </div>
-          </div>
+          <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
         )}
       </div>
     );
