@@ -97,15 +97,6 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          onClick={() => signIn("facebook")}
-          disabled={busyProvider !== null}
-          className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
-        >
-          {busyProvider === "facebook" ? <Spinner /> : <FacebookIcon className="h-4 w-4 shrink-0" />}
-          {t("facebook")}
-        </button>
-        <button
-          type="button"
           onClick={() => signIn("google")}
           disabled={busyProvider !== null}
           className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
@@ -126,26 +117,11 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
               <p className="text-sm text-foreground/70 mb-2">{t("openInBrowserIntro")}</p>
               <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
                 <li>{t("openInBrowserBullet1")}</li>
-                <li>{t("openInBrowserBullet2")}</li>
               </ul>
               <button
                 type="button"
-                onClick={() => {
-                  setShowOpenInBrowserHint(false);
-                  signIn("facebook");
-                }}
-                className="relative flex w-full items-center justify-center rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
-              >
-                <FacebookIcon
-                  className="absolute left-4 h-5 w-5 shrink-0"
-                  color="white"
-                />
-                {t("signInWithFacebook")}
-              </button>
-              <button
-                type="button"
                 onClick={() => setShowOpenInBrowserHint(false)}
-                className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
+                className="w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
               >
                 {t("cancel")}
               </button>

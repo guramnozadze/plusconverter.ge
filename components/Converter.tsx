@@ -28,7 +28,7 @@ import {
 import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
-import { GoogleIcon, FacebookIcon } from "./icons/ProviderIcons";
+import { GoogleIcon } from "./icons/ProviderIcons";
 
 type Props = {
   initialSettings: Settings;
@@ -513,15 +513,6 @@ export function Converter({
           </p>
           <button
             type="button"
-            onClick={() => signIn("facebook")}
-            disabled={busyProvider !== null}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
-          >
-            {busyProvider === "facebook" ? <Spinner /> : <FacebookIcon className="h-5 w-5 shrink-0" />}
-            {t("continueWithFacebook")}
-          </button>
-          <button
-            type="button"
             onClick={() => signIn("google")}
             disabled={busyProvider !== null}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
@@ -573,26 +564,11 @@ export function Converter({
             </p>
             <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
               <li>{tCommon("openInBrowserBullet1")}</li>
-              <li>{tCommon("openInBrowserBullet2")}</li>
             </ul>
             <button
               type="button"
-              onClick={() => {
-                setShowOpenInBrowserHint(false);
-                signIn("facebook");
-              }}
-              className="relative flex w-full items-center justify-center rounded-lg bg-[#1877F2] py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[#166FE5]"
-            >
-              <FacebookIcon
-                className="absolute left-4 h-5 w-5 shrink-0"
-                color="white"
-              />
-              {tCommon("signInWithFacebook")}
-            </button>
-            <button
-              type="button"
               onClick={() => setShowOpenInBrowserHint(false)}
-              className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
+              className="w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
             >
               {tCommon("cancel")}
             </button>

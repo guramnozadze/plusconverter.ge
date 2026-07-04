@@ -7,18 +7,15 @@
     "appName": "PLUS Converter",
     "tagline": "Купить и продать PLUS баллы Bank of Georgia",
     "google": "Google",
-    "facebook": "Facebook",
     "logout": "Выйти",
     "loading": "Загрузка…",
     "cancel": "Отмена",
     "copy": "Копировать",
     "copied": "Скопировано",
     "ok": "ОК",
-    "openInBrowserTitle": "Откройте в браузере или войдите через Facebook",
+    "openInBrowserTitle": "Откройте в браузере",
     "openInBrowserIntro": "Google не работает в браузере Facebook. Чтобы продолжить:",
-    "openInBrowserBullet1": "Нажмите на три точки (•••) в углу экрана и выберите «Открыть во внешнем браузере»",
-    "openInBrowserBullet2": "Или войдите через Facebook",
-    "signInWithFacebook": "Войти через Facebook"
+    "openInBrowserBullet1": "Нажмите на три точки (•••) в углу экрана и выберите «Открыть во внешнем браузере»"
   },
   "nav": {
     "home": "Главная",
@@ -55,7 +52,6 @@
     "continue": "Продолжить",
     "loginToContinue": "Войдите, чтобы продолжить",
     "continueWithGoogle": "Продолжить с Google",
-    "continueWithFacebook": "Продолжить с Facebook",
     "enterAmount": "Введите сумму",
     "available": "Доступно: {amount} {unit}",
     "exceedsMax": "Это превышает доступную сумму ({amount} {unit})",

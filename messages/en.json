@@ -7,18 +7,15 @@
     "appName": "PLUS Converter",
     "tagline": "Buy & sell Bank of Georgia PLUS points",
     "google": "Google",
-    "facebook": "Facebook",
     "logout": "Sign out",
     "loading": "Loading…",
     "cancel": "Cancel",
     "copy": "Copy",
     "copied": "Copied",
     "ok": "OK",
-    "openInBrowserTitle": "Open in browser or sign in with Facebook",
+    "openInBrowserTitle": "Open in browser",
     "openInBrowserIntro": "Google doesn't work in Facebook's browser. To continue:",
-    "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
-    "openInBrowserBullet2": "Or sign in with Facebook instead",
-    "signInWithFacebook": "Sign in with Facebook"
+    "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\""
   },
   "nav": {
     "home": "Home",
@@ -55,7 +52,6 @@
     "continue": "Continue",
     "loginToContinue": "Sign in to continue",
     "continueWithGoogle": "Continue with Google",
-    "continueWithFacebook": "Continue with Facebook",
     "enterAmount": "Enter an amount",
     "available": "Available: {amount} {unit}",
     "exceedsMax": "This exceeds the available amount ({amount} {unit})",
