@@ -13,10 +13,12 @@
     "copy": "Copy",
     "copied": "Copied",
     "ok": "OK",
-    "openInBrowserTitle": "Can't sign in from here",
-    "openInBrowserIntro": "This isn't a problem with your account - this in-app browser just blocks Google sign-in. Here's how to continue:",
+    "openInBrowserTitle": "Continue sign-in in your browser",
+    "openInBrowserIntro": "Facebook's browser blocks Google sign-in. Here's how to continue:",
+    "openInBrowserBulletOpen": "Tap \"Open in browser\" below to switch instantly",
     "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
-    "openInBrowserBullet2": "Or copy this link and open it in your browser instead"
+    "openInBrowserBullet2": "Or copy this link and open it in your browser instead",
+    "openInBrowserButton": "Open in browser"
   },
   "nav": {
     "home": "Home",
