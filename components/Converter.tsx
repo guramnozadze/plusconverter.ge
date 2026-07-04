@@ -48,6 +48,10 @@ function fmtField(n: number): string {
   return String(Number(n.toFixed(2)));
 }
 
+// Quick-fill shortcuts for the buy GEL input — only shown to signed-in users,
+// since guests hit the login prompt before an amount matters anyway.
+const QUICK_BUY_AMOUNTS = [10, 20, 50, 199];
+
 // Keep only digits and a single decimal point — no commas, signs, or letters.
 function sanitizeNumeric(raw: string): string {
   const cleaned = raw.replace(/[^0-9.]/g, "");
@@ -412,6 +416,22 @@ export function Converter({
         </div>
       ) : (
         numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)
+      )}
+
+      {/* Quick-fill shortcuts — buy only, signed-in users only */}
+      {direction === "buy" && isAuthenticated && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {QUICK_BUY_AMOUNTS.map((amount) => (
+            <button
+              key={amount}
+              type="button"
+              onClick={() => onGiveChange(String(amount))}
+              className="rounded-full border border-black/15 dark:border-white/20 px-3 py-1 text-xs font-medium text-foreground/70 transition-colors hover:border-black/30 hover:text-foreground dark:hover:border-white/40"
+            >
+              {amount} {t("gel")}
+            </button>
+          ))}
+        </div>
       )}
 
       {/* You get: editable rate-adjusted amount (reverse pricing) */}
