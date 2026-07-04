@@ -104,7 +104,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
 
           <div className="space-y-3">
             <label className="block">
-              <span className="mb-1 block text-xs text-foreground/60">
+              <span className="mb-1 block text-sm text-foreground/60">
                 {t("fullName")}
               </span>
               <input
@@ -115,12 +115,12 @@ export function ProfileCard({ profile }: { profile: Profile }) {
                   setSaved(false);
                 }}
                 maxLength={120}
-                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-foreground/30"
+                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-base outline-none focus:ring-2 focus:ring-foreground/30"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-xs text-foreground/60">
+              <span className="mb-1 block text-sm text-foreground/60">
                 {t("accountNumber")}
               </span>
               <input
@@ -132,12 +132,12 @@ export function ProfileCard({ profile }: { profile: Profile }) {
                   setSaved(false);
                 }}
                 maxLength={40}
-                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 font-mono text-sm outline-none focus:ring-2 focus:ring-foreground/30"
+                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 font-mono text-base outline-none focus:ring-2 focus:ring-foreground/30"
               />
             </label>
 
             <label className="block">
-              <span className="mb-1 block text-xs text-foreground/60">
+              <span className="mb-1 block text-sm text-foreground/60">
                 {t("username")}
               </span>
               <p className="mb-1.5 text-xs text-foreground/50">
@@ -154,7 +154,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
                 }}
                 maxLength={32}
                 placeholder={t("usernamePlaceholder")}
-                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-foreground/30"
+                className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-base outline-none focus:ring-2 focus:ring-foreground/30"
               />
               {(error === "username_taken" || error === "username_invalid") && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
