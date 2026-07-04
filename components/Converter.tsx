@@ -13,6 +13,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
+import { track } from "@/lib/meta-pixel";
 import { useConverterDirection } from "./ConverterDirection";
 import {
   bankValueGel,
@@ -311,6 +312,11 @@ export function Converter({
     // Canonical order input is always PLUS points (server derives the GEL leg):
     // for buy that's the `get` leg, for sell the `give` leg.
     setNavigating(true);
+    track("InitiateCheckout", {
+      value: direction === "buy" ? giveNum : getNum,
+      currency: "GEL",
+      content_category: direction,
+    });
     router.push(`/order/new?direction=${direction}&points=${pointsAmount}`);
   }
 

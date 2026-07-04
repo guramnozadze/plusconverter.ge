@@ -14,7 +14,11 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(redirectTo);
+      // Marks the redirect as a *completed* sign-in so the client can fire
+      // the Meta Pixel `Lead` event (see components/MetaPixel.tsx).
+      const url = new URL(redirectTo);
+      url.searchParams.set("signed_in", "1");
+      return NextResponse.redirect(url);
     }
   }
 

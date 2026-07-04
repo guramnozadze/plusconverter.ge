@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { markOrderPaid } from "@/lib/actions/orders";
+import { trackOnce } from "@/lib/meta-pixel";
 import { saveProfile } from "@/lib/actions/profile";
 import { PlusBadge } from "./PlusBadge";
 import { ReviewForm } from "./ReviewForm";
@@ -75,6 +76,17 @@ export function OrderView({
       supabase.removeChannel(channel);
     };
   }, [order.id, router]);
+
+  // Meta Pixel conversion: Realtime refresh re-renders with the new status,
+  // so this catches admin completion live; the once-guard covers revisits.
+  useEffect(() => {
+    if (order.status !== "completed") return;
+    trackOnce(`purchase_${order.id}`, "Purchase", {
+      value: order.gel_amount,
+      currency: "GEL",
+      content_category: order.direction,
+    });
+  }, [order.status, order.id, order.gel_amount, order.direction]);
 
   const gelFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
