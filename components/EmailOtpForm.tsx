@@ -60,9 +60,9 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
     setStep("code");
   }
 
-  async function verify() {
-    const token = code.trim();
-    if (token.length < 6) {
+  async function verify(tokenOverride?: string) {
+    const token = (tokenOverride ?? code).trim();
+    if (token.length < 4) {
       setError("invalidCode");
       return;
     }
@@ -135,21 +135,25 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
-              // Supabase's OTP length is a per-project dashboard setting
-              // (6–10 digits) — don't hard-assume 6 here.
-              maxLength={10}
+              // Matches the project's Email OTP length setting (Supabase
+              // dashboard: Auth → Providers → Email → Email OTP length = 4).
+              maxLength={4}
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") verify();
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+                setCode(digits);
+                if (digits.length === 4) verify(digits);
               }}
-              placeholder="000000"
-              className={`${inputClass} text-center text-2xl font-semibold tracking-[0.3em] tabular-nums`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && code.length === 4) verify();
+              }}
+              placeholder="0000"
+              className={`${inputClass} text-center text-3xl font-semibold tracking-[0.5em] tabular-nums`}
             />
           </label>
           <button
             type="button"
-            onClick={verify}
+            onClick={() => verify()}
             disabled={busy}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
           >
