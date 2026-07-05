@@ -4,14 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useConverterDirection } from "./ConverterDirection";
-import { pointsFromGel } from "@/lib/pricing";
+import { gelFromPoints } from "@/lib/pricing";
 import type { Settings } from "@/lib/supabase/types";
 import type { PlatformStats } from "@/lib/data";
 
-// Illustrative example amount, in GEL — the points payout below is computed
-// live from the real pricing helper, so it can never drift from what the
-// converter itself would quote.
-const EXAMPLE_GEL = 100;
+// Illustrative example amount, in PLUS points — the GEL payout below is
+// computed live from the real pricing helper, so it can never drift from
+// what the converter itself would quote.
+const EXAMPLE_POINTS = 100000;
 
 export function PromoBanner({
   initialSettings,
@@ -42,10 +42,6 @@ export function PromoBanner({
     };
   }, []);
 
-  const gelFmt = useMemo(
-    () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
-    [locale],
-  );
   const pointsFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }),
     [locale],
@@ -64,7 +60,7 @@ export function PromoBanner({
     [],
   );
 
-  const payout = pointsFromGel(EXAMPLE_GEL, settings.buy_multiplier);
+  const payout = gelFromPoints(EXAMPLE_POINTS, settings.sell_multiplier);
   const payoutParts = payoutFmt.formatToParts(payout);
   const decimalIndex = payoutParts.findIndex((part) => part.type === "decimal");
   const payoutWhole = payoutParts
@@ -79,7 +75,7 @@ export function PromoBanner({
   return (
     <button
       type="button"
-      onClick={() => focusDirection("buy")}
+      onClick={() => focusDirection("sell", EXAMPLE_POINTS)}
       className="mb-4 block w-full text-left rounded-2xl border border-orange-200 dark:border-orange-500/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-500/15 dark:via-amber-500/10 dark:to-transparent p-5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-2">
@@ -97,11 +93,11 @@ export function PromoBanner({
       </p>
 
       <p className="mt-3 text-xs font-normal text-foreground/60">
-        {t("exampleLabel", { gel: gelFmt.format(EXAMPLE_GEL) })}
+        {t("exampleLabel", { points: pointsFmt.format(EXAMPLE_POINTS) })}
       </p>
       {/* The payout is the whole pitch, but as a quoted-price panel nested in
           the banner rather than bare oversized text floating on it. */}
-      <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border border-orange-200/70 dark:border-orange-500/20 bg-white/60 dark:bg-black/20 px-4 py-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="mt-2 flex cursor-pointer items-center justify-between gap-2 rounded-xl border border-orange-200/70 dark:border-orange-500/20 bg-white/60 dark:bg-black/20 px-4 py-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
         <p className="flex flex-wrap items-baseline gap-y-0 font-extrabold tracking-tight text-orange-600 dark:text-orange-400">
           <span className="flex items-baseline tabular-nums font-[family-name:var(--font-baloo)]">
             <span className="text-3xl sm:text-4xl">{payoutWhole}</span>
@@ -109,7 +105,7 @@ export function PromoBanner({
               {payoutFraction}
             </span>
           </span>
-          <span className="ml-3 whitespace-nowrap text-base sm:text-lg">{t("points")}</span>
+          <span className="ml-3 whitespace-nowrap text-base sm:text-lg">{t("gelUnit")}</span>
         </p>
         {/* Genuinely live: settings (and so this payout) update over the
             realtime subscription above whenever the rate changes. */}

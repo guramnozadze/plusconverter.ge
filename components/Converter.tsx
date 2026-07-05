@@ -95,7 +95,7 @@ export function Converter({
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
-  const { direction, setDirection, focusToken } = useConverterDirection();
+  const { direction, setDirection, focusToken, focusAmount } = useConverterDirection();
 
   const [settings, setSettings] = useState(initialSettings);
   // Two editable legs. `give` is what the user puts in (GEL when buying, PLUS
@@ -111,18 +111,7 @@ export function Converter({
   const [showEmailModal, setShowEmailModal] = useState(false);
   const inApp = useIsInAppBrowser();
   const giveInputRef = useRef<HTMLInputElement>(null);
-
-  // Only the promo banner's click should jump focus here — bumping
-  // focusToken is how it signals that (a plain tab click must not).
   const isFirstRender = useRef(true);
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    giveInputRef.current?.focus();
-    giveInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [focusToken]);
 
   // Flashes a field green/red for a beat when a live settings update moves it,
   // since the rate itself is never shown — this is the only visible cue.
@@ -277,6 +266,25 @@ export function Converter({
     [getToGive],
   );
 
+  // Only the promo banner's click should jump focus here — bumping
+  // focusToken is how it signals that (a plain tab click must not). If it
+  // also carried a prefill amount (e.g. the banner's example figure), fill
+  // the give input with it too.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (focusAmount != null) {
+      anchor.current = "give";
+      setGive(String(focusAmount));
+      setGet(fmtField(giveToGet(focusAmount)));
+    }
+    giveInputRef.current?.focus();
+    giveInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusToken]);
+
   const giveNum = Number(give);
   const getNum = Number(get);
   const hasAmount = giveNum > 0 && getNum > 0;
@@ -296,10 +304,12 @@ export function Converter({
   const minUnit = direction === "buy" ? t("gel") : t("points");
 
   // Sell only: the fixed face value of the points being sold (no rate applied).
-  const baseValue =
-    direction === "sell" && giveNum > 0
-      ? gelFmt.format(bankValueGel(giveNum))
-      : "0";
+  // Commented out along with the readonly "= face value" box below — keeping
+  // the calc here so both can be restored together.
+  // const baseValue =
+  //   direction === "sell" && giveNum > 0
+  //     ? gelFmt.format(bankValueGel(giveNum))
+  //     : "0";
 
   // Sell only: GEL earned above the plain bank face value — the gain, no rate.
   const sellBonus =
@@ -427,8 +437,10 @@ export function Converter({
       <label className="block text-sm text-foreground/60 mb-1">
         {direction === "sell" ? t("youSend") : t("youPay")}
       </label>
+      {/* Sell used to pair the input with a readonly "= face value" box.
+          Commented out for now (with its baseValue calc above) — just the
+          plain input for both directions until this comes back.
       {direction === "sell" ? (
-        // PLUS in  =  GEL face value
         <div className="flex items-center gap-2">
           {numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)}
           <span className="text-lg text-foreground/40">=</span>
@@ -442,6 +454,8 @@ export function Converter({
       ) : (
         numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)
       )}
+      */}
+      {numField(give, onGiveChange, giveCurrency, flashGive, giveInputRef)}
 
       {/* Quick-fill shortcuts — buy only */}
       {direction === "buy" && (

@@ -46,13 +46,13 @@
   },
   "promoBanner": {
     "badge": "🔥 Мы онлайн",
-    "headline": "Самый быстрый сайт для обмена PLUS баллов - обмен менее чем за 5 минут",
-    "exampleLabel": "За {gel} лари вы получите",
-    "points": "PLUS баллы",
+    "headline": "Продайте PLUS баллы и получите деньги менее чем за 5 минут",
+    "exampleLabel": "За {points} PLUS баллов вы получите",
+    "gelUnit": "лари",
     "live": "LIVE",
     "activityOrders": "Завершено {orders, plural, one {# транзакция} few {# транзакции} many {# транзакций} other {# транзакции}}",
     "activityPoints": "Обменяно {points} PLUS баллов",
-    "cta": "Нажмите, чтобы купить →"
+    "cta": "Нажмите, чтобы продать →"
   },
   "converter": {
     "title": "Конвертировать PLUS баллы",

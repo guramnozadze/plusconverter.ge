@@ -46,13 +46,13 @@
   },
   "promoBanner": {
     "badge": "🔥 ონლაინ ვართ",
-    "headline": "ყველაზე სწრაფი PLUS ქულების გაცვლის საიტი",
-    "exampleLabel": "{gel} ლარად მიიღებ",
-    "points": "PLUS ქულას",
+    "headline": "გაყიდე PLUS ქულები და მიიღე თანხა 5 წუთში",
+    "exampleLabel": "{points} PLUS ქულის სანაცვლოდ მიიღე",
+    "gelUnit": "ლარი",
     "live": "LIVE",
     "activityOrders": "დასრულებულია {orders} ტრანზაქცია",
     "activityPoints": "გაცვლილია {points} PLUS ქულა",
-    "cta": "დააჭირე საყიდლად →"
+    "cta": "დააჭირე გასაყიდად →"
   },
   "converter": {
     "title": "PLUS ქულების კონვერტაცია",

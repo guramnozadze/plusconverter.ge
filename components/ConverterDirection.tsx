@@ -10,7 +10,10 @@ type Ctx = {
   // asks it to jump to a direction — Converter uses this to focus/scroll its
   // input, which a plain tab click should NOT trigger.
   focusToken: number;
-  focusDirection: (direction: OrderDirection) => void;
+  // Set alongside focusToken when the caller wants the "give" input
+  // pre-filled (e.g. the promo banner's example amount).
+  focusAmount: number | null;
+  focusDirection: (direction: OrderDirection, amount?: number) => void;
 };
 
 const ConverterDirectionContext = createContext<Ctx | null>(null);
@@ -18,15 +21,17 @@ const ConverterDirectionContext = createContext<Ctx | null>(null);
 export function ConverterDirectionProvider({ children }: { children: ReactNode }) {
   const [direction, setDirection] = useState<OrderDirection>("buy");
   const [focusToken, setFocusToken] = useState(0);
+  const [focusAmount, setFocusAmount] = useState<number | null>(null);
 
-  const focusDirection = (next: OrderDirection) => {
+  const focusDirection = (next: OrderDirection, amount?: number) => {
     setDirection(next);
+    setFocusAmount(amount ?? null);
     setFocusToken((n) => n + 1);
   };
 
   return (
     <ConverterDirectionContext.Provider
-      value={{ direction, setDirection, focusToken, focusDirection }}
+      value={{ direction, setDirection, focusToken, focusAmount, focusDirection }}
     >
       {children}
     </ConverterDirectionContext.Provider>
