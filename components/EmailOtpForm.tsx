@@ -75,7 +75,8 @@ export function EmailOtpForm({
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState<
     "invalidEmail" | "sendError" | "invalidCode" | null
   >(null);
@@ -110,13 +111,13 @@ export function EmailOtpForm({
     // it here keeps the step change (and the mount + focus it triggers) in
     // the same gesture window as the click; roll back on send failure.
     goToStep("code");
-    setBusy(true);
+    setSending(true);
     const supabase = createClient();
     const { error: sendError } = await supabase.auth.signInWithOtp({
       email: target,
       options: { shouldCreateUser: true },
     });
-    setBusy(false);
+    setSending(false);
     if (sendError) {
       setError("sendError");
       goToStep("email");
@@ -131,7 +132,7 @@ export function EmailOtpForm({
       return;
     }
     setError(null);
-    setBusy(true);
+    setVerifying(true);
     const supabase = createClient();
     const { data, error: verifyError } = await supabase.auth.verifyOtp({
       email: email.trim(),
@@ -139,7 +140,7 @@ export function EmailOtpForm({
       type: "email",
     });
     if (verifyError || !data.session) {
-      setBusy(false);
+      setVerifying(false);
       setError("invalidCode");
       return;
     }
@@ -185,10 +186,10 @@ export function EmailOtpForm({
           <button
             type="button"
             onClick={sendCode}
-            disabled={busy}
+            disabled={sending}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
           >
-            {busy && <Spinner />}
+            {sending && <Spinner />}
             {t("sendCode")}
           </button>
         </>
@@ -224,17 +225,17 @@ export function EmailOtpForm({
           <button
             type="button"
             onClick={() => verify()}
-            disabled={busy}
+            disabled={verifying}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
           >
-            {busy ? <Spinner /> : <ArrowRightIcon className="h-4 w-4 shrink-0" />}
+            {verifying ? <Spinner /> : <ArrowRightIcon className="h-4 w-4 shrink-0" />}
             {t("verify")}
           </button>
           <div className="flex justify-center pt-1 text-sm">
             <button
               type="button"
               onClick={sendCode}
-              disabled={busy}
+              disabled={sending || verifying}
               className="inline-flex items-center gap-1 font-medium text-orange-600 hover:text-orange-500 disabled:opacity-50 dark:text-orange-400 dark:hover:text-orange-300"
             >
               <RefreshIcon className="h-3.5 w-3.5 shrink-0" />
