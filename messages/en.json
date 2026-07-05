@@ -23,10 +23,11 @@
     "useEmailInstead": "Sign in with email",
     "emailOtp": {
       "continueWithEmail": "Continue with email",
+      "subtitle": "We'll email you a one-time code - no password needed.",
       "emailLabel": "Email",
       "sendCode": "Send code",
-      "codeSentTo": "We sent a 6-digit code to {email}",
-      "codeLabel": "6-digit code",
+      "codeSentTo": "We sent a sign-in code to {email}",
+      "codeLabel": "Code from the email",
       "verify": "Verify & sign in",
       "resend": "Resend code",
       "changeEmail": "Use a different email",

@@ -23,10 +23,11 @@
     "useEmailInstead": "Войти по email",
     "emailOtp": {
       "continueWithEmail": "Продолжить с email",
+      "subtitle": "Мы отправим вам одноразовый код на email - пароль не нужен.",
       "emailLabel": "Email",
       "sendCode": "Отправить код",
-      "codeSentTo": "Мы отправили 6-значный код на {email}",
-      "codeLabel": "6-значный код",
+      "codeSentTo": "Мы отправили код для входа на {email}",
+      "codeLabel": "Код из письма",
       "verify": "Подтвердить и войти",
       "resend": "Отправить код ещё раз",
       "changeEmail": "Использовать другой email",

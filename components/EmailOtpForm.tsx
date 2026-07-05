@@ -6,6 +6,20 @@ import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { trackOnce } from "@/lib/meta-pixel";
 import { Spinner } from "./Spinner";
+import { MailIcon } from "./icons/ProviderIcons";
+
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="m6 6 12 12M18 6 6 18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 // Email OTP is the sign-in path that works inside embedded webviews
 // (Messenger, Facebook, Instagram) where Google refuses to complete OAuth:
@@ -75,25 +89,29 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
   }
 
   const inputClass =
-    "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-base outline-none focus:ring-2 focus:ring-foreground/30";
+    "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-lg outline-none focus:ring-2 focus:ring-foreground/30";
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {step === "email" ? (
         <>
-          <input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") sendCode();
-            }}
-            placeholder={t("emailLabel")}
-            aria-label={t("emailLabel")}
-            className={inputClass}
-          />
+          <label className="block">
+            <span className="mb-1 block text-xs text-foreground/60">
+              {t("emailLabel")}
+            </span>
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") sendCode();
+              }}
+              placeholder="example@gmail.com"
+              className={inputClass}
+            />
+          </label>
           <button
             type="button"
             onClick={sendCode}
@@ -109,20 +127,26 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
           <p className="text-sm text-foreground/70">
             {t("codeSentTo", { email: email.trim() })}
           </p>
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={6}
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") verify();
-            }}
-            placeholder={t("codeLabel")}
-            aria-label={t("codeLabel")}
-            className={`${inputClass} tracking-[0.3em] font-mono`}
-          />
+          <label className="block">
+            <span className="mb-1 block text-xs text-foreground/60">
+              {t("codeLabel")}
+            </span>
+            <input
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              // Supabase's OTP length is a per-project dashboard setting
+              // (6–10 digits) — don't hard-assume 6 here.
+              maxLength={10}
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") verify();
+              }}
+              placeholder="000000"
+              className={`${inputClass} text-center text-2xl font-semibold tracking-[0.3em] tabular-nums`}
+            />
+          </label>
           <button
             type="button"
             onClick={verify}
@@ -168,22 +192,35 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
   const t = useTranslations("common");
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
       onClick={onClose}
     >
       <div
         className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold mb-3">{t("useEmailInstead")}</h2>
+        <div className="mb-4 flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
+            <MailIcon className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-semibold leading-tight">
+              {t("useEmailInstead")}
+            </h2>
+            <p className="mt-0.5 text-sm text-foreground/60">
+              {t("emailOtp.subtitle")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t("cancel")}
+            className="-m-1 rounded-md p-1 text-foreground/40 hover:text-foreground/70"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
         <EmailOtpForm onSuccess={onClose} />
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
-        >
-          {t("cancel")}
-        </button>
       </div>
     </div>
   );
