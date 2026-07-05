@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { getSettings } from "@/lib/data";
+import { getSettings, getPlatformStats } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
@@ -30,7 +30,13 @@ export default async function HomePage({
     settings,
     { user, profile },
     { reviewsPage: reviewsPageRaw, reviewsSort: reviewsSortRaw },
-  ] = await Promise.all([getSettings(), getUserProfile(), searchParams]);
+    platformStats,
+  ] = await Promise.all([
+    getSettings(),
+    getUserProfile(),
+    searchParams,
+    getPlatformStats(),
+  ]);
 
   const reviewsPage = Math.max(1, Number(reviewsPageRaw) || 1);
   const reviewsSort = reviewsSortRaw === "best" ? "best" : "latest";
@@ -92,7 +98,7 @@ export default async function HomePage({
         {!user && (
           <>
             <ReviewsCarousel reviews={carouselReviews} locale={locale} />
-            <PromoBanner initialSettings={settings} />
+            <PromoBanner initialSettings={settings} stats={platformStats} />
           </>
         )}
         {user && profile && <ProfileCard profile={profile} />}

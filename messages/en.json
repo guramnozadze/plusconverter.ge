@@ -45,16 +45,14 @@
     "help": "Help"
   },
   "promoBanner": {
-    "badge": "We're online",
+    "badge": "🔥 We're online",
     "headline": "The fastest PLUS points exchange site - get your exchange done in under 5 minutes",
     "exampleLabel": "{gel} GEL gets you",
     "points": "PLUS Points",
     "live": "LIVE",
-    "limitedStock": "Limited supply — going fast",
-    "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 48 hours",
-    "cta": "Tap to buy now →",
-    "endsIn": "Ends in {time}",
-    "ended": "Today's promo has ended"
+    "activityOrders": "{orders, plural, one {# transaction} other {# transactions}} completed",
+    "activityPoints": "{points} PLUS Points traded",
+    "cta": "Tap to buy now →"
   },
   "converter": {
     "title": "Convert PLUS Points",

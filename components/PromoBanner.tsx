@@ -6,54 +6,23 @@ import { createClient } from "@/lib/supabase/client";
 import { useConverterDirection } from "./ConverterDirection";
 import { pointsFromGel } from "@/lib/pricing";
 import type { Settings } from "@/lib/supabase/types";
-
-// Next campaign: edit this constant (UTC). Currently 2026-07-05 22:35 Tbilisi
-// time (UTC+4) — a fresh 4-hour window restarted after the first one ended.
-const PROMO_DEADLINE = "2026-07-05T18:35:00Z";
+import type { PlatformStats } from "@/lib/data";
 
 // Illustrative example amount, in GEL — the points payout below is computed
 // live from the real pricing helper, so it can never drift from what the
 // converter itself would quote.
 const EXAMPLE_GEL = 100;
 
-// Illustrative "last 48h" activity line — not a live query (deliberately: a
-// real aggregate would mean summing the reviews table on every page load).
-// Bump these by hand occasionally so the copy doesn't go stale.
-const ACTIVITY_TRADERS = 50;
-const ACTIVITY_POINTS = 1254347;
-
-function msRemaining(deadline: string): number {
-  return Math.max(0, new Date(deadline).getTime() - Date.now());
-}
-
-// Ticks every second so the banner reads as a live countdown, not a static
-// "ends soon" line. Clamped at 0 rather than going negative once the
-// deadline passes.
-function useCountdown(deadline: string) {
-  const [ms, setMs] = useState(() => msRemaining(deadline));
-  useEffect(() => {
-    const tick = () => setMs(msRemaining(deadline));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [deadline]);
-  return ms;
-}
-
-function formatCountdown(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-}
-
-export function PromoBanner({ initialSettings }: { initialSettings: Settings }) {
+export function PromoBanner({
+  initialSettings,
+  stats,
+}: {
+  initialSettings: Settings;
+  stats: PlatformStats;
+}) {
   const t = useTranslations("promoBanner");
   const locale = useLocale();
   const [settings, setSettings] = useState(initialSettings);
-  const msLeft = useCountdown(PROMO_DEADLINE);
   const { focusDirection } = useConverterDirection();
 
   // Live price: stay in sync if the owner adjusts the multiplier again,
@@ -114,24 +83,13 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
       className="mb-4 block w-full text-left rounded-2xl border border-orange-200 dark:border-orange-500/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-500/15 dark:via-amber-500/10 dark:to-transparent p-5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 dark:bg-white px-2.5 py-1 text-xs font-semibold text-white dark:text-neutral-900 shadow-sm">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-500 px-2.5 py-1 text-xs font-semibold text-white">
           <span className="relative flex h-1.5 w-1.5 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
           </span>
           {t("badge")}
         </span>
-        {/* After the deadline a frozen 00:00:00 reads as broken — swap in a
-            plain "ended" line instead. */}
-        {msLeft > 0 ? (
-          <span className="text-xs font-semibold text-red-500 dark:text-red-400 tabular-nums">
-            {t("endsIn", { time: formatCountdown(msLeft) })}
-          </span>
-        ) : (
-          <span className="text-xs font-semibold text-foreground/50">
-            {t("ended")}
-          </span>
-        )}
       </div>
 
       <p className="mt-3 text-lg sm:text-xl font-semibold leading-tight">
@@ -164,19 +122,15 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
         </span>
       </div>
 
-      <p className="ml-1 mt-2 text-xs font-semibold text-red-500 dark:text-red-400">
-        {t("limitedStock")}
-      </p>
-
-      <div className="mt-4 flex items-center gap-2 text-sm font-medium text-foreground/70">
-        <span className="relative flex h-2 w-2">
+      <div className="mt-4 flex items-start gap-2 text-sm font-medium text-foreground/70">
+        <span className="relative mt-1.5 flex h-2 w-2 shrink-0">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
         </span>
-        {t("activity", {
-          traders: ACTIVITY_TRADERS,
-          points: pointsFmt.format(ACTIVITY_POINTS),
-        })}
+        <span className="flex flex-col">
+          <span>{t("activityOrders", { orders: stats.totalOrders })}</span>
+          <span>{t("activityPoints", { points: pointsFmt.format(stats.totalPoints) })}</span>
+        </span>
       </div>
     </button>
   );

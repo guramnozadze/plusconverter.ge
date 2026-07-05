@@ -45,16 +45,14 @@
     "help": "დახმარება"
   },
   "promoBanner": {
-    "badge": "ონლაინ ვართ",
+    "badge": "🔥 ონლაინ ვართ",
     "headline": "ყველაზე სწრაფი PLUS ქულების გაცვლის საიტი",
     "exampleLabel": "{gel} ლარად მიიღებ",
     "points": "PLUS ქულას",
     "live": "LIVE",
-    "limitedStock": "მარაგი სწრაფად იწურება",
-    "activity": "ბოლო 48 საათში {traders} ადამიანმა გაცვალა {points} PLUS ქულა",
-    "cta": "დააჭირე საყიდლად →",
-    "endsIn": "დარჩენილი დრო: {time}",
-    "ended": "დღევანდელი აქცია დასრულდა"
+    "activityOrders": "დასრულებულია {orders} ტრანზაქცია",
+    "activityPoints": "გაცვლილია {points} PLUS ქულა",
+    "cta": "დააჭირე საყიდლად →"
   },
   "converter": {
     "title": "PLUS ქულების კონვერტაცია",

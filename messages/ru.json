@@ -45,16 +45,14 @@
     "help": "Помощь"
   },
   "promoBanner": {
-    "badge": "Мы онлайн",
+    "badge": "🔥 Мы онлайн",
     "headline": "Самый быстрый сайт для обмена PLUS баллов - обмен менее чем за 5 минут",
     "exampleLabel": "За {gel} лари вы получите",
     "points": "PLUS баллы",
     "live": "LIVE",
-    "limitedStock": "Осталось немного — раскупают быстро",
-    "activity": "За последние 48 часов {traders} человек обменяли {points} PLUS баллов",
-    "cta": "Нажмите, чтобы купить →",
-    "endsIn": "Заканчивается через {time}",
-    "ended": "Сегодняшняя акция завершена"
+    "activityOrders": "Завершено {orders, plural, one {# транзакция} few {# транзакции} many {# транзакций} other {# транзакции}}",
+    "activityPoints": "Обменяно {points} PLUS баллов",
+    "cta": "Нажмите, чтобы купить →"
   },
   "converter": {
     "title": "Конвертировать PLUS баллы",

@@ -139,6 +139,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      get_platform_stats: {
+        Args: Record<string, never>;
+        Returns: { total_orders: number; total_points: number }[];
+      };
       mark_order_paid: {
         Args: { p_order_id: string };
         Returns: undefined;
