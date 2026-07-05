@@ -168,7 +168,7 @@ export function EmailOtpForm({
     "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-lg outline-none focus:ring-2 focus:ring-foreground/30 placeholder:text-sm placeholder:text-foreground/30";
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {step === "email" ? (
         <>
           <label className="block">
@@ -275,10 +275,10 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
+        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-7 shadow-lg"
       >
 
-        <div className="mb-4 flex items-start gap-3">
+        <div className="mb-6 flex items-start gap-3.5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
             <MailIcon className="h-5 w-5 text-orange-600 dark:text-orange-400" />
           </span>
@@ -286,7 +286,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
             <h2 className="text-lg font-semibold leading-tight">
               {step === "code" ? t("emailOtp.codeSentTitle") : t("useEmailInstead")}
             </h2>
-            <p className="mt-0.5 truncate text-sm text-foreground/60">
+            <p className="mt-1 truncate text-sm text-foreground/60">
               {step === "code"
                 ? t("emailOtp.codeSentTo", { email: sentTo })
                 : t("emailOtp.subtitle")}
