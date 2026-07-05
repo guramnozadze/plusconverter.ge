@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -21,22 +21,88 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
+function ArrowRightIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M5 12h14M13 6l6 6-6 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function RefreshIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M4 4v5h5M20 20v-5h-5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.5 9A7 7 0 0 1 19 12M18.5 15A7 7 0 0 1 5 12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M19 12H5M11 6l-6 6 6 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+type Step = "email" | "code";
+
 // Email OTP is the sign-in path that works inside embedded webviews
 // (Messenger, Facebook, Instagram) where Google refuses to complete OAuth:
 // the whole exchange happens on this page, with no redirect for the webview
 // to break. Requires custom SMTP on the Supabase project — the built-in
 // mailer is rate-limited to a couple of emails per hour.
-export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
+export function EmailOtpForm({
+  onSuccess,
+  onStepChange,
+}: {
+  onSuccess?: () => void;
+  onStepChange?: (step: Step, email: string) => void;
+}) {
   const t = useTranslations("common.emailOtp");
   const router = useRouter();
 
-  const [step, setStep] = useState<"email" | "code">("email");
+  const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<
     "invalidEmail" | "sendError" | "invalidCode" | null
   >(null);
+  const codeInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (step === "code") codeInputRef.current?.focus();
+  }, [step]);
+
+  function goToStep(next: Step) {
+    setStep(next);
+    onStepChange?.(next, email.trim());
+  }
 
   async function sendCode() {
     const target = email.trim();
@@ -57,7 +123,7 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
       return;
     }
     setCode("");
-    setStep("code");
+    goToStep("code");
   }
 
   async function verify(tokenOverride?: string) {
@@ -124,14 +190,12 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
         </>
       ) : (
         <>
-          <p className="text-sm text-foreground/70">
-            {t("codeSentTo", { email: email.trim() })}
-          </p>
           <label className="block">
             <span className="mb-1 block text-xs text-foreground/60">
               {t("codeLabel")}
             </span>
             <input
+              ref={codeInputRef}
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
@@ -157,27 +221,29 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
             disabled={busy}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-50"
           >
-            {busy && <Spinner />}
+            {busy ? <Spinner /> : <ArrowRightIcon className="h-4 w-4 shrink-0" />}
             {t("verify")}
           </button>
-          <div className="flex justify-between text-sm">
+          <div className="flex items-center justify-between pt-1 text-sm">
             <button
               type="button"
               onClick={() => {
-                setStep("email");
+                goToStep("email");
                 setError(null);
               }}
               disabled={busy}
-              className="text-foreground/60 underline underline-offset-2 disabled:opacity-50"
+              className="inline-flex items-center gap-1 font-medium text-foreground/60 hover:text-foreground/80 disabled:opacity-50"
             >
+              <ArrowLeftIcon className="h-3.5 w-3.5 shrink-0" />
               {t("changeEmail")}
             </button>
             <button
               type="button"
               onClick={sendCode}
               disabled={busy}
-              className="text-foreground/60 underline underline-offset-2 disabled:opacity-50"
+              className="inline-flex items-center gap-1 font-medium text-orange-600 hover:text-orange-500 disabled:opacity-50 dark:text-orange-400 dark:hover:text-orange-300"
             >
+              <RefreshIcon className="h-3.5 w-3.5 shrink-0" />
               {t("resend")}
             </button>
           </div>
@@ -191,9 +257,14 @@ export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
 }
 
 // The OTP flow always runs in this modal — sign-in buttons stay compact and
-// the email/code exchange gets its own focused surface.
+// the email/code exchange gets its own focused surface. Header copy tracks
+// the form's current step so "code sent" replaces the intro once a code
+// has actually gone out.
 export function EmailOtpModal({ onClose }: { onClose: () => void }) {
   const t = useTranslations("common");
+  const [step, setStep] = useState<Step>("email");
+  const [sentTo, setSentTo] = useState("");
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
@@ -209,10 +280,12 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
           </span>
           <div className="min-w-0 flex-1">
             <h2 className="text-lg font-semibold leading-tight">
-              {t("useEmailInstead")}
+              {step === "code" ? t("emailOtp.codeSentTitle") : t("useEmailInstead")}
             </h2>
-            <p className="mt-0.5 text-sm text-foreground/60">
-              {t("emailOtp.subtitle")}
+            <p className="mt-0.5 truncate text-sm text-foreground/60">
+              {step === "code"
+                ? t("emailOtp.codeSentTo", { email: sentTo })
+                : t("emailOtp.subtitle")}
             </p>
           </div>
           <button
@@ -224,7 +297,13 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
             <CloseIcon className="h-5 w-5" />
           </button>
         </div>
-        <EmailOtpForm onSuccess={onClose} />
+        <EmailOtpForm
+          onSuccess={onClose}
+          onStepChange={(nextStep, email) => {
+            setStep(nextStep);
+            setSentTo(email);
+          }}
+        />
       </div>
     </div>
   );
