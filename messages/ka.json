@@ -24,8 +24,8 @@
     "useEmailInstead": "შესვლა ელფოსტით",
     "emailOtp": {
       "continueWithEmail": "შესვლა ელფოსტით",
-      "subtitle": "ელფოსტაზე გამოიგზავნება კოდი.",
-      "emailLabel": "ელფოსტა",
+      "subtitle": "გამოგეგზავნებათ კოდი",
+      "emailLabel": "მიუთითეთ თქვენი ელფოსტა",
       "sendCode": "კოდის გაგზავნა",
       "codeSentTitle": "კოდი გამოიგზავნა",
       "codeSentTo": "{email}",
