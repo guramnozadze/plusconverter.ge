@@ -276,7 +276,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-7 shadow-lg"
+        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-7 pb-6 shadow-lg"
       >
 
         <div className="mb-6 flex items-start gap-3.5">
