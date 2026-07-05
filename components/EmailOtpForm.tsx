@@ -128,7 +128,7 @@ export function EmailOtpForm({
 
   async function verify(tokenOverride?: string) {
     const token = (tokenOverride ?? code).trim();
-    if (token.length < 4) {
+    if (token.length < 6) {
       setError("invalidCode");
       return;
     }
@@ -200,19 +200,19 @@ export function EmailOtpForm({
               inputMode="numeric"
               autoComplete="one-time-code"
               // Matches the project's Email OTP length setting (Supabase
-              // dashboard: Auth → Providers → Email → Email OTP length = 4).
-              maxLength={4}
+              // dashboard: Auth → Providers → Email → Email OTP length = 6).
+              maxLength={6}
               value={code}
               onChange={(e) => {
-                const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+                const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
                 setCode(digits);
-                if (digits.length === 4) verify(digits);
+                if (digits.length === 6) verify(digits);
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && code.length === 4) verify();
+                if (e.key === "Enter" && code.length === 6) verify();
               }}
-              placeholder="0000"
-              className={`${inputClass} text-center text-3xl font-semibold tracking-[0.5em] tabular-nums`}
+              placeholder="000000"
+              className={`${inputClass} text-center text-2xl font-semibold tracking-[0.3em] tabular-nums`}
             />
           </label>
           <button
