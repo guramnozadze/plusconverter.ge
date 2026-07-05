@@ -124,8 +124,11 @@ export function AccountPicker({
         type="button"
         onClick={confirm}
         disabled={!hasAvailable || busy || !detailsProvided}
-        className="w-full rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium disabled:opacity-40"
       >
+        {busy && (
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-background/40 border-t-background" />
+        )}
         {t("confirm")}
       </button>
     </div>
