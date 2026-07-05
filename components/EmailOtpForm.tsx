@@ -152,6 +152,10 @@ export function EmailOtpForm({
     }
     setError(null);
     setVerifying(true);
+    // Dismiss the keyboard as soon as verification starts rather than
+    // waiting for the modal to unmount — otherwise the keyboard-close
+    // animation and the post-sign-in header swap happen at the same instant.
+    codeInputRef.current?.blur();
     const supabase = createClient();
     const { data, error: verifyError } = await supabase.auth.verifyOtp({
       email: email.trim(),
