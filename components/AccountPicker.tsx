@@ -111,7 +111,7 @@ export function AccountPicker({
             maxLength={500}
             rows={2}
             placeholder={t("commentPlaceholder")}
-            className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-base sm:text-sm outline-none focus:ring-2 focus:ring-foreground/30"
+            className="w-full rounded-md border border-black/15 dark:border-white/20 bg-transparent px-3 py-2 text-base sm:text-sm outline-none focus:ring-2 focus:ring-foreground/30 placeholder:text-xs"
           />
         </label>
       </div>
