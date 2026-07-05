@@ -351,7 +351,7 @@ export function Converter({
   const pointsLabel = t("points");
   const currencyTag = (cur: string) =>
     cur === pointsLabel ? (
-      <PlusBadge />
+      <PlusBadge expandOnMobile={direction === "buy"} />
     ) : (
       <span className="text-sm font-medium text-foreground/60">{cur}</span>
     );
