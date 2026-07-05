@@ -5,8 +5,29 @@ import { useTranslations } from "next-intl";
 
 // Deliberately the clean root, not window.location.href - the copied link is
 // meant to be pasted straight into a real browser, not carry over whatever
-// deep path/query string the user happened to be on.
+// deep path/query string the user happened to be on. Ad-click IDs are the
+// one exception: dropping them would silently uncredit exactly the ad
+// traffic this modal exists for, so those ride along if present.
 const CANONICAL_URL = "https://plusconverter.ge";
+const TRACKED_PARAMS = [
+  "fbclid",
+  "gclid",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+];
+
+function buildCopyUrl(currentUrl: URL): string {
+  const tracked = new URLSearchParams();
+  for (const key of TRACKED_PARAMS) {
+    const value = currentUrl.searchParams.get(key);
+    if (value) tracked.set(key, value);
+  }
+  const query = tracked.toString();
+  return query ? `${CANONICAL_URL}?${query}` : CANONICAL_URL;
+}
 
 function CopyIcon({ className }: { className?: string }) {
   return (
@@ -44,7 +65,7 @@ export function OpenInBrowserModal({ onClose }: { onClose: () => void }) {
   const isAndroid = /Android/i.test(navigator.userAgent);
 
   async function copyLink() {
-    await navigator.clipboard.writeText(CANONICAL_URL);
+    await navigator.clipboard.writeText(buildCopyUrl(new URL(window.location.href)));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
