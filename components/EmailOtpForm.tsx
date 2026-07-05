@@ -12,7 +12,7 @@ import { Spinner } from "./Spinner";
 // the whole exchange happens on this page, with no redirect for the webview
 // to break. Requires custom SMTP on the Supabase project — the built-in
 // mailer is rate-limited to a couple of emails per hour.
-export function EmailOtpForm() {
+export function EmailOtpForm({ onSuccess }: { onSuccess?: () => void }) {
   const t = useTranslations("common.emailOtp");
   const router = useRouter();
 
@@ -71,6 +71,7 @@ export function EmailOtpForm() {
     // Stay busy: the refresh re-renders the server tree with the new session,
     // which replaces this form with the signed-in UI.
     router.refresh();
+    onSuccess?.();
   }
 
   const inputClass =
@@ -157,6 +158,33 @@ export function EmailOtpForm() {
       {error && (
         <p className="text-sm text-red-600 dark:text-red-400">{t(error)}</p>
       )}
+    </div>
+  );
+}
+
+// The OTP flow always runs in this modal — sign-in buttons stay compact and
+// the email/code exchange gets its own focused surface.
+export function EmailOtpModal({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("common");
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-lg font-semibold mb-3">{t("useEmailInstead")}</h2>
+        <EmailOtpForm onSuccess={onClose} />
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-2 w-full rounded-lg border border-black/15 dark:border-white/20 py-2 font-medium"
+        >
+          {t("cancel")}
+        </button>
+      </div>
     </div>
   );
 }
