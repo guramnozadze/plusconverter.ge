@@ -55,20 +55,6 @@ function RefreshIcon({ className }: { className?: string }) {
   );
 }
 
-function ArrowLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M19 12H5M11 6l-6 6 6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 type Step = "email" | "code";
 
 // Email OTP is the sign-in path that works inside embedded webviews
@@ -224,19 +210,7 @@ export function EmailOtpForm({
             {busy ? <Spinner /> : <ArrowRightIcon className="h-4 w-4 shrink-0" />}
             {t("verify")}
           </button>
-          <div className="flex items-center justify-between pt-1 text-sm">
-            <button
-              type="button"
-              onClick={() => {
-                goToStep("email");
-                setError(null);
-              }}
-              disabled={busy}
-              className="inline-flex items-center gap-1 font-medium text-foreground/60 hover:text-foreground/80 disabled:opacity-50"
-            >
-              <ArrowLeftIcon className="h-3.5 w-3.5 shrink-0" />
-              {t("changeEmail")}
-            </button>
+          <div className="flex justify-center pt-1 text-sm">
             <button
               type="button"
               onClick={sendCode}
@@ -266,14 +240,9 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
   const [sentTo, setSentTo] = useState("");
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4">
+      <div className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg">
+
         <div className="mb-4 flex items-start gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
             <MailIcon className="h-5 w-5 text-orange-600 dark:text-orange-400" />

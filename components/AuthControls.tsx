@@ -105,10 +105,10 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           <button
             type="button"
             onClick={() => setShowEmailModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
+            className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5 text-sm font-medium sm:px-2.5"
           >
             <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
-            {t("useEmailInstead")}
+            <span className="hidden truncate sm:inline">{t("signInWithCode")}</span>
           </button>
         ) : (
           <>
@@ -116,18 +116,18 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
               type="button"
               onClick={() => signIn("google")}
               disabled={busyProvider !== null}
-              className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
+              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5 text-sm font-medium disabled:opacity-50 sm:px-2.5"
             >
               {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
-              {t("signInWithGoogle")}
+              <span className="hidden truncate sm:inline">{t("signInWithGoogle")}</span>
             </button>
             <button
               type="button"
               onClick={() => setShowEmailModal(true)}
-              aria-label={t("useEmailInstead")}
-              className="inline-flex items-center rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5"
+              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5 text-sm font-medium sm:px-2.5"
             >
               <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
+              <span className="hidden truncate sm:inline">{t("signInWithCode")}</span>
             </button>
           </>
         )}
