@@ -7,6 +7,7 @@
     "appName": "PLUS Converter",
     "tagline": "Купить и продать PLUS баллы Bank of Georgia",
     "signInWithGoogle": "Войти через Google",
+    "signInWithCode": "Войти по email",
     "logout": "Выйти",
     "loading": "Загрузка…",
     "cancel": "Отмена",
@@ -18,7 +19,24 @@
     "openInBrowserBulletOpen": "Нажмите «Открыть в браузере» ниже, чтобы перейти мгновенно",
     "openInBrowserBullet1": "Нажмите на три точки (•••) в углу экрана и выберите «Открыть во внешнем браузере»",
     "openInBrowserBullet2": "Или скопируйте эту ссылку и откройте её в своём браузере",
-    "openInBrowserButton": "Открыть в браузере"
+    "openInBrowserButton": "Открыть в браузере",
+    "openInBrowserEmailAlt": "Или войдите по email прямо здесь - другой браузер не нужен:",
+    "useEmailInstead": "Войти по email",
+    "emailOtp": {
+      "continueWithEmail": "Войти по email",
+      "subtitle": "Мы отправим вам одноразовый код на email - пароль не нужен.",
+      "emailLabel": "Email",
+      "sendCode": "Отправить код",
+      "codeSentTitle": "Код отправлен",
+      "codeSentTo": "Мы отправили код для входа на {email}",
+      "codeLabel": "6-значный код",
+      "verify": "Подтвердить и войти",
+      "resend": "Отправить код ещё раз",
+      "changeEmail": "Использовать другой email",
+      "invalidEmail": "Введите корректный email.",
+      "invalidCode": "Неверный или просроченный код. Попробуйте ещё раз.",
+      "sendError": "Не удалось отправить код. Попробуйте ещё раз."
+    }
   },
   "nav": {
     "home": "Главная",
@@ -34,7 +52,8 @@
     "limitedStock": "Осталось немного — раскупают быстро",
     "activity": "За последние 48 часов {traders} человек обменяли {points} PLUS баллов",
     "cta": "Нажмите, чтобы купить →",
-    "endsIn": "Заканчивается через {time}"
+    "endsIn": "Заканчивается через {time}",
+    "ended": "Сегодняшняя акция завершена"
   },
   "converter": {
     "title": "Конвертировать PLUS баллы",
@@ -105,6 +124,13 @@
     "otherAccounts": "Другие счета",
     "noneAvailable": "Сейчас нет доступных счетов. Пожалуйста, зайдите позже.",
     "error": "Не удалось создать заказ. Попробуйте ещё раз.",
+    "errors": {
+      "direction_disabled": "Это направление временно недоступно.",
+      "below_minimum": "Сумма меньше минимальной.",
+      "above_maximum": "Сумма превышает доступный объём.",
+      "account_unavailable": "Сейчас нет доступного счёта - попробуйте чуть позже.",
+      "order_limit_reached": "У вас уже есть активный заказ - сначала завершите его или дождитесь истечения."
+    },
     "summaryBuy": "Покупка {points} PLUS баллов за {gel} лари",
     "summarySell": "Продажа {points} PLUS баллов за {gel} лари",
     "yourDetails": "Ваши банковские реквизиты",

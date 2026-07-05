@@ -12,7 +12,7 @@ import type { Provider } from "@supabase/supabase-js";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { isInAppBrowser } from "@/lib/inAppBrowser";
+import { isInAppBrowser, useIsInAppBrowser } from "@/lib/inAppBrowser";
 import { track } from "@/lib/meta-pixel";
 import { useConverterDirection } from "./ConverterDirection";
 import {
@@ -29,7 +29,8 @@ import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
-import { GoogleIcon } from "./icons/ProviderIcons";
+import { EmailOtpModal } from "./EmailOtpForm";
+import { GoogleIcon, MailIcon } from "./icons/ProviderIcons";
 
 type Props = {
   initialSettings: Settings;
@@ -107,6 +108,8 @@ export function Converter({
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const inApp = useIsInAppBrowser();
   const giveInputRef = useRef<HTMLInputElement>(null);
 
   // Only the promo banner's click should jump focus here — bumping
@@ -512,15 +515,28 @@ export function Converter({
           <p className="text-center text-sm text-foreground/60">
             {t("loginToContinue")}
           </p>
+          {/* Inside Meta's in-app browser Google OAuth is a dead end, so the
+              email code is the only option there; in a normal browser email
+              leads as the primary path with Google as the alternative. */}
           <button
             type="button"
-            onClick={() => signIn("google")}
-            disabled={busyProvider !== null}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
+            onClick={() => setShowEmailModal(true)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium"
           >
-            {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
-            {t("continueWithGoogle")}
+            <MailIcon className="h-5 w-5 shrink-0" />
+            {tCommon("emailOtp.continueWithEmail")}
           </button>
+          {!inApp && (
+            <button
+              type="button"
+              onClick={() => signIn("google")}
+              disabled={busyProvider !== null}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-black/15 dark:border-white/20 py-3 font-medium disabled:opacity-50"
+            >
+              {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
+              {t("continueWithGoogle")}
+            </button>
+          )}
         </div>
       )}
 
@@ -548,8 +564,18 @@ export function Converter({
         </div>
       )}
 
+      {showEmailModal && (
+        <EmailOtpModal onClose={() => setShowEmailModal(false)} />
+      )}
+
       {showOpenInBrowserHint && (
-        <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
+        <OpenInBrowserModal
+          onClose={() => setShowOpenInBrowserHint(false)}
+          onUseEmail={() => {
+            setShowOpenInBrowserHint(false);
+            setShowEmailModal(true);
+          }}
+        />
       )}
     </div>
   );

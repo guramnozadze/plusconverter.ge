@@ -121,9 +121,17 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
           </span>
           {t("badge")}
         </span>
-        <span className="text-xs font-semibold text-red-500 dark:text-red-400 tabular-nums">
-          {t("endsIn", { time: formatCountdown(msLeft) })}
-        </span>
+        {/* After the deadline a frozen 00:00:00 reads as broken — swap in a
+            plain "ended" line instead. */}
+        {msLeft > 0 ? (
+          <span className="text-xs font-semibold text-red-500 dark:text-red-400 tabular-nums">
+            {t("endsIn", { time: formatCountdown(msLeft) })}
+          </span>
+        ) : (
+          <span className="text-xs font-semibold text-foreground/50">
+            {t("ended")}
+          </span>
+        )}
       </div>
 
       <p className="mt-3 text-lg sm:text-xl font-semibold leading-tight">

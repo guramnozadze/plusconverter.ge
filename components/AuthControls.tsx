@@ -5,10 +5,11 @@ import type { Provider } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { isInAppBrowser } from "@/lib/inAppBrowser";
+import { isInAppBrowser, useIsInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
-import { GoogleIcon, FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
+import { EmailOtpModal } from "./EmailOtpForm";
+import { GoogleIcon, MailIcon, FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
 
 function UserIcon({ className }: { className?: string }) {
   return (
@@ -52,7 +53,9 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const [busyProvider, setBusyProvider] = useState<Provider | null>(null);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const inApp = useIsInAppBrowser();
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -96,17 +99,49 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   if (!isAuthenticated) {
     return (
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={() => signIn("google")}
-          disabled={busyProvider !== null}
-          className="inline-flex items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium disabled:opacity-50"
-        >
-          {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
-          {t("signInWithGoogle")}
-        </button>
+        {/* Google OAuth can't complete inside Meta's webview, so in-app the
+            header offers only the email code. */}
+        {inApp ? (
+          <button
+            type="button"
+            onClick={() => setShowEmailModal(true)}
+            className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
+          >
+            <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
+            <span className="truncate">{t("signInWithCode")}</span>
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => signIn("google")}
+              disabled={busyProvider !== null}
+              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5 text-sm font-medium disabled:opacity-50"
+            >
+              {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
+              <span className="hidden truncate sm:inline">{t("signInWithGoogle")}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowEmailModal(true)}
+              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
+            >
+              <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
+              <span className="truncate">{t("signInWithCode")}</span>
+            </button>
+          </>
+        )}
+        {showEmailModal && (
+          <EmailOtpModal onClose={() => setShowEmailModal(false)} />
+        )}
         {showOpenInBrowserHint && (
-          <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
+          <OpenInBrowserModal
+            onClose={() => setShowOpenInBrowserHint(false)}
+            onUseEmail={() => {
+              setShowOpenInBrowserHint(false);
+              setShowEmailModal(true);
+            }}
+          />
         )}
       </div>
     );
