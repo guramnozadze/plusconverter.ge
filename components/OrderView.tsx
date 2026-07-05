@@ -9,6 +9,7 @@ import { trackOnce } from "@/lib/meta-pixel";
 import { saveProfile } from "@/lib/actions/profile";
 import { PlusBadge } from "./PlusBadge";
 import { ReviewForm } from "./ReviewForm";
+import { HelpContactCard } from "./HelpContactCard";
 import type { BankAccount, Order } from "@/lib/supabase/types";
 
 type Props = {
@@ -184,6 +185,10 @@ export function OrderView({
         <p className="text-base text-foreground/70">
           {t.rich("instructions", {
             direction: order.direction,
+            amount:
+              order.direction === "sell"
+                ? gelFmt.format(order.gel_amount)
+                : pointsFmt.format(order.points_amount),
             paid: (chunks) => (
               <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
                 {chunks}
@@ -215,6 +220,10 @@ export function OrderView({
           </>
         )}
       </div>
+
+      {/* Help/contact card — surfaces only once payment has been reported,
+          right below the "processing" indicator. */}
+      {confirmed && <HelpContactCard />}
 
       {/* Big, easy-to-copy ID number card — sell orders only. Sellers transfer
           PLUS points to this ID, not a bank account number, so it gets top
@@ -384,20 +393,6 @@ export function OrderView({
         </div>
       )}
 
-      {/* Support contact — only surfaces once the user has reported payment */}
-      {confirmed && (
-        <p className="text-center text-sm text-foreground/60">
-          {t("support")}{" "}
-          <a
-            href="https://t.me/plusconverter"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium underline"
-          >
-            @plusconverter
-          </a>
-        </p>
-      )}
     </div>
   );
 }

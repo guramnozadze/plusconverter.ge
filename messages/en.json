@@ -78,7 +78,6 @@
     "paidHint": "Only tap this after you've already sent the transfer",
     "paidConfirmed": "Transfer reported — waiting for confirmation",
     "processing": "Processing your transfer…",
-    "support": "Questions? Message us on Telegram:",
     "otherAccounts": "Other accounts",
     "notFound": "Order not found",
     "status": {
@@ -87,11 +86,15 @@
       "cancelled": "Cancelled"
     }
   },
+  "help": {
+    "intro": "Need help? Message us any way that's easiest:",
+    "messenger": "Messenger",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
+  },
   "selectAccount": {
     "title": "Choose an account",
     "subtitle": "Pick where you'll send your transfer.",
-    "bankLabel": "Bank",
-    "bankOfGeorgia": "Bank of Georgia",
     "confirm": "Confirm",
     "otherAccounts": "Other accounts",
     "noneAvailable": "No accounts are available right now. Please check back soon.",
@@ -201,6 +204,7 @@
     "privacyLink": "Privacy Policy",
     "contactLabel": "Telegram",
     "facebookLabel": "Facebook",
+    "whatsappLabel": "WhatsApp",
     "disclaimer": "Independent service, not affiliated with Bank of Georgia",
     "copyright": "© {year} plusconverter.ge"
   },

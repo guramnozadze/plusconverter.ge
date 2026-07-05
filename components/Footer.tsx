@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { FooterLanguageSelect } from "./FooterLanguageSelect";
-import { FacebookIcon, TelegramIcon } from "./icons/ProviderIcons";
+import { FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
 
 export async function Footer() {
   const t = await getTranslations();
@@ -32,6 +32,15 @@ export async function Footer() {
             >
               <TelegramIcon className="h-4 w-4 shrink-0" />
               {t("footer.contactLabel")}
+            </a>
+            <a
+              href="https://wa.me/995574120140"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/15 px-3 py-1.5 font-medium text-foreground/80 hover:border-black/20 hover:text-foreground dark:hover:border-white/25"
+            >
+              <WhatsAppIcon className="h-4 w-4 shrink-0" />
+              {t("footer.whatsappLabel")}
             </a>
           </div>
         </div>

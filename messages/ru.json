@@ -78,7 +78,6 @@
     "paidHint": "Нажимайте только после того, как перевод уже отправлен",
     "paidConfirmed": "Перевод отмечен — ожидаем подтверждения",
     "processing": "Обработка вашего перевода…",
-    "support": "Есть вопросы? Напишите нам в Telegram:",
     "otherAccounts": "Другие счета",
     "notFound": "Заказ не найден",
     "status": {
@@ -87,11 +86,15 @@
       "cancelled": "Отменён"
     }
   },
+  "help": {
+    "intro": "Нужна помощь? Напишите нам удобным способом:",
+    "messenger": "Messenger",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
+  },
   "selectAccount": {
     "title": "Выберите счёт",
     "subtitle": "Выберите, куда отправить перевод.",
-    "bankLabel": "Банк",
-    "bankOfGeorgia": "Bank of Georgia",
     "confirm": "Подтвердить",
     "otherAccounts": "Другие счета",
     "noneAvailable": "Сейчас нет доступных счетов. Пожалуйста, зайдите позже.",
@@ -201,6 +204,7 @@
     "privacyLink": "Политика конфиденциальности",
     "contactLabel": "Telegram",
     "facebookLabel": "Facebook",
+    "whatsappLabel": "WhatsApp",
     "disclaimer": "Независимый сервис, не аффилирован с Bank of Georgia",
     "copyright": "© {year} plusconverter.ge"
   },

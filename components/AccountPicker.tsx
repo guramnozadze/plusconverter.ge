@@ -60,19 +60,6 @@ export function AccountPicker({
 
   return (
     <div className="space-y-4">
-      {/* Bank is fixed — this app only handles Bank of Georgia PLUS points. */}
-      <label className="block">
-        <span className="mb-1 block text-xs text-foreground/60">
-          {t("bankLabel")}
-        </span>
-        <input
-          type="text"
-          value={t("bankOfGeorgia")}
-          disabled
-          className="w-full rounded-md border border-black/15 dark:border-white/20 bg-black/5 dark:bg-white/10 px-3 py-2 text-sm text-foreground/60 outline-none"
-        />
-      </label>
-
       {!hasAvailable && (
         <p className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm text-foreground/60">
           {t("noneAvailable")}

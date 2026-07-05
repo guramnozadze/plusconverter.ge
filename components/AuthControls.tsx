@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
-import { GoogleIcon, FacebookIcon, TelegramIcon } from "./icons/ProviderIcons";
+import { GoogleIcon, FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
 
 function UserIcon({ className }: { className?: string }) {
   return (
@@ -149,6 +149,16 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           >
             <TelegramIcon className="h-4 w-4 shrink-0" />
             {tFooter("contactLabel")}
+          </a>
+          <a
+            href="https://wa.me/995574120140"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:bg-black/5 dark:hover:bg-white/10"
+          >
+            <WhatsAppIcon className="h-4 w-4 shrink-0" />
+            {tFooter("whatsappLabel")}
           </a>
           <button
             type="button"
