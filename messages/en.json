@@ -29,7 +29,7 @@
       "sendCode": "Send code",
       "codeSentTitle": "Code sent",
       "codeSentTo": "We sent a sign-in code to {email}",
-      "codeLabel": "Code",
+      "codeLabel": "6-digit code",
       "verify": "Verify & sign in",
       "resend": "Resend code",
       "changeEmail": "Use a different email",

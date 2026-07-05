@@ -29,7 +29,7 @@
       "sendCode": "კოდის გაგზავნა",
       "codeSentTitle": "კოდი გამოიგზავნა",
       "codeSentTo": "{email}",
-      "codeLabel": "კოდი",
+      "codeLabel": "6-ნიშნა კოდი",
       "verify": "დადასტურება და შესვლა",
       "resend": "კოდის ხელახლა გაგზავნა",
       "changeEmail": "სხვა ელფოსტის მითითება",
