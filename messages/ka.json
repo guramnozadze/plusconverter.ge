@@ -24,9 +24,9 @@
     "useEmailInstead": "შესვლა ელფოსტით",
     "emailOtp": {
       "continueWithEmail": "შესვლა ელფოსტით",
-      "subtitle": "გამოგეგზავნებათ კოდი",
+      "subtitle": "უსაფრთხო შესვლა ერთჯერადი კოდით",
       "emailLabel": "მიუთითეთ თქვენი ელფოსტა",
-      "sendCode": "კოდის გაგზავნა",
+      "sendCode": "შესვლა",
       "codeSentTitle": "კოდი გამოიგზავნა",
       "codeSentTo": "{email}",
       "codeLabel": "6-ნიშნა კოდი",
