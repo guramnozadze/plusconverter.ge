@@ -168,7 +168,7 @@ export function EmailOtpForm({
     "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-lg outline-none focus:ring-2 focus:ring-foreground/30 placeholder:text-sm placeholder:text-foreground/30";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {step === "email" ? (
         <>
           <label className="block">
