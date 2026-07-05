@@ -1,12 +1,27 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLinkStatus } from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { PlusBadge } from "./PlusBadge";
 import { ReviewForm } from "./ReviewForm";
 import type { Order, Review } from "@/lib/supabase/types";
+
+// Pagination Links navigate to a fresh RSC render, which can take a moment -
+// this gives the click somewhere to go instead of feeling like a no-op.
+function PageLinkLabel({ children }: { children: React.ReactNode }) {
+  const { pending } = useLinkStatus();
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {children}
+      {pending && (
+        <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent opacity-60" />
+      )}
+    </span>
+  );
+}
 
 type Props = {
   feed: Review[];
@@ -198,11 +213,11 @@ export function ActivityTabs({
             href={{ pathname: "/", query: { reviewsPage: reviewsPage - 1, reviewsSort } }}
             scroll={false}
             aria-disabled={reviewsPage <= 1}
-            className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium ${
+            className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium transition-colors hover:bg-black/10 dark:hover:bg-white/20 active:bg-black/15 dark:active:bg-white/25 ${
               reviewsPage <= 1 ? "pointer-events-none opacity-40" : ""
             }`}
           >
-            {t("prevPage")}
+            <PageLinkLabel>{t("prevPage")}</PageLinkLabel>
           </Link>
           <span className="text-foreground/60">
             {t("pageOf", { page: reviewsPage, total: reviewsTotalPages })}
@@ -211,11 +226,11 @@ export function ActivityTabs({
             href={{ pathname: "/", query: { reviewsPage: reviewsPage + 1, reviewsSort } }}
             scroll={false}
             aria-disabled={reviewsPage >= reviewsTotalPages}
-            className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium ${
+            className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium transition-colors hover:bg-black/10 dark:hover:bg-white/20 active:bg-black/15 dark:active:bg-white/25 ${
               reviewsPage >= reviewsTotalPages ? "pointer-events-none opacity-40" : ""
             }`}
           >
-            {t("nextPage")}
+            <PageLinkLabel>{t("nextPage")}</PageLinkLabel>
           </Link>
         </div>
       )}
