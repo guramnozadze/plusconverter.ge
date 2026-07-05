@@ -47,7 +47,7 @@
     "points": "PLUS ქულა",
     "multiplier": "კურსი ×{mult}",
     "worthInBank": "= {gel} ლარი ბანკში",
-    "worthJuly": "≈ {gel} ლარი 5 ივლისს (2×)",
+    "worthJuly": "≈ {gel} ლარი, 5 ივლისს (2x ღირებულება)",
     "sellBonus": "მიიღეთ +{gel} ლარით მეტი",
     "buyDisabled": "ყიდვა დროებით შეუძლებელია",
     "sellDisabled": "გაყიდვა დროებით შეუძლებელია",

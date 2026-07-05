@@ -47,7 +47,7 @@
     "points": "PLUS Points",
     "multiplier": "Rate ×{mult}",
     "worthInBank": "= {gel} GEL in bank",
-    "worthJuly": "≈ {gel} GEL on Jul 5 (2×)",
+    "worthJuly": "≈ {gel} GEL on Jul 5 (at 2x value)",
     "sellBonus": "You earn +{gel} GEL more than face value",
     "buyDisabled": "Buying is currently unavailable",
     "sellDisabled": "Selling is currently unavailable",

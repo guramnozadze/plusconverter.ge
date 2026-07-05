@@ -47,7 +47,7 @@
     "points": "PLUS баллы",
     "multiplier": "Курс ×{mult}",
     "worthInBank": "= {gel} лари в банке",
-    "worthJuly": "≈ {gel} лари 5 июля (2×)",
+    "worthJuly": "≈ {gel} лари, 5 июля (по цене 2x)",
     "sellBonus": "Вы получаете на {gel} лари больше номинала",
     "buyDisabled": "Покупка временно недоступна",
     "sellDisabled": "Продажа временно недоступна",
