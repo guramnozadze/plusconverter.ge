@@ -45,8 +45,9 @@ body {
 /* Continuous, seamless auto-scroll for the logged-out reviews carousel. The
    caller renders the review list twice back to back; translating by exactly
    -50% shifts past one full copy, so the loop point is invisible regardless
-   of how many reviews are in the list. Pauses on hover/focus so a reader can
-   actually read a card, and is disabled outright for reduced-motion users. */
+   of how many reviews are in the list. Runs uninterrupted (no hover-pause -
+   that caused a visible jump on resume) and is disabled outright for
+   reduced-motion users. */
 @keyframes reviews-marquee {
   from {
     transform: translateX(0);

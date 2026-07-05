@@ -52,7 +52,7 @@ export async function ReviewsCarousel({
       <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wide text-foreground/50">
         {t("carouselTitle")}
       </p>
-      <div className="flex w-max animate-reviews-marquee gap-3 px-4 hover:[animation-play-state:paused]">
+      <div className="flex w-max animate-reviews-marquee gap-3 px-4">
         {reviews.map((r) => card(r, false))}
         {reviews.map((r) => card(r, true))}
       </div>
