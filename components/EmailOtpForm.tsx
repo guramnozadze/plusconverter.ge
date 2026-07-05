@@ -82,7 +82,12 @@ export function EmailOtpForm({
   const codeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (step === "code") codeInputRef.current?.focus();
+    if (step !== "code") return;
+    // A plain focus() here can lose to the browser's own layout/keyboard
+    // timing right after the step swap — wait a frame so the input is
+    // actually painted and interactive before we grab focus.
+    const raf = requestAnimationFrame(() => codeInputRef.current?.focus());
+    return () => cancelAnimationFrame(raf);
   }, [step]);
 
   function goToStep(next: Step) {
@@ -134,6 +139,9 @@ export function EmailOtpForm({
     // Same one-shot Lead as the OAuth ?signed_in=1 path — shared localStorage
     // key, so whichever method completes first wins and the other no-ops.
     trackOnce("lead", "Lead");
+    // The user may have scrolled deep into the converter while signing in —
+    // bring them back to the top so the now-signed-in header/CTA is visible.
+    window.scrollTo({ top: 0, behavior: "smooth" });
     // Stay busy: the refresh re-renders the server tree with the new session,
     // which replaces this form with the signed-in UI.
     router.refresh();
@@ -182,6 +190,7 @@ export function EmailOtpForm({
             </span>
             <input
               ref={codeInputRef}
+              autoFocus
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
