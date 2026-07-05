@@ -130,15 +130,15 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
         {t("headline")}
       </p>
 
-      <p className="mt-3 text-sm font-semibold text-foreground/70">
+      <p className="mt-3 text-xs font-normal text-foreground/60">
         {t("exampleLabel", { gel: gelFmt.format(EXAMPLE_GEL) })}
       </p>
       {/* The payout is the whole pitch, but as a quoted-price panel nested in
           the banner rather than bare oversized text floating on it. */}
       <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border border-orange-200/70 dark:border-orange-500/20 bg-white/60 dark:bg-black/20 px-4 py-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
         <p className="flex flex-wrap items-baseline gap-y-0 font-extrabold tracking-tight text-orange-600 dark:text-orange-400">
-          <span className="flex items-baseline tabular-nums">
-            <span className="text-4xl sm:text-5xl">{payoutWhole}</span>
+          <span className="flex items-baseline tabular-nums font-[family-name:var(--font-baloo)]">
+            <span className="text-3xl sm:text-4xl">{payoutWhole}</span>
             <span className="align-sub text-base sm:text-lg text-orange-600/70 dark:text-orange-400/70">
               {payoutFraction}
             </span>
@@ -147,7 +147,7 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
         </p>
         {/* Genuinely live: settings (and so this payout) update over the
             realtime subscription above whenever the rate changes. */}
-        <span className="flex shrink-0 items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-green-600 dark:text-green-400">
+        <span className="hidden shrink-0 items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-green-600 dark:text-green-400 sm:flex">
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -155,6 +155,10 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
           {t("live")}
         </span>
       </div>
+
+      <p className="ml-1 mt-2 text-xs font-semibold text-red-500 dark:text-red-400">
+        {t("limitedStock")}
+      </p>
 
       <div className="mt-4 flex items-center gap-2 text-sm font-medium text-foreground/70">
         <span className="relative flex h-2 w-2">
