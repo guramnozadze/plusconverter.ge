@@ -19,44 +19,50 @@ export default async function HomePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ reviewsPage?: string }>;
+  searchParams: Promise<{ reviewsPage?: string; reviewsSort?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const supabase = await createClient();
 
-  const [settings, { user, profile }, { reviewsPage: reviewsPageRaw }] =
-    await Promise.all([
-      getSettings(),
-      getUserProfile(),
-      searchParams,
-    ]);
+  const [
+    settings,
+    { user, profile },
+    { reviewsPage: reviewsPageRaw, reviewsSort: reviewsSortRaw },
+  ] = await Promise.all([getSettings(), getUserProfile(), searchParams]);
 
   const reviewsPage = Math.max(1, Number(reviewsPageRaw) || 1);
+  const reviewsSort = reviewsSortRaw === "best" ? "best" : "latest";
 
-  // Public community feed (RLS: non-hidden rows are world-readable). Ranked so
-  // rows with a written comment come first, then star-only ratings, then plain
-  // completed-transaction rows - newest first within each tier.
+  // Public community feed (RLS: non-hidden rows are world-readable).
+  // `latestFeed` is plain reverse-chronological, straight from the query.
+  // `bestSortedFeed` re-ranks so rows with a written comment come first, then
+  // star-only ratings, then plain completed-transaction rows - newest first
+  // within each tier. The toggle in ActivityTabs picks which one is shown;
+  // the carousel always uses the "best" ranking regardless of that toggle.
   const { data: feedData } = await supabase
     .from("reviews")
     .select("*")
     .eq("hidden", false)
     .order("created_at", { ascending: false });
+  const latestFeed = (feedData ?? []) as Review[];
   const feedTier = (r: Review) => (r.comment ? 0 : r.rating != null ? 1 : 2);
-  const sortedFeed = ((feedData ?? []) as Review[]).sort(
+  const bestSortedFeed = [...latestFeed].sort(
     (a, b) => feedTier(a) - feedTier(b),
   );
+
+  const displayFeed = reviewsSort === "best" ? bestSortedFeed : latestFeed;
   const reviewsTotalPages = Math.max(
     1,
-    Math.ceil(sortedFeed.length / REVIEWS_PER_PAGE),
+    Math.ceil(displayFeed.length / REVIEWS_PER_PAGE),
   );
   const rangeStart = (reviewsPage - 1) * REVIEWS_PER_PAGE;
-  const feed = sortedFeed.slice(rangeStart, rangeStart + REVIEWS_PER_PAGE);
+  const feed = displayFeed.slice(rangeStart, rangeStart + REVIEWS_PER_PAGE);
 
   // "Latest and greatest" for the logged-out carousel: newest highly-rated
-  // written reviews (sortedFeed is already newest-first within its comment tier).
-  const carouselReviews = sortedFeed
+  // written reviews, independent of the visible feed's sort toggle.
+  const carouselReviews = bestSortedFeed
     .filter((r) => r.comment && (r.rating ?? 0) >= CAROUSEL_MIN_RATING)
     .slice(0, CAROUSEL_MAX_ITEMS);
 
@@ -99,6 +105,7 @@ export default async function HomePage({
         feed={feed}
         reviewsPage={reviewsPage}
         reviewsTotalPages={reviewsTotalPages}
+        reviewsSort={reviewsSort}
         myOrders={myOrders}
         reviewByOrder={reviewByOrder}
         isAuthenticated={Boolean(user)}

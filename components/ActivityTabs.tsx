@@ -12,6 +12,7 @@ type Props = {
   feed: Review[];
   reviewsPage: number;
   reviewsTotalPages: number;
+  reviewsSort: "latest" | "best";
   myOrders: Order[];
   reviewByOrder: Record<string, number | null>;
   isAuthenticated: boolean;
@@ -31,6 +32,7 @@ export function ActivityTabs({
   feed,
   reviewsPage,
   reviewsTotalPages,
+  reviewsSort,
   myOrders,
   reviewByOrder,
   isAuthenticated,
@@ -82,6 +84,21 @@ export function ActivityTabs({
 
   const community = (
     <>
+      <div className="mb-3 grid grid-cols-2 gap-1 rounded-lg bg-black/5 dark:bg-white/10 p-1 text-sm">
+        {(["latest", "best"] as const).map((sort) => (
+          <Link
+            key={sort}
+            href={{ pathname: "/", query: { reviewsSort: sort } }}
+            scroll={false}
+            aria-current={reviewsSort === sort ? "true" : undefined}
+            className={`rounded-md py-1.5 text-center font-medium transition-colors ${
+              reviewsSort === sort ? "bg-background shadow-sm" : "text-foreground/60"
+            }`}
+          >
+            {sort === "latest" ? t("sortLatest") : t("sortBest")}
+          </Link>
+        ))}
+      </div>
       <ul className="space-y-2">
         {feed.length === 0 ? (
           <li className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm text-foreground/60">
@@ -117,7 +134,7 @@ export function ActivityTabs({
       {reviewsTotalPages > 1 && (
         <div className="mt-3 flex items-center justify-between text-sm">
           <Link
-            href={{ pathname: "/", query: { reviewsPage: reviewsPage - 1 } }}
+            href={{ pathname: "/", query: { reviewsPage: reviewsPage - 1, reviewsSort } }}
             scroll={false}
             aria-disabled={reviewsPage <= 1}
             className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium ${
@@ -130,7 +147,7 @@ export function ActivityTabs({
             {t("pageOf", { page: reviewsPage, total: reviewsTotalPages })}
           </span>
           <Link
-            href={{ pathname: "/", query: { reviewsPage: reviewsPage + 1 } }}
+            href={{ pathname: "/", query: { reviewsPage: reviewsPage + 1, reviewsSort } }}
             scroll={false}
             aria-disabled={reviewsPage >= reviewsTotalPages}
             className={`rounded-md bg-black/5 dark:bg-white/10 px-3 py-1.5 font-medium ${

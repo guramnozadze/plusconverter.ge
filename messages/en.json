@@ -140,6 +140,8 @@
     "error": "Couldn't submit your review. Please try again.",
     "emptyFeed": "No activity yet.",
     "emptyMine": "You have no transactions yet.",
+    "sortLatest": "Latest transactions",
+    "sortBest": "Best reviews",
     "prevPage": "Prev",
     "nextPage": "Next",
     "pageOf": "Page {page} of {total}",
