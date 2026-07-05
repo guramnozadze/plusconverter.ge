@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +28,33 @@ function Stars({ value }: { value: number }) {
   );
 }
 
+function FilterIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M4 6h16M7 12h10M10 18h4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="m5 13 4 4L19 7"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function ActivityTabs({
   feed,
   reviewsPage,
@@ -43,6 +70,19 @@ export function ActivityTabs({
   const router = useRouter();
   const [tab, setTab] = useState<"community" | "mine">("community");
   const hasPending = myOrders.some((o) => o.status === "pending");
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sortMenuOpen) return;
+    function onClickOutside(e: MouseEvent) {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(e.target as Node)) {
+        setSortMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [sortMenuOpen]);
 
   // Live community feed: refresh when any review row changes.
   useEffect(() => {
@@ -84,20 +124,41 @@ export function ActivityTabs({
 
   const community = (
     <>
-      <div className="mb-3 grid grid-cols-2 gap-1 rounded-lg bg-black/5 dark:bg-white/10 p-1 text-sm">
-        {(["latest", "best"] as const).map((sort) => (
-          <Link
-            key={sort}
-            href={{ pathname: "/", query: { reviewsSort: sort } }}
-            scroll={false}
-            aria-current={reviewsSort === sort ? "true" : undefined}
-            className={`rounded-md py-1.5 text-center font-medium transition-colors ${
-              reviewsSort === sort ? "bg-background shadow-sm" : "text-foreground/60"
-            }`}
+      <div className="mb-3 flex items-center justify-between text-sm">
+        <span className="font-medium text-foreground/70">
+          {reviewsSort === "latest" ? t("sortLatest") : t("sortBest")}
+        </span>
+        <div className="relative" ref={sortMenuRef}>
+          <button
+            type="button"
+            onClick={() => setSortMenuOpen((v) => !v)}
+            aria-label={t("sortLabel")}
+            aria-expanded={sortMenuOpen}
+            className="rounded-md p-1.5 text-foreground/60 hover:bg-black/5 dark:hover:bg-white/10"
           >
-            {sort === "latest" ? t("sortLatest") : t("sortBest")}
-          </Link>
-        ))}
+            <FilterIcon className="h-4 w-4" />
+          </button>
+          {sortMenuOpen && (
+            <div className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-lg border border-black/10 dark:border-white/15 bg-background shadow-lg">
+              {(["latest", "best"] as const).map((sort) => (
+                <Link
+                  key={sort}
+                  href={{ pathname: "/", query: { reviewsSort: sort } }}
+                  scroll={false}
+                  onClick={() => setSortMenuOpen(false)}
+                  className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-black/5 dark:hover:bg-white/10"
+                >
+                  <span className={reviewsSort === sort ? "font-medium" : "text-foreground/70"}>
+                    {sort === "latest" ? t("sortLatest") : t("sortBest")}
+                  </span>
+                  {reviewsSort === sort && (
+                    <CheckIcon className="h-4 w-4 shrink-0 text-foreground/60" />
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <ul className="space-y-2">
         {feed.length === 0 ? (

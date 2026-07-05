@@ -142,6 +142,7 @@
     "emptyMine": "You have no transactions yet.",
     "sortLatest": "Latest transactions",
     "sortBest": "Best reviews",
+    "sortLabel": "Sort",
     "prevPage": "Prev",
     "nextPage": "Next",
     "pageOf": "Page {page} of {total}",

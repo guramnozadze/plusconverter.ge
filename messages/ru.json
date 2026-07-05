@@ -142,6 +142,7 @@
     "emptyMine": "У вас пока нет транзакций.",
     "sortLatest": "Последние транзакции",
     "sortBest": "Лучшие отзывы",
+    "sortLabel": "Сортировка",
     "prevPage": "Назад",
     "nextPage": "Далее",
     "pageOf": "Страница {page} из {total}",
