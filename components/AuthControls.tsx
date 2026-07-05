@@ -98,7 +98,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center gap-1.5">
+      <div key="signed-out" className="flex items-center gap-1.5">
         {/* Google OAuth can't complete inside Meta's webview, so in-app the
             header offers only the email code. */}
         {inApp ? (
@@ -148,7 +148,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   }
 
   return (
-    <div className="relative min-w-0" ref={menuRef}>
+    <div key="signed-in" className="relative min-w-0" ref={menuRef}>
       <button
         type="button"
         onClick={() => setMenuOpen((v) => !v)}
