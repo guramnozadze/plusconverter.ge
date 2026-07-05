@@ -168,7 +168,6 @@ export function EmailOtpForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter") sendCode();
               }}
-              placeholder="example@gmail.com"
               className={inputClass}
             />
           </label>
