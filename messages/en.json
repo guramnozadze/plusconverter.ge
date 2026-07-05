@@ -7,7 +7,7 @@
     "appName": "PLUS Converter",
     "tagline": "Buy & sell Bank of Georgia PLUS points",
     "signInWithGoogle": "Sign in with Google",
-    "signInWithCode": "Sign in with code",
+    "signInWithCode": "Sign in with email",
     "logout": "Sign out",
     "loading": "Loading…",
     "cancel": "Cancel",
@@ -23,7 +23,7 @@
     "openInBrowserEmailAlt": "Or sign in with your email right here - no other browser needed:",
     "useEmailInstead": "Sign in with email",
     "emailOtp": {
-      "continueWithEmail": "Continue with email",
+      "continueWithEmail": "Sign in with email",
       "subtitle": "We'll email you a one-time code - no password needed.",
       "emailLabel": "Email",
       "sendCode": "Send code",

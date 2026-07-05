@@ -7,7 +7,7 @@
     "appName": "PLUS Converter",
     "tagline": "Купить и продать PLUS баллы Bank of Georgia",
     "signInWithGoogle": "Войти через Google",
-    "signInWithCode": "Войти по коду",
+    "signInWithCode": "Войти по email",
     "logout": "Выйти",
     "loading": "Загрузка…",
     "cancel": "Отмена",
@@ -23,7 +23,7 @@
     "openInBrowserEmailAlt": "Или войдите по email прямо здесь - другой браузер не нужен:",
     "useEmailInstead": "Войти по email",
     "emailOtp": {
-      "continueWithEmail": "Продолжить с email",
+      "continueWithEmail": "Войти по email",
       "subtitle": "Мы отправим вам одноразовый код на email - пароль не нужен.",
       "emailLabel": "Email",
       "sendCode": "Отправить код",
