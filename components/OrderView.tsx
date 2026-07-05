@@ -173,53 +173,22 @@ export function OrderView({
 
   return (
     <div className="space-y-4">
-      {!confirmed && (
-        <h1 className="text-xl font-semibold mb-2.5">{t("title")}</h1>
-      )}
-
-      {confirmed ? (
-        <p className="text-base text-foreground/70">
-          {t("confirmedMessage", { direction: order.direction })}
-        </p>
-      ) : (
-        <ol className="list-decimal space-y-1 pl-5 text-base text-foreground/70 marker:text-foreground/40">
-          <li>
-            {t("step1", {
-              direction: order.direction,
-              amount:
-                order.direction === "sell"
-                  ? pointsFmt.format(order.points_amount)
-                  : gelFmt.format(order.gel_amount),
-            })}
-          </li>
-          <li>
-            {t.rich("step2", {
-              paid: (chunks) => (
-                <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
-                  {chunks}
-                </span>
-              ),
-            })}
-          </li>
-          <li>
-            {t("step3", {
-              direction: order.direction,
-              amount:
-                order.direction === "sell"
-                  ? gelFmt.format(order.gel_amount)
-                  : pointsFmt.format(order.points_amount),
-            })}
-          </li>
-        </ol>
-      )}
+      {/* Help/contact card — surfaces only once payment has been reported;
+          placed first so it's immediately visible. */}
+      {confirmed && <HelpContactCard />}
 
       {/* Timer */}
       <div className="rounded-2xl border border-black/10 dark:border-white/15 p-3 text-center">
         {confirmed ? (
-          <p className="flex items-center justify-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
-            <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-            {t("processing")}
-          </p>
+          <>
+            <p className="flex items-center justify-center gap-2 text-base font-semibold text-amber-600 dark:text-amber-400">
+              <span className="inline-block h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+              {t("processing")}
+            </p>
+            <p className="mt-1 text-sm text-foreground/70">
+              {t("confirmedMessage", { direction: order.direction })}
+            </p>
+          </>
         ) : (
           <>
             <p className="text-xs text-foreground/60">{t("timeLeft")}</p>
@@ -236,27 +205,38 @@ export function OrderView({
         )}
       </div>
 
-      {/* Help/contact card — surfaces only once payment has been reported,
-          right below the "processing" indicator. */}
-      {confirmed && <HelpContactCard />}
-
-      {/* Big, easy-to-copy ID number card — sell orders only. Sellers transfer
-          PLUS points to this ID, not a bank account number, so it gets top
-          billing above everything else. */}
-      {order.direction === "sell" && assigned?.id_number && (
-        <div className="rounded-2xl border-2 border-black/15 dark:border-white/25 p-4 text-center space-y-1">
-          <p className="text-xs text-foreground/60">{t("sendPointsHere")}</p>
-          <button
-            type="button"
-            onClick={() => copy("id_number_big", assigned.id_number!)}
-            className="mx-auto flex items-center gap-2 font-mono text-2xl font-bold tabular-nums"
-            aria-label={t("idNumber")}
-          >
-            {assigned.id_number}
-            <span className="text-base">
-              {copiedField === "id_number_big" ? "✓" : "⧉"}
-            </span>
-          </button>
+      {!confirmed && (
+        <div>
+          <h1 className="text-xl font-semibold mb-2.5">{t("title")}</h1>
+          <ol className="list-decimal space-y-1 pl-5 text-base text-foreground/70 marker:text-foreground/40">
+            <li>
+              {t("step1", {
+                direction: order.direction,
+                amount:
+                  order.direction === "sell"
+                    ? pointsFmt.format(order.points_amount)
+                    : gelFmt.format(order.gel_amount),
+              })}
+            </li>
+            <li>
+              {t.rich("step2", {
+                paid: (chunks) => (
+                  <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
+                    {chunks}
+                  </span>
+                ),
+              })}
+            </li>
+            <li>
+              {t("step3", {
+                direction: order.direction,
+                amount:
+                  order.direction === "sell"
+                    ? gelFmt.format(order.gel_amount)
+                    : pointsFmt.format(order.points_amount),
+              })}
+            </li>
+          </ol>
         </div>
       )}
 
