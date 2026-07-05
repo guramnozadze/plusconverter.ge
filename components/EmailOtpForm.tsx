@@ -250,6 +250,9 @@ export function EmailOtpForm({
               {t("resend")}
             </button>
           </div>
+          <p className="text-center text-xs text-foreground/40">
+            {t("linkFallbackHint")}
+          </p>
         </>
       )}
       {error && (

@@ -32,6 +32,7 @@
       "codeLabel": "6-digit code",
       "verify": "Verify & sign in",
       "resend": "Resend code",
+      "linkFallbackHint": "Got a link instead of a code? Just open it from your email to sign in.",
       "changeEmail": "Use a different email",
       "invalidEmail": "Enter a valid email address.",
       "invalidCode": "Wrong or expired code. Try again.",
