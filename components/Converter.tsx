@@ -74,7 +74,7 @@ const QUICK_BUY_AMOUNTS = [
   {
     value: 199,
     selectedClassName:
-      "border-purple-500 dark:border-purple-400/50 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white !font-bold animate-shimmer",
+      "border-purple-400 dark:border-purple-400/40 bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white !font-bold animate-shimmer",
   },
 ] as const;
 
