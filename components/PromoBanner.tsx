@@ -114,10 +114,10 @@ export function PromoBanner({ initialSettings }: { initialSettings: Settings }) 
       className="mb-4 block w-full text-left rounded-2xl border border-orange-200 dark:border-orange-500/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-500/15 dark:via-amber-500/10 dark:to-transparent p-5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-500 px-2.5 py-1 text-xs font-semibold text-white">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 dark:bg-white px-2.5 py-1 text-xs font-semibold text-white dark:text-neutral-900 shadow-sm">
           <span className="relative flex h-1.5 w-1.5 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
           </span>
           {t("badge")}
         </span>
