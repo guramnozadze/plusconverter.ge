@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -77,11 +77,22 @@ export function EmailOtpForm({
   const [code, setCode] = useState("");
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState<
     "invalidEmail" | "sendError" | "invalidCode" | null
   >(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const codeInputRef = useRef<HTMLInputElement>(null);
+  const [isRefreshing, startRefresh] = useTransition();
+
+  useEffect(() => {
+    // Wait for the RSC refresh to actually commit before closing the modal —
+    // otherwise the modal disappears while the header/CTA are still
+    // rendering the old signed-out tree, leaving a brief "signed out" flash.
+    if (signedIn && !isRefreshing) {
+      onSuccess?.();
+    }
+  }, [signedIn, isRefreshing, onSuccess]);
 
   useEffect(() => {
     // A plain focus() here can lose to the browser's own layout/keyboard
@@ -158,10 +169,12 @@ export function EmailOtpForm({
     // The user may have scrolled deep into the converter while signing in —
     // bring them back to the top so the now-signed-in header/CTA is visible.
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // Stay busy: the refresh re-renders the server tree with the new session,
-    // which replaces this form with the signed-in UI.
-    router.refresh();
-    onSuccess?.();
+    // Stay busy (verifying stays true) until the refresh commits — see the
+    // effect above, which closes the modal once isRefreshing flips false.
+    startRefresh(() => {
+      router.refresh();
+    });
+    setSignedIn(true);
   }
 
   const inputClass =
