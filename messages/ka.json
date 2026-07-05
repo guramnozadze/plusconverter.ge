@@ -28,7 +28,7 @@
       "emailLabel": "ელფოსტა",
       "sendCode": "კოდის გაგზავნა",
       "codeSentTitle": "კოდი გამოიგზავნა",
-      "codeSentTo": "კოდი გაიგზავნა ელფოსტაზე",
+      "codeSentTo": "{email}",
       "codeLabel": "კოდი",
       "verify": "დადასტურება და შესვლა",
       "resend": "კოდის ხელახლა გაგზავნა",
