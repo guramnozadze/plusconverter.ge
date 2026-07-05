@@ -115,7 +115,15 @@ export function EmailOtpForm({
     const supabase = createClient();
     const { error: sendError } = await supabase.auth.signInWithOtp({
       email: target,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        // If the user taps the emailed link instead of typing the code
+        // (e.g. the "Confirm signup" template still shows a link), route
+        // through the same server-side code-exchange callback the Google
+        // OAuth flow uses, so cookies are written before the page renders
+        // instead of relying on the client SDK's after-the-fact URL parsing.
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
     setSending(false);
     if (sendError) {
