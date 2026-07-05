@@ -8,7 +8,23 @@ import { createClient } from "@/lib/supabase/client";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
+import { EmailOtpForm } from "./EmailOtpForm";
 import { GoogleIcon, FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
+
+function MailIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="m4 7 8 6 8-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 function UserIcon({ className }: { className?: string }) {
   return (
@@ -52,7 +68,9 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const [busyProvider, setBusyProvider] = useState<Provider | null>(null);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [emailOpen, setEmailOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -64,6 +82,17 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!emailOpen) return;
+    function onClickOutside(e: MouseEvent) {
+      if (emailRef.current && !emailRef.current.contains(e.target as Node)) {
+        setEmailOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [emailOpen]);
 
   async function signIn(provider: Provider) {
     // Google refuses to complete OAuth inside embedded webviews (Messenger,
@@ -95,7 +124,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="relative flex items-center gap-1.5" ref={emailRef}>
         <button
           type="button"
           onClick={() => signIn("google")}
@@ -105,8 +134,27 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
           {t("signInWithGoogle")}
         </button>
+        <button
+          type="button"
+          onClick={() => setEmailOpen((v) => !v)}
+          aria-label={t("emailOtp.continueWithEmail")}
+          className="inline-flex items-center rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5"
+        >
+          <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
+        </button>
+        {emailOpen && (
+          <div className="absolute right-0 top-full z-20 mt-2 w-72 rounded-lg border border-black/10 dark:border-white/15 bg-background p-3 shadow-lg">
+            <EmailOtpForm />
+          </div>
+        )}
         {showOpenInBrowserHint && (
-          <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
+          <OpenInBrowserModal
+            onClose={() => setShowOpenInBrowserHint(false)}
+            onUseEmail={() => {
+              setShowOpenInBrowserHint(false);
+              setEmailOpen(true);
+            }}
+          />
         )}
       </div>
     );

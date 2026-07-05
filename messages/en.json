@@ -18,7 +18,22 @@
     "openInBrowserBulletOpen": "Tap \"Open in browser\" below to switch instantly",
     "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
     "openInBrowserBullet2": "Or copy this link and open it in your browser instead",
-    "openInBrowserButton": "Open in browser"
+    "openInBrowserButton": "Open in browser",
+    "openInBrowserEmailAlt": "Or sign in with your email right here - no other browser needed:",
+    "useEmailInstead": "Sign in with email",
+    "emailOtp": {
+      "continueWithEmail": "Continue with email",
+      "emailLabel": "Email",
+      "sendCode": "Send code",
+      "codeSentTo": "We sent a 6-digit code to {email}",
+      "codeLabel": "6-digit code",
+      "verify": "Verify & sign in",
+      "resend": "Resend code",
+      "changeEmail": "Use a different email",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidCode": "Wrong or expired code. Try again.",
+      "sendError": "Couldn't send the code. Please try again."
+    }
   },
   "nav": {
     "home": "Home",
@@ -33,7 +48,8 @@
     "live": "LIVE",
     "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 48 hours",
     "cta": "Tap to buy now →",
-    "endsIn": "Ends in {time}"
+    "endsIn": "Ends in {time}",
+    "ended": "Today's promo has ended"
   },
   "converter": {
     "title": "Convert PLUS Points",
@@ -104,6 +120,13 @@
     "otherAccounts": "Other accounts",
     "noneAvailable": "No accounts are available right now. Please check back soon.",
     "error": "Couldn't create your order. Please try again.",
+    "errors": {
+      "direction_disabled": "This direction is temporarily unavailable.",
+      "below_minimum": "The amount is below the minimum.",
+      "above_maximum": "The amount exceeds what's currently available.",
+      "account_unavailable": "No account is available right now - please try again shortly.",
+      "order_limit_reached": "You already have a pending order - complete it or let it expire first."
+    },
     "summaryBuy": "Buying {points} PLUS Points for {gel} GEL",
     "summarySell": "Selling {points} PLUS Points for {gel} GEL",
     "yourDetails": "Your bank details",

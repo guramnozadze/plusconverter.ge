@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type RefObject,
 } from "react";
 import type { Provider } from "@supabase/supabase-js";
@@ -29,6 +30,7 @@ import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
+import { EmailOtpForm } from "./EmailOtpForm";
 import { GoogleIcon } from "./icons/ProviderIcons";
 
 type Props = {
@@ -78,6 +80,10 @@ const QUICK_BUY_AMOUNTS = [
   },
 ] as const;
 
+// The user agent never changes within a page lifetime, so the in-app-browser
+// "store" never emits updates.
+const noopSubscribe = () => () => {};
+
 // Keep only digits and a single decimal point — no commas, signs, or letters.
 function sanitizeNumeric(raw: string): string {
   const cleaned = raw.replace(/[^0-9.]/g, "");
@@ -107,6 +113,14 @@ export function Converter({
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  // UA sniffing needs `navigator`; the server snapshot renders the
+  // normal-browser variant, then hydration swaps in the real answer.
+  const inApp = useSyncExternalStore(
+    noopSubscribe,
+    isInAppBrowser,
+    () => false,
+  );
   const giveInputRef = useRef<HTMLInputElement>(null);
 
   // Only the promo banner's click should jump focus here — bumping
@@ -512,6 +526,10 @@ export function Converter({
           <p className="text-center text-sm text-foreground/60">
             {t("loginToContinue")}
           </p>
+          {/* Inside Meta's in-app browser Google OAuth is a dead end, so the
+              email code becomes the primary path and Google the fallback;
+              in a normal browser Google stays primary with email opt-in. */}
+          {(inApp || showEmailForm) && <EmailOtpForm />}
           <button
             type="button"
             onClick={() => signIn("google")}
@@ -521,6 +539,15 @@ export function Converter({
             {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-5 w-5 shrink-0" />}
             {t("continueWithGoogle")}
           </button>
+          {!inApp && !showEmailForm && (
+            <button
+              type="button"
+              onClick={() => setShowEmailForm(true)}
+              className="w-full text-center text-sm text-foreground/60 underline underline-offset-2"
+            >
+              {tCommon("emailOtp.continueWithEmail")}
+            </button>
+          )}
         </div>
       )}
 
@@ -549,7 +576,13 @@ export function Converter({
       )}
 
       {showOpenInBrowserHint && (
-        <OpenInBrowserModal onClose={() => setShowOpenInBrowserHint(false)} />
+        <OpenInBrowserModal
+          onClose={() => setShowOpenInBrowserHint(false)}
+          onUseEmail={() => {
+            setShowOpenInBrowserHint(false);
+            setShowEmailForm(true);
+          }}
+        />
       )}
     </div>
   );

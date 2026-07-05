@@ -14,6 +14,16 @@ type Props = {
   defaultAccountNumber: string;
 };
 
+// createOrder error codes that have their own user-facing message; anything
+// else (insert_failed, invalid_*) falls back to the generic one.
+const KNOWN_ORDER_ERRORS = new Set([
+  "direction_disabled",
+  "below_minimum",
+  "above_maximum",
+  "account_unavailable",
+  "order_limit_reached",
+]);
+
 export function AccountPicker({
   direction,
   points,
@@ -117,7 +127,9 @@ export function AccountPicker({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{t("error")}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">
+          {KNOWN_ORDER_ERRORS.has(error) ? t(`errors.${error}`) : t("error")}
+        </p>
       )}
 
       <button

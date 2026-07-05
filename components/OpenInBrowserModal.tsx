@@ -59,7 +59,15 @@ function CheckIcon({ className }: { className?: string }) {
 
 // Shown when Google sign-in is attempted inside an embedded webview
 // (Messenger, Facebook, Instagram) that Google itself refuses to complete.
-export function OpenInBrowserModal({ onClose }: { onClose: () => void }) {
+// When the caller renders an email OTP form, `onUseEmail` surfaces it as the
+// zero-effort alternative — email sign-in works fine inside the webview.
+export function OpenInBrowserModal({
+  onClose,
+  onUseEmail,
+}: {
+  onClose: () => void;
+  onUseEmail?: () => void;
+}) {
   const t = useTranslations("common");
   const [copied, setCopied] = useState(false);
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -90,6 +98,20 @@ export function OpenInBrowserModal({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-2">{t("openInBrowserTitle")}</h2>
+        {onUseEmail && (
+          <>
+            <p className="text-sm text-foreground/70 mb-2">
+              {t("openInBrowserEmailAlt")}
+            </p>
+            <button
+              type="button"
+              onClick={onUseEmail}
+              className="mb-3 w-full rounded-lg bg-foreground text-background py-2.5 font-medium"
+            >
+              {t("useEmailInstead")}
+            </button>
+          </>
+        )}
         <p className="text-sm text-foreground/70 mb-2">{t("openInBrowserIntro")}</p>
         <ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground/70">
           {isAndroid && <li>{t("openInBrowserBulletOpen")}</li>}
