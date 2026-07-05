@@ -103,13 +103,6 @@ export function EmailOtpForm({
       return;
     }
     setError(null);
-    setCode("");
-    // Flip to the code step before the network call, not after: once an
-    // await crosses a real network round-trip, iOS Safari no longer treats
-    // a later focus() as tied to this tap and won't raise the keyboard. Doing
-    // it here keeps the step change (and the focus effect it triggers) in
-    // the same task as the click, so we roll back on failure instead.
-    goToStep("code");
     setBusy(true);
     const supabase = createClient();
     const { error: sendError } = await supabase.auth.signInWithOtp({
@@ -119,9 +112,10 @@ export function EmailOtpForm({
     setBusy(false);
     if (sendError) {
       setError("sendError");
-      goToStep("email");
       return;
     }
+    setCode("");
+    goToStep("code");
   }
 
   async function verify(tokenOverride?: string) {
@@ -167,6 +161,7 @@ export function EmailOtpForm({
               {t("emailLabel")}
             </span>
             <input
+              key="email-step-input"
               ref={emailInputRef}
               autoFocus
               type="email"
@@ -198,6 +193,7 @@ export function EmailOtpForm({
               {t("codeLabel")}
             </span>
             <input
+              key="code-step-input"
               ref={codeInputRef}
               autoFocus
               type="text"
