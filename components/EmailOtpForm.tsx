@@ -203,6 +203,7 @@ export function EmailOtpForm({
         </>
       ) : (
         <>
+          <p className="text-sm text-foreground/70">{t("linkFallbackHint")}</p>
           <label className="block">
             <span className="mb-1 block text-xs text-foreground/60">
               {t("codeLabel")}
@@ -250,9 +251,6 @@ export function EmailOtpForm({
               {t("resend")}
             </button>
           </div>
-          <p className="text-center text-xs text-foreground/40">
-            {t("linkFallbackHint")}
-          </p>
         </>
       )}
       {error && (
