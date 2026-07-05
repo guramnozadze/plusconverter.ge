@@ -24,7 +24,7 @@
     "useEmailInstead": "შესვლა ელფოსტით",
     "emailOtp": {
       "continueWithEmail": "შესვლა ელფოსტით",
-      "subtitle": "უსაფრთხო შესვლა ერთჯერადი კოდით",
+      "subtitle": "შექმენით საკუთარი უნიკალური ანგარიში",
       "emailLabel": "მიუთითეთ თქვენი ელფოსტა",
       "sendCode": "შესვლა",
       "codeSentTitle": "კოდი გამოიგზავნა",

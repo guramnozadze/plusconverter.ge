@@ -289,7 +289,9 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
             <h2 className="text-lg font-semibold leading-tight">
               {step === "code" ? t("emailOtp.codeSentTitle") : t("useEmailInstead")}
             </h2>
-            <p className="mt-1 truncate text-sm text-foreground/60">
+            <p
+              className={`mt-1 text-sm text-foreground/60 ${step === "code" ? "truncate" : ""}`}
+            >
               {step === "code"
                 ? t("emailOtp.codeSentTo", { email: sentTo })
                 : t("emailOtp.subtitle")}
