@@ -7,9 +7,9 @@ import { useConverterDirection } from "./ConverterDirection";
 import { pointsFromGel } from "@/lib/pricing";
 import type { Settings } from "@/lib/supabase/types";
 
-// Next campaign: edit this constant (UTC). Currently 2026-07-05 18:00 Tbilisi
-// time (UTC+4).
-const PROMO_DEADLINE = "2026-07-05T14:00:00Z";
+// Next campaign: edit this constant (UTC). Currently 2026-07-05 22:35 Tbilisi
+// time (UTC+4) — a fresh 4-hour window restarted after the first one ended.
+const PROMO_DEADLINE = "2026-07-05T18:35:00Z";
 
 // Illustrative example amount, in GEL — the points payout below is computed
 // live from the real pricing helper, so it can never drift from what the
