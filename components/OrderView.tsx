@@ -182,20 +182,35 @@ export function OrderView({
           {t("confirmedMessage", { direction: order.direction })}
         </p>
       ) : (
-        <p className="text-base text-foreground/70">
-          {t.rich("instructions", {
-            direction: order.direction,
-            amount:
-              order.direction === "sell"
-                ? gelFmt.format(order.gel_amount)
-                : pointsFmt.format(order.points_amount),
-            paid: (chunks) => (
-              <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
-                {chunks}
-              </span>
-            ),
-          })}
-        </p>
+        <ol className="list-decimal space-y-1 pl-5 text-base text-foreground/70 marker:text-foreground/40">
+          <li>
+            {t("step1", {
+              direction: order.direction,
+              amount:
+                order.direction === "sell"
+                  ? pointsFmt.format(order.points_amount)
+                  : gelFmt.format(order.gel_amount),
+            })}
+          </li>
+          <li>
+            {t.rich("step2", {
+              paid: (chunks) => (
+                <span className="font-bold uppercase text-orange-600 dark:text-orange-400">
+                  {chunks}
+                </span>
+              ),
+            })}
+          </li>
+          <li>
+            {t("step3", {
+              direction: order.direction,
+              amount:
+                order.direction === "sell"
+                  ? gelFmt.format(order.gel_amount)
+                  : pointsFmt.format(order.points_amount),
+            })}
+          </li>
+        </ol>
       )}
 
       {/* Timer */}
@@ -330,6 +345,16 @@ export function OrderView({
             <div className="flex justify-between text-sm">
               <span className="text-foreground/60">{t("accountNumber")}</span>
               <span className="font-mono">{order.user_account_number}</span>
+            </div>
+          )}
+          {order.comment && (
+            <div className="flex justify-between gap-3 text-sm">
+              <span className="shrink-0 text-foreground/60">
+                {t("additionalInfo")}
+              </span>
+              <span className="whitespace-pre-wrap break-words text-right">
+                {order.comment}
+              </span>
             </div>
           )}
         </div>

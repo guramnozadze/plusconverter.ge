@@ -13,8 +13,8 @@
     "copy": "Copy",
     "copied": "Copied",
     "ok": "OK",
-    "openInBrowserTitle": "Continue sign-in in your browser",
-    "openInBrowserIntro": "Facebook's browser blocks Google sign-in. Here's how to continue:",
+    "openInBrowserTitle": "This browser blocks Google sign-in",
+    "openInBrowserIntro": "Open the link in another browser to continue:",
     "openInBrowserBulletOpen": "Tap \"Open in browser\" below to switch instantly",
     "openInBrowserBullet1": "Tap the three dots (•••) in the corner and choose \"Open in external browser\"",
     "openInBrowserBullet2": "Or copy this link and open it in your browser instead",
@@ -28,9 +28,11 @@
   "promoBanner": {
     "badge": "🔥 We're online",
     "headline": "The fastest PLUS points exchange site - get your exchange done in under 5 minutes",
-    "exampleLabel": "{points} PLUS Points is worth",
+    "exampleLabel": "{gel} GEL gets you",
+    "points": "PLUS Points",
+    "live": "LIVE",
     "activity": "{traders, plural, one {# person} other {# people}} traded {points} PLUS Points in the last 48 hours",
-    "cta": "Tap to sell now →",
+    "cta": "Tap to buy now →",
     "endsIn": "Ends in {time}"
   },
   "converter": {
@@ -59,10 +61,12 @@
     "minPopupBody": "The minimum is {amount} {unit}."
   },
   "order": {
-    "title": "Transfer via your banking app",
+    "title": "Instructions",
     "timeLeft": "Time left",
     "expired": "This order has expired",
-    "instructions": "{direction, select, sell {Open the Bank of Georgia app and send the exact PLUS points to the ID number below. Once it's sent, tap <paid>“Transfer sent”</paid> — we’ll send your GEL shortly.} other {Using your banking app, transfer the exact amount to the account below. Once it's sent, tap <paid>“Transfer sent”</paid> — we’ll send your points shortly.}}",
+    "step1": "{direction, select, sell {Transfer {amount} points to the ID number below} other {Transfer {amount} GEL to the account below}}",
+    "step2": "Tap <paid>“Transfer sent”</paid>",
+    "step3": "{direction, select, sell {Wait 1 minute and you'll get {amount} GEL} other {Wait 1 minute and you'll get {amount} points}}",
     "confirmedMessage": "{direction, select, sell {We'll send your GEL shortly.} other {We'll send your points shortly.}}",
     "bank": "Bank",
     "accountName": "Account name",
@@ -71,6 +75,7 @@
     "sendPointsHere": "Send your PLUS points to this ID number",
     "yourAccount": "Your account",
     "yourAccountHint": "{direction, select, sell {account where you'll get {amount} GEL} other {account where you'll get {amount} PLUS Points}}",
+    "additionalInfo": "Additional information",
     "youSend": "You send",
     "youReceive": "You receive",
     "usernameNudge": "Set a username so you can leave a comment/review.",

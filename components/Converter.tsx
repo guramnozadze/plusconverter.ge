@@ -94,7 +94,7 @@ export function Converter({
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
-  const { direction, setDirection, sellFocusToken } = useConverterDirection();
+  const { direction, setDirection, focusToken } = useConverterDirection();
 
   const [settings, setSettings] = useState(initialSettings);
   // Two editable legs. `give` is what the user puts in (GEL when buying, PLUS
@@ -109,8 +109,8 @@ export function Converter({
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const giveInputRef = useRef<HTMLInputElement>(null);
 
-  // Only the promo banner's "sell now" click should jump focus here — bumping
-  // sellFocusToken is how it signals that (a plain tab click must not).
+  // Only the promo banner's click should jump focus here — bumping
+  // focusToken is how it signals that (a plain tab click must not).
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
@@ -119,7 +119,7 @@ export function Converter({
     }
     giveInputRef.current?.focus();
     giveInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [sellFocusToken]);
+  }, [focusToken]);
 
   // Flashes a field green/red for a beat when a live settings update moves it,
   // since the rate itself is never shown — this is the only visible cue.

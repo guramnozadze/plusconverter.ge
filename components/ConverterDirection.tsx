@@ -7,26 +7,26 @@ type Ctx = {
   direction: OrderDirection;
   setDirection: (direction: OrderDirection) => void;
   // Bumped only when something outside the converter (the promo banner)
-  // asks it to jump to sell — Converter uses this to focus/scroll its input,
-  // which a plain tab click should NOT trigger.
-  sellFocusToken: number;
-  focusSell: () => void;
+  // asks it to jump to a direction — Converter uses this to focus/scroll its
+  // input, which a plain tab click should NOT trigger.
+  focusToken: number;
+  focusDirection: (direction: OrderDirection) => void;
 };
 
 const ConverterDirectionContext = createContext<Ctx | null>(null);
 
 export function ConverterDirectionProvider({ children }: { children: ReactNode }) {
   const [direction, setDirection] = useState<OrderDirection>("buy");
-  const [sellFocusToken, setSellFocusToken] = useState(0);
+  const [focusToken, setFocusToken] = useState(0);
 
-  const focusSell = () => {
-    setDirection("sell");
-    setSellFocusToken((n) => n + 1);
+  const focusDirection = (next: OrderDirection) => {
+    setDirection(next);
+    setFocusToken((n) => n + 1);
   };
 
   return (
     <ConverterDirectionContext.Provider
-      value={{ direction, setDirection, sellFocusToken, focusSell }}
+      value={{ direction, setDirection, focusToken, focusDirection }}
     >
       {children}
     </ConverterDirectionContext.Provider>
