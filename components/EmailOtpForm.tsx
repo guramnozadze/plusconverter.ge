@@ -79,14 +79,15 @@ export function EmailOtpForm({
   const [error, setError] = useState<
     "invalidEmail" | "sendError" | "invalidCode" | null
   >(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const codeInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (step !== "code") return;
     // A plain focus() here can lose to the browser's own layout/keyboard
     // timing right after the step swap — wait a frame so the input is
     // actually painted and interactive before we grab focus.
-    const raf = requestAnimationFrame(() => codeInputRef.current?.focus());
+    const target = step === "code" ? codeInputRef : emailInputRef;
+    const raf = requestAnimationFrame(() => target.current?.focus());
     return () => cancelAnimationFrame(raf);
   }, [step]);
 
@@ -149,7 +150,7 @@ export function EmailOtpForm({
   }
 
   const inputClass =
-    "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-lg outline-none focus:ring-2 focus:ring-foreground/30";
+    "w-full rounded-lg border border-black/15 dark:border-white/20 bg-transparent px-3 py-3 text-lg outline-none focus:ring-2 focus:ring-foreground/30 placeholder:text-foreground/35";
 
   return (
     <div className="space-y-3">
@@ -160,6 +161,8 @@ export function EmailOtpForm({
               {t("emailLabel")}
             </span>
             <input
+              ref={emailInputRef}
+              autoFocus
               type="email"
               inputMode="email"
               autoComplete="email"
@@ -168,6 +171,7 @@ export function EmailOtpForm({
               onKeyDown={(e) => {
                 if (e.key === "Enter") sendCode();
               }}
+              placeholder="magti@gmail.com"
               className={inputClass}
             />
           </label>
