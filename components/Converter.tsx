@@ -38,7 +38,8 @@ type Props = {
 };
 
 type FlashDir = "up" | "down" | null;
-type FlashField = "give" | "get" | "max";
+// Only used by the disabled realtime-flash feature below — see REMINDER.
+// type FlashField = "give" | "get" | "max";
 
 const flashClass: Record<Exclude<FlashDir, null>, string> = {
   up: "text-green-600 dark:text-green-400",
@@ -97,7 +98,13 @@ export function Converter({
   const router = useRouter();
   const { direction, setDirection, focusToken, focusAmount } = useConverterDirection();
 
-  const [settings, setSettings] = useState(initialSettings);
+  // REMINDER: restore live pricing before 2027-07-01 (ahead of next year's
+  // flash-sale event). Traffic settled back to normal after the July 2026
+  // event ended, so the realtime settings subscription (and the flash-on-
+  // change cues it drove) is disabled below — the rate now only updates on a
+  // full page reload. getSettings() is still fetched fresh server-side on
+  // every request either way (see lib/data.ts).
+  const [settings] = useState(initialSettings);
   // Two editable legs. `give` is what the user puts in (GEL when buying, PLUS
   // when selling); `get` is the rate-adjusted amount they receive. Either can be
   // edited — the other is recomputed (reverse pricing).
@@ -111,109 +118,120 @@ export function Converter({
   const [showEmailModal, setShowEmailModal] = useState(false);
   const inApp = useIsInAppBrowser();
   const giveInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
 
-  // Flashes a field green/red for a beat when a live settings update moves it,
-  // since the rate itself is never shown — this is the only visible cue.
-  const [flashGive, setFlashGive] = useState<FlashDir>(null);
-  const [flashGet, setFlashGet] = useState<FlashDir>(null);
-  const [flashMax, setFlashMax] = useState<FlashDir>(null);
-  const flashSetters = useRef({ give: setFlashGive, get: setFlashGet, max: setFlashMax });
-  const flashTimers = useRef<Partial<Record<FlashField, ReturnType<typeof setTimeout>>>>({});
-
-  const triggerFlash = useCallback((field: FlashField, dir: "up" | "down") => {
-    flashSetters.current[field](dir);
-    clearTimeout(flashTimers.current[field]);
-    flashTimers.current[field] = setTimeout(() => flashSetters.current[field](null), 900);
-  }, []);
-
-  useEffect(
-    () => () => {
-      Object.values(flashTimers.current).forEach(clearTimeout);
-    },
-    [],
-  );
+  // Flashed a field green/red for a beat when a live settings update moved
+  // it. Disabled 2026-07-06 along with the realtime subscription below (see
+  // REMINDER above `settings`) — flashGive/flashGet/flashMax now just stay
+  // null forever, which numField/the "available" text already render as a
+  // no-op. To restore: uncomment this block and the effect further down,
+  // and swap `const [settings] = useState(...)` back to
+  // `const [settings, setSettings] = useState(...)`.
+  // const [flashGive, setFlashGive] = useState<FlashDir>(null);
+  // const [flashGet, setFlashGet] = useState<FlashDir>(null);
+  // const [flashMax, setFlashMax] = useState<FlashDir>(null);
+  // const flashSetters = useRef({ give: setFlashGive, get: setFlashGet, max: setFlashMax });
+  // const flashTimers = useRef<Partial<Record<FlashField, ReturnType<typeof setTimeout>>>>({});
+  //
+  // const triggerFlash = useCallback((field: FlashField, dir: "up" | "down") => {
+  //   flashSetters.current[field](dir);
+  //   clearTimeout(flashTimers.current[field]);
+  //   flashTimers.current[field] = setTimeout(() => flashSetters.current[field](null), 900);
+  // }, []);
+  //
+  // useEffect(
+  //   () => () => {
+  //     Object.values(flashTimers.current).forEach(clearTimeout);
+  //   },
+  //   [],
+  // );
+  const flashGive: FlashDir = null;
+  const flashGet: FlashDir = null;
+  const flashMax: FlashDir = null;
 
   const multiplier = multiplierFor(direction, settings);
 
   // The realtime subscription below is set up once; these refs let its
   // callback always read the latest direction/amounts without resubscribing.
-  const directionRef = useRef(direction);
-  directionRef.current = direction;
-  const giveRef = useRef(give);
-  giveRef.current = give;
-  const getRef = useRef(get);
-  getRef.current = get;
+  // Disabled along with the effect itself — see REMINDER above `settings`.
+  // const directionRef = useRef(direction);
+  // directionRef.current = direction;
+  // const giveRef = useRef(give);
+  // giveRef.current = give;
+  // const getRef = useRef(get);
+  // getRef.current = get;
 
   // Live price: keep the rate current so the amounts stay accurate when the
   // owner changes multipliers or thresholds. The rate itself is never shown
-  // to the user, so flash the visible fields it affects instead.
-  useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase
-      .channel("settings-live")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "settings" },
-        (payload) => {
-          const oldSettings = payload.old as Settings;
-          const newSettings = payload.new as Settings;
-          const dir = directionRef.current;
-
-          if (oldSettings) {
-            const oldMax = maxPoints(dir, oldSettings);
-            const newMax = maxPoints(dir, newSettings);
-            if (oldMax !== newMax) {
-              triggerFlash("max", newMax > oldMax ? "up" : "down");
-            }
-
-            const oldMultiplier = multiplierFor(dir, oldSettings);
-            const newMultiplier = multiplierFor(dir, newSettings);
-            if (oldMultiplier !== newMultiplier) {
-              // Flash whichever amount is currently computed — the one the
-              // user isn't actively typing into.
-              if (anchor.current === "give") {
-                const g = Number(giveRef.current);
-                if (g > 0) {
-                  const oldVal =
-                    dir === "buy"
-                      ? pointsFromGel(g, oldMultiplier)
-                      : gelFromPoints(g, oldMultiplier);
-                  const newVal =
-                    dir === "buy"
-                      ? pointsFromGel(g, newMultiplier)
-                      : gelFromPoints(g, newMultiplier);
-                  if (oldVal !== newVal) {
-                    triggerFlash("get", newVal > oldVal ? "up" : "down");
-                  }
-                }
-              } else {
-                const x = Number(getRef.current);
-                if (x > 0) {
-                  const oldVal =
-                    dir === "buy"
-                      ? gelFromPoints(x, oldMultiplier)
-                      : pointsFromGel(x, oldMultiplier);
-                  const newVal =
-                    dir === "buy"
-                      ? gelFromPoints(x, newMultiplier)
-                      : pointsFromGel(x, newMultiplier);
-                  if (oldVal !== newVal) {
-                    triggerFlash("give", newVal > oldVal ? "up" : "down");
-                  }
-                }
-              }
-            }
-          }
-
-          setSettings(newSettings);
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [triggerFlash]);
+  // to the user, so flash the visible fields it affects instead. Disabled
+  // 2026-07-06 — see REMINDER above `settings`.
+  // useEffect(() => {
+  //   const supabase = createClient();
+  //   const channel = supabase
+  //     .channel("settings-live")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "settings" },
+  //       (payload) => {
+  //         const oldSettings = payload.old as Settings;
+  //         const newSettings = payload.new as Settings;
+  //         const dir = directionRef.current;
+  //
+  //         if (oldSettings) {
+  //           const oldMax = maxPoints(dir, oldSettings);
+  //           const newMax = maxPoints(dir, newSettings);
+  //           if (oldMax !== newMax) {
+  //             triggerFlash("max", newMax > oldMax ? "up" : "down");
+  //           }
+  //
+  //           const oldMultiplier = multiplierFor(dir, oldSettings);
+  //           const newMultiplier = multiplierFor(dir, newSettings);
+  //           if (oldMultiplier !== newMultiplier) {
+  //             // Flash whichever amount is currently computed — the one the
+  //             // user isn't actively typing into.
+  //             if (anchor.current === "give") {
+  //               const g = Number(giveRef.current);
+  //               if (g > 0) {
+  //                 const oldVal =
+  //                   dir === "buy"
+  //                     ? pointsFromGel(g, oldMultiplier)
+  //                     : gelFromPoints(g, oldMultiplier);
+  //                 const newVal =
+  //                   dir === "buy"
+  //                     ? pointsFromGel(g, newMultiplier)
+  //                     : gelFromPoints(g, newMultiplier);
+  //                 if (oldVal !== newVal) {
+  //                   triggerFlash("get", newVal > oldVal ? "up" : "down");
+  //                 }
+  //               }
+  //             } else {
+  //               const x = Number(getRef.current);
+  //               if (x > 0) {
+  //                 const oldVal =
+  //                   dir === "buy"
+  //                     ? gelFromPoints(x, oldMultiplier)
+  //                     : pointsFromGel(x, oldMultiplier);
+  //                 const newVal =
+  //                   dir === "buy"
+  //                     ? gelFromPoints(x, newMultiplier)
+  //                     : pointsFromGel(x, newMultiplier);
+  //                 if (oldVal !== newVal) {
+  //                   triggerFlash("give", newVal > oldVal ? "up" : "down");
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //
+  //         setSettings(newSettings);
+  //       },
+  //     )
+  //     .subscribe();
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, [triggerFlash]);
 
   // Convert between the two legs. For buy, `give` is GEL and `get` is PLUS; for
   // sell it's the reverse — both reduce to the same two pricing helpers.
@@ -277,11 +295,52 @@ export function Converter({
     }
     if (focusAmount != null) {
       anchor.current = "give";
+      // This effect only runs in response to an external signal (the promo
+      // banner bumping focusToken), never as a reaction to `give`/`get`
+      // themselves — there's no render-time equivalent to compute this from.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGive(String(focusAmount));
       setGet(fmtField(giveToGet(focusAmount)));
     }
-    giveInputRef.current?.focus();
-    giveInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // preventScroll: focusing an input natively auto-scrolls it into view,
+    // which raced our own scrollIntoView below (the native jump would land
+    // partway, then our smooth scroll fought it) — this leaves scrolling
+    // entirely to the explicit call after it.
+    giveInputRef.current?.focus({ preventScroll: true });
+    // Scroll the section (not the input itself) into view — scrolling to
+    // the input landed too far down, past the title. scroll-mt-4 on the
+    // container gives it a little breathing room from the top edge.
+    // Mobile always scrolls (the keyboard eats half the screen, so it's
+    // worth the jump); desktop only scrolls if the section is actually cut
+    // off — if it's already fully in view, forcing a scroll would be
+    // gratuitous motion for no reason.
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const rect = containerRef.current?.getBoundingClientRect();
+    const cutOff = rect ? rect.top < 0 || rect.bottom > window.innerHeight : false;
+    if (isMobile || cutOff) {
+      const scrollToSection = () =>
+        containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // On mobile, the virtual keyboard opens after focus() above and
+      // shrinks the visual viewport, which re-scrolls the page on its own —
+      // running our scroll before that settles gets fought/undone, leaving
+      // the banner still on screen instead of scrolled past. Wait for the
+      // keyboard's resize (or a fallback timeout if it never fires, e.g. no
+      // keyboard at all) before scrolling for real.
+      if (isMobile && window.visualViewport) {
+        const vv = window.visualViewport;
+        let settled = false;
+        const settle = () => {
+          if (settled) return;
+          settled = true;
+          vv.removeEventListener("resize", settle);
+          scrollToSection();
+        };
+        vv.addEventListener("resize", settle);
+        setTimeout(settle, 400);
+      } else {
+        scrollToSection();
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusToken]);
 
@@ -357,11 +416,13 @@ export function Converter({
   const giveCurrency = direction === "buy" ? t("gel") : t("points");
   const getCurrency = direction === "buy" ? t("points") : t("gel");
 
-  // "PLUS Points" renders as an orange badge; GEL stays plain text.
+  // "PLUS Points" renders as an orange badge; GEL stays plain text. Full unit
+  // word on mobile too now that both directions render a single full-width
+  // input row (the sell side dropped its paired "= face value" box).
   const pointsLabel = t("points");
   const currencyTag = (cur: string) =>
     cur === pointsLabel ? (
-      <PlusBadge expandOnMobile={direction === "buy"} />
+      <PlusBadge expandOnMobile />
     ) : (
       <span className="text-sm font-medium text-foreground/60">{cur}</span>
     );
@@ -394,7 +455,8 @@ export function Converter({
   return (
     <div
       id="converter"
-      className="rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6"
+      ref={containerRef}
+      className="scroll-mt-4 rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6"
     >
       <div className="mb-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
