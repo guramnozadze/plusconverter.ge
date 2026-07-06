@@ -1,5 +1,7 @@
+import { hasLocale } from "next-intl";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import { getUserProfile } from "@/lib/auth";
 import { getBankAccounts, getSettings } from "@/lib/data";
 import { quote } from "@/lib/pricing";
@@ -13,7 +15,10 @@ export default async function NewOrderPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ direction?: string; points?: string }>;
 }) {
-  const { locale } = await params;
+  const { locale: candidateLocale } = await params;
+  const locale = hasLocale(routing.locales, candidateLocale)
+    ? candidateLocale
+    : routing.defaultLocale;
   setRequestLocale(locale);
   const sp = await searchParams;
 

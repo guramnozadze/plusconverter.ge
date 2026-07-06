@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { fetchWithTimeout } from "@/lib/supabase/fetch-with-timeout";
 import type { BankAccount, Database, Review, Settings } from "@/lib/supabase/types";
 
 const DEFAULT_SETTINGS: Settings = {
@@ -27,6 +28,7 @@ export const getSettings = unstable_cache(
     const supabase = createSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { fetch: fetchWithTimeout() } },
     );
     const { data } = await supabase
       .from("settings")
@@ -46,6 +48,7 @@ export const getBankAccounts = unstable_cache(
     const supabase = createSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { fetch: fetchWithTimeout() } },
     );
     const { data } = await supabase
       .from("bank_accounts")
@@ -73,6 +76,7 @@ export const getPlatformStats = unstable_cache(
     const supabase = createSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { fetch: fetchWithTimeout() } },
     );
     const { data } = await supabase.rpc("get_platform_stats");
     const row = data?.[0];
@@ -97,6 +101,7 @@ export const getReviewsFeed = unstable_cache(
     const supabase = createSupabaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { fetch: fetchWithTimeout() } },
     );
     const { data } = await supabase
       .from("reviews")

@@ -1,4 +1,6 @@
+import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import { getSettings, getPlatformStats, getReviewsFeed } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -21,7 +23,10 @@ export default async function HomePage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ reviewsPage?: string; reviewsSort?: string }>;
 }) {
-  const { locale } = await params;
+  const { locale: candidateLocale } = await params;
+  const locale = hasLocale(routing.locales, candidateLocale)
+    ? candidateLocale
+    : routing.defaultLocale;
   setRequestLocale(locale);
 
   const supabase = await createClient();
