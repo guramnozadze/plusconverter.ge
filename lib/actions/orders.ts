@@ -156,6 +156,7 @@ export async function createOrder(input: {
       direction,
       gelAmount: gel,
       pointsAmount: points,
+      userEmail: user.email ?? null,
       userFullName,
       userAccountNumber,
       comment,

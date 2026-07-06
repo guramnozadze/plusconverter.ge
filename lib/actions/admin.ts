@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
+import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendPointsSentEmail } from "@/lib/notifications";
 import type { BankAccountStatus, OrderStatus } from "@/lib/supabase/types";
 
 type ActionResult = { ok: boolean; error?: string };
@@ -102,19 +104,42 @@ export async function setOrderStatus(
   status: OrderStatus,
 ): Promise<ActionResult> {
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data: order, error } = await supabase
     .from("orders")
     .update({
       status,
       completed_at: status === "completed" ? new Date().toISOString() : null,
     })
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .select("user_id, direction, points_amount")
+    .single();
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
   // Completing an order auto-creates its review row (handle_order_completed
   // trigger) — bust the cached homepage feed (lib/data.ts getReviewsFeed) so
   // it shows up right away instead of waiting out the cache window.
   if (status === "completed") updateTag("reviews");
+
+  // Buy orders: we send the customer PLUS points directly via BOG, whose own
+  // SMS confirmation to them is unreliable overnight — email them a receipt
+  // in that window as a fallback (sendPointsSentEmail checks the time itself).
+  if (status === "completed" && order.direction === "buy") {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", order.user_id)
+      .single();
+    if (profile?.email) {
+      after(() =>
+        sendPointsSentEmail({
+          orderId,
+          pointsAmount: order.points_amount,
+          userEmail: profile.email as string,
+        }),
+      );
+    }
+  }
+
   return { ok: true };
 }
 
