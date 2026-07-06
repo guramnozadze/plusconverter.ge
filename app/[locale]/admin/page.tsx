@@ -55,6 +55,7 @@ export default async function AdminPage({
         <h1 className="text-xl font-semibold">{t("title")}</h1>
         <Link
           href="/admin/reviews"
+          prefetch={false}
           className="rounded-md border border-black/15 dark:border-white/20 px-3 py-1.5 text-sm font-medium"
         >
           {t("reviewsLink")}
