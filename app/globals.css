@@ -162,12 +162,14 @@ body {
     transition-duration: 0s;
   }
 
-  /* `ease-out` (not `linear`) so it launches a touch quicker off the start
-     and eases through the rest — reads as one deliberate wave rather than a
-     constant mechanical scroll. */
+  /* `linear`, not `ease-out`: ease-out decelerates hard through its last
+     stretch, so the sheen would crawl (while still technically on its way
+     off-screen) for a good chunk of the cycle before the next lap started —
+     that dead-slow tail is what read as a ~1s delay between waves. Constant
+     speed removes the tail entirely. */
   &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
   &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
-    animation: glow-sheen-slide 2.6s ease-out infinite;
+    animation: glow-sheen-slide 2.6s linear infinite;
   }
 
   @media (prefers-color-scheme: dark) {
