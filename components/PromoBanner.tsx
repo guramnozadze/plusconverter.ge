@@ -144,6 +144,7 @@ export function PromoBanner({
         <span className="flex flex-col">
           <span>{t("activityOrders", { orders: stats.totalOrders })}</span>
           <span>{t("activityPoints", { points: pointsFmt.format(stats.totalPoints) })}</span>
+          <span>{t("activityUsers", { users: stats.totalUsers })}</span>
         </span>
       </div>
     </div>

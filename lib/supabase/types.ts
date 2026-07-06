@@ -141,7 +141,7 @@ export type Database = {
       };
       get_platform_stats: {
         Args: Record<string, never>;
-        Returns: { total_orders: number; total_points: number }[];
+        Returns: { total_orders: number; total_points: number; total_users: number }[];
       };
       mark_order_paid: {
         Args: { p_order_id: string };

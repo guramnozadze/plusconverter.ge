@@ -52,6 +52,7 @@
     "live": "LIVE",
     "activityOrders": "Завершено {orders, plural, one {# транзакция} few {# транзакции} many {# транзакций} other {# транзакции}}",
     "activityPoints": "Обменяно {points} PLUS баллов",
+    "activityUsers": "Зарегистрировано {users, plural, one {# пользователь} few {# пользователя} many {# пользователей} other {# пользователя}}",
     "cta": "Нажмите, чтобы продать →"
   },
   "converter": {

@@ -52,6 +52,7 @@
     "live": "LIVE",
     "activityOrders": "დასრულებულია {orders} ტრანზაქცია",
     "activityPoints": "გაცვლილია {points} PLUS ქულა",
+    "activityUsers": "დარეგისტრირებულია {users} მომხმარებელი",
     "cta": "დააჭირე გასაყიდად →"
   },
   "converter": {

@@ -52,6 +52,7 @@
     "live": "LIVE",
     "activityOrders": "{orders, plural, one {# transaction} other {# transactions}} completed",
     "activityPoints": "{points} PLUS Points traded",
+    "activityUsers": "{users, plural, one {# user} other {# users}} registered",
     "cta": "Tap to sell now →"
   },
   "converter": {

@@ -38,9 +38,13 @@ export async function getBankAccounts(): Promise<BankAccount[]> {
   return data ?? [];
 }
 
-export type PlatformStats = { totalOrders: number; totalPoints: number };
+export type PlatformStats = { totalOrders: number; totalPoints: number; totalUsers: number };
 
-const DEFAULT_PLATFORM_STATS: PlatformStats = { totalOrders: 0, totalPoints: 0 };
+const DEFAULT_PLATFORM_STATS: PlatformStats = {
+  totalOrders: 0,
+  totalPoints: 0,
+  totalUsers: 0,
+};
 
 // Cached across all requests for an hour — unstable_cache can't read the
 // per-request auth cookies, so this uses a plain anon client, which is fine
@@ -54,7 +58,11 @@ export const getPlatformStats = unstable_cache(
     const { data } = await supabase.rpc("get_platform_stats");
     const row = data?.[0];
     if (!row) return DEFAULT_PLATFORM_STATS;
-    return { totalOrders: row.total_orders, totalPoints: row.total_points };
+    return {
+      totalOrders: row.total_orders,
+      totalPoints: row.total_points,
+      totalUsers: row.total_users,
+    };
   },
   ["platform-stats"],
   { revalidate: 3600 },
