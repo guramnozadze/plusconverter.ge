@@ -50,9 +50,9 @@
     "exampleLabel": "{points} PLUS ქულის სანაცვლოდ მიიღე",
     "gelUnit": "ლარი",
     "live": "LIVE",
-    "activityOrders": "დასრულებულია {orders} ტრანზაქცია",
-    "activityPoints": "გაცვლილია {points} PLUS ქულა",
-    "activityUsers": "დარეგისტრირებულია {users} მომხმარებელი",
+    "activityOrders": "{orders} ტრანზაქცია განხორციელდა",
+    "activityPoints": "{points} PLUS ქულა გაიცვალა",
+    "activityUsers": "{users} მომხმარებელი დარეგისტრირდა",
     "cta": "დააჭირე გასაყიდად →"
   },
   "converter": {

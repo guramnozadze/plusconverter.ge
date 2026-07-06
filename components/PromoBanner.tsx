@@ -141,7 +141,7 @@ export function PromoBanner({
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
         </span>
-        <span className="flex flex-col">
+        <span className="flex flex-col gap-1">
           <span>{t("activityOrders", { orders: stats.totalOrders })}</span>
           <span>{t("activityPoints", { points: pointsFmt.format(stats.totalPoints) })}</span>
           <span>{t("activityUsers", { users: stats.totalUsers })}</span>
