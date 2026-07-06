@@ -1,7 +1,9 @@
 "use server";
 
+import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { quote, isDirectionEnabled, minGive, maxPoints } from "@/lib/pricing";
+import { sendOrderAlertEmail } from "@/lib/notifications";
 import type { OrderDirection } from "@/lib/supabase/types";
 
 export type CreateOrderResult =
@@ -147,6 +149,18 @@ export async function createOrder(input: {
       await supabase.from("profiles").update(profileUpdates).eq("id", user.id);
     }
   }
+
+  after(() =>
+    sendOrderAlertEmail({
+      orderId: order.id,
+      direction,
+      gelAmount: gel,
+      pointsAmount: points,
+      userFullName,
+      userAccountNumber,
+      comment,
+    }),
+  );
 
   return { ok: true, orderId: order.id };
 }
