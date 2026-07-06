@@ -172,6 +172,18 @@ body {
     animation: glow-sheen-slide 2.6s linear infinite;
   }
 
+  /* Two sheens (see the duplicated span in the JSX), not one: the second
+     starts at a negative delay, i.e. already half a lap into its own cycle
+     the instant hover fires. That does two things at once — there's visible
+     motion in-frame from t=0 (rather than everything starting from fully
+     off-screen and needing time to travel into view), and because the two
+     are perpetually a half-cycle apart, the next wave is always already
+     under way by the time the previous one exits — no gap between laps. */
+  &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen:nth-child(2),
+  &:active > .glow-ring-sheen-wrap > .glow-ring-sheen:nth-child(2) {
+    animation-delay: -1.3s;
+  }
+
   @media (prefers-color-scheme: dark) {
     &:hover,
     &:active {

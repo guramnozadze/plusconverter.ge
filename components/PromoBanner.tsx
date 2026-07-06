@@ -115,6 +115,7 @@ export function PromoBanner({
       >
         <span className="glow-ring-sheen-wrap" aria-hidden="true">
           <span className="glow-ring-sheen" />
+          <span className="glow-ring-sheen" />
         </span>
         <p className="flex flex-wrap items-baseline gap-y-0 font-extrabold tracking-tight text-orange-600 dark:text-orange-400">
           <span className="flex items-baseline tabular-nums font-[family-name:var(--font-baloo)]">
