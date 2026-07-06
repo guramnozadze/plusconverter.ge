@@ -86,19 +86,18 @@ body {
     pointer-events: none;
   }
 
-  /* Shimmer wave across the whole face — a snake-around-a-torus effect, not
-     a single band that travels fully off-screen and resets. `repeating-
-     linear-gradient` defines ONE period spanning the sheen's own width
-     (band colored for ~70% of it, transparent gap for the other ~30%), and
-     the pattern then repeats infinitely in both directions by definition —
-     independent of the element's actual box size. Sliding the whole element
-     via `transform: translateX(-100%)` (exactly one period) is then a
-     no-op visually: the content that scrolls into view on one side is, by
-     construction, identical to what scrolled out the other side. That's
-     what gives the "tail still entering on the right while the head is
-     already exiting on the left" wraparound look, and it's always visible
-     from the very first frame (no runway to travel before color appears),
-     since the band covers most of the period at any given offset. */
+  /* Shimmer wave across the whole face — dark-to-light orange, not a flat
+     single tint, so it reads as one continuous wave of light rather than a
+     color wash. Real child (`.glow-ring-sheen`, in a clipping
+     `.glow-ring-sheen-wrap`), not a `background-position` sweep: the sheen
+     div slides via `transform` from fully off its own left edge to fully
+     off its own right edge, so the loop reset is provably invisible — no
+     tiling/repeat math (bg-size vs. travel distance) that can be subtly off
+     by a few percent and show a seam every lap, which is what happened with
+     the background-position version this replaced. Widened past 100% of the
+     wrap so more of the gradient is on-screen at once (a longer-looking
+     wave) — `translateX` is relative to the element's own width, so this
+     doesn't change how far it needs to travel to fully clear. */
   & > .glow-ring-sheen-wrap {
     position: absolute;
     inset: 0;
@@ -111,17 +110,34 @@ body {
 
   & > .glow-ring-sheen-wrap > .glow-ring-sheen {
     position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 220%;
+    background: linear-gradient(
       100deg,
       transparent 0%,
-      transparent 15%,
       rgba(194, 65, 12, 0.4) 30%,
       rgba(253, 186, 116, 0.4) 50%,
       rgba(194, 65, 12, 0.4) 70%,
-      transparent 85%,
       transparent 100%
     );
+    /* Resting position matches the animation's own "to" keyframe (fully
+       off-screen right) — not the untransformed identity position, which
+       (given `left:-60%; width:220%`) sits mostly *inside* the visible
+       clipped area. Without this, ending hover cancels the animation
+       (removing `animation-name` snaps `transform` straight back to this
+       rule's value) mid-slide, and the sheen would jump from wherever it
+       was to that on-screen resting spot for a frame before the opacity
+       fade-out finished — reading as a flash of the wave "entering again". */
+    transform: translateX(100%);
+    /* No animation here at rest — it's only applied below, on :hover/:active.
+       Running it continuously in the background (with only opacity toggled
+       on hover) meant each hover caught the loop at whatever random phase it
+       happened to be in, so the wave appeared to "start" from a different
+       spot every time. Scoping the animation itself to :hover/:active means
+       every hover starts a fresh animation instance at 0% — always the
+       left edge. */
   }
 
   /* :hover for desktop pointers, :active too since mobile touch (this is a
@@ -136,10 +152,10 @@ body {
     opacity: 1;
   }
 
-  /* Appears instantly (no fade-in transition) so the wave is already moving
-     the moment hover fires, rather than the motion being masked by an
-     opacity ramp for its first fraction of a second. Still fades out over
-     0.3s on hover-end, via the base rule above. */
+  /* Appears instantly (no fade-in transition) so the sheen's first frame —
+     fully off-screen left — is visible the moment the animation starts,
+     rather than being masked by an opacity ramp while it's already moving.
+     Still fades out over 0.3s on hover-end, via the base rule above. */
   &:hover > .glow-ring-sheen-wrap,
   &:active > .glow-ring-sheen-wrap {
     opacity: 1;
@@ -147,14 +163,13 @@ body {
   }
 
   /* `linear`, not `ease-out`: ease-out decelerates hard through its last
-     stretch, so the sheen would crawl for a good chunk of the cycle before
-     the next lap started — that dead-slow tail is what read as a ~1s delay
-     between waves. Constant speed removes the tail entirely. Scoped to
-     :hover/:active (not running always-on in the background) so every
-     hover restarts the loop at the same deterministic phase. */
+     stretch, so the sheen would crawl (while still technically on its way
+     off-screen) for a good chunk of the cycle before the next lap started —
+     that dead-slow tail is what read as a ~1s delay between waves. Constant
+     speed removes the tail entirely. */
   &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
   &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
-    animation: glow-sheen-scroll 2.6s linear infinite;
+    animation: glow-sheen-slide 2.6s linear infinite;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -175,9 +190,12 @@ body {
   }
 }
 
-@keyframes glow-sheen-scroll {
-  to {
+@keyframes glow-sheen-slide {
+  from {
     transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
   }
 }
 
