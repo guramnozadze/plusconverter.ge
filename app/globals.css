@@ -167,7 +167,7 @@ body {
      constant mechanical scroll. */
   &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
   &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
-    animation: glow-sheen-slide 1.8s ease-out infinite;
+    animation: glow-sheen-slide 2.6s ease-out infinite;
   }
 
   @media (prefers-color-scheme: dark) {
