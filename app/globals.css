@@ -25,20 +25,25 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Sweeping highlight + soft glow for the 199 GEL quick-amount chip. Declared
-   via @utility (not a plain class) so Tailwind v4 actually generates the
-   class — a plain .animate-shimmer class defined outside @utility can still
-   be used directly, but @utility keeps it consistent with the rest of the
-   generated utilities and available to variants if we need them later.
-   The sweep runs at a constant `linear` pace (not ease-in-out) and keeps the
-   highlight fully off-screen at both loop endpoints, so the reset from 100%
-   back to 0% is invisible instead of reading as a stutter. */
+/* Sweeping highlight + soft glow for the 199 GEL quick-amount chip (and the
+   promo banner's price-chip wave, which shares this keyframe). Declared via
+   @utility (not a plain class) so Tailwind v4 actually generates the class —
+   a plain .animate-shimmer class defined outside @utility can still be used
+   directly, but @utility keeps it consistent with the rest of the generated
+   utilities and available to variants if we need them later.
+   The sweep runs at a constant `linear` pace (not ease-in-out). Both
+   consumers use `background-size: 250% 100%` (with the default tiling
+   `background-repeat`), so the 0%->100% travel here is exactly 250% — one
+   full tile width. That makes the loop point land on a matching phase of
+   the repeating pattern, so the reset is a perfect, invisible continuation
+   instead of a visible jump. (An earlier version traveled 260%, a non-
+   multiple of the 250% tile, which read as a cut/stutter every loop.) */
 @keyframes shimmer-sweep {
   0% {
-    background-position: 130% 0;
+    background-position: 125% 0;
   }
   100% {
-    background-position: -130% 0;
+    background-position: -125% 0;
   }
 }
 
@@ -62,6 +67,133 @@ body {
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+  }
+}
+
+@utility glow-ring {
+  position: relative;
+  transition: background-color 0.3s ease;
+
+  /* Soft static glow, no pulsing — just fades in on hover/active. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 16px 3px rgba(249, 115, 22, 0.4);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  /* Shimmer wave across the whole face — dark-to-light orange, not a flat
+     single tint, so it reads as one continuous wave of light rather than a
+     color wash. Real child (`.glow-ring-sheen`, in a clipping
+     `.glow-ring-sheen-wrap`), not a `background-position` sweep: the sheen
+     div slides via `transform` from fully off its own left edge to fully
+     off its own right edge, so the loop reset is provably invisible — no
+     tiling/repeat math (bg-size vs. travel distance) that can be subtly off
+     by a few percent and show a seam every lap, which is what happened with
+     the background-position version this replaced. Widened past 100% of the
+     wrap so more of the gradient is on-screen at once (a longer-looking
+     wave) — `translateX` is relative to the element's own width, so this
+     doesn't change how far it needs to travel to fully clear. */
+  & > .glow-ring-sheen-wrap {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  & > .glow-ring-sheen-wrap > .glow-ring-sheen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 220%;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(194, 65, 12, 0.4) 30%,
+      rgba(253, 186, 116, 0.4) 50%,
+      rgba(194, 65, 12, 0.4) 70%,
+      transparent 100%
+    );
+    /* Resting position matches the animation's own "to" keyframe (fully
+       off-screen right) — not the untransformed identity position, which
+       (given `left:-60%; width:220%`) sits mostly *inside* the visible
+       clipped area. Without this, ending hover cancels the animation
+       (removing `animation-name` snaps `transform` straight back to this
+       rule's value) mid-slide, and the sheen would jump from wherever it
+       was to that on-screen resting spot for a frame before the opacity
+       fade-out finished — reading as a flash of the wave "entering again". */
+    transform: translateX(100%);
+    /* No animation here at rest — it's only applied below, on :hover/:active.
+       Running it continuously in the background (with only opacity toggled
+       on hover) meant each hover caught the loop at whatever random phase it
+       happened to be in, so the wave appeared to "start" from a different
+       spot every time. Scoping the animation itself to :hover/:active means
+       every hover starts a fresh animation instance at 0% — always the
+       left edge. */
+  }
+
+  /* :hover for desktop pointers, :active too since mobile touch (this is a
+     mobile-first site) never sets :hover from a tap — only :active. */
+  &:hover,
+  &:active {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:hover::before,
+  &:active::before {
+    opacity: 1;
+  }
+
+  /* Appears instantly (no fade-in transition) so the sheen's first frame —
+     fully off-screen left — is visible the moment the animation starts,
+     rather than being masked by an opacity ramp while it's already moving.
+     Still fades out over 0.3s on hover-end, via the base rule above. */
+  &:hover > .glow-ring-sheen-wrap,
+  &:active > .glow-ring-sheen-wrap {
+    opacity: 1;
+    transition-duration: 0s;
+  }
+
+  /* `ease-out` (not `linear`) so it launches a touch quicker off the start
+     and eases through the rest — reads as one deliberate wave rather than a
+     constant mechanical scroll. */
+  &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
+  &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
+    animation: glow-sheen-slide 1.8s ease-out infinite;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:hover,
+    &:active {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      animation: none;
+    }
+
+    & .glow-ring-sheen {
+      animation: none;
+    }
+  }
+}
+
+@keyframes glow-sheen-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
   }
 }
 

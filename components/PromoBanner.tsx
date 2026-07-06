@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
 import { useConverterDirection } from "./ConverterDirection";
 import { gelFromPoints } from "@/lib/pricing";
 import type { Settings } from "@/lib/supabase/types";
@@ -22,25 +21,33 @@ export function PromoBanner({
 }) {
   const t = useTranslations("promoBanner");
   const locale = useLocale();
-  const [settings, setSettings] = useState(initialSettings);
+  // REMINDER: restore live pricing before 2027-07-01 (ahead of next year's
+  // flash-sale event). Traffic settled back to normal after the July 2026
+  // event ended, so the realtime settings subscription below is disabled —
+  // the rate now only updates on a full page reload. getSettings() is still
+  // fetched fresh server-side on every request either way (see lib/data.ts).
+  const [settings] = useState(initialSettings);
   const { focusDirection } = useConverterDirection();
 
-  // Live price: stay in sync if the owner adjusts the multiplier again,
-  // same realtime channel pattern as Converter.
-  useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase
-      .channel("settings-live-promo")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "settings" },
-        (payload) => setSettings(payload.new as Settings),
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  // Live price: stay in sync if the owner adjusts the multiplier again, same
+  // realtime channel pattern as Converter. Disabled 2026-07-06 — see the
+  // REMINDER above `settings`. To restore: bring back `setSettings` in the
+  // destructure above, re-add the `useEffect`/`createClient` imports, and
+  // uncomment this effect.
+  // useEffect(() => {
+  //   const supabase = createClient();
+  //   const channel = supabase
+  //     .channel("settings-live-promo")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "settings" },
+  //       (payload) => setSettings(payload.new as Settings),
+  //     )
+  //     .subscribe();
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, []);
 
   const pointsFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }),
@@ -73,9 +80,8 @@ export function PromoBanner({
     .join("");
 
   return (
-    <button
-      type="button"
-      onClick={() => focusDirection("sell", EXAMPLE_POINTS)}
+    <div
+      onClick={() => focusDirection("sell")}
       className="mb-4 block w-full text-left rounded-2xl border border-orange-200 dark:border-orange-500/30 bg-gradient-to-br from-orange-50 via-amber-50 to-white dark:from-orange-500/15 dark:via-amber-500/10 dark:to-transparent p-5 sm:p-6"
     >
       <div className="flex items-center justify-between gap-2">
@@ -96,8 +102,20 @@ export function PromoBanner({
         {t("exampleLabel", { points: pointsFmt.format(EXAMPLE_POINTS) })}
       </p>
       {/* The payout is the whole pitch, but as a quoted-price panel nested in
-          the banner rather than bare oversized text floating on it. */}
-      <div className="mt-2 flex cursor-pointer items-center justify-between gap-2 rounded-xl border border-orange-200/70 dark:border-orange-500/20 bg-white/60 dark:bg-black/20 px-4 py-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+          the banner rather than bare oversized text floating on it. Its own
+          button (stopping propagation) so only this click pre-fills the
+          example amount — a tap elsewhere on the banner just scrolls down. */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          focusDirection("sell", EXAMPLE_POINTS);
+        }}
+        className="glow-ring mt-2 flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-orange-200/70 dark:border-orange-500/20 bg-white/60 dark:bg-black/20 px-4 py-3 text-left shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] transition-transform duration-300 hover:scale-[1.01]"
+      >
+        <span className="glow-ring-sheen-wrap" aria-hidden="true">
+          <span className="glow-ring-sheen" />
+        </span>
         <p className="flex flex-wrap items-baseline gap-y-0 font-extrabold tracking-tight text-orange-600 dark:text-orange-400">
           <span className="flex items-baseline tabular-nums font-[family-name:var(--font-baloo)]">
             <span className="text-3xl sm:text-4xl">{payoutWhole}</span>
@@ -116,7 +134,7 @@ export function PromoBanner({
           </span>
           {t("live")}
         </span>
-      </div>
+      </button>
 
       <div className="mt-4 flex items-start gap-2 text-sm font-medium text-foreground/70">
         <span className="relative mt-1.5 flex h-2 w-2 shrink-0">
@@ -128,6 +146,6 @@ export function PromoBanner({
           <span>{t("activityPoints", { points: pointsFmt.format(stats.totalPoints) })}</span>
         </span>
       </div>
-    </button>
+    </div>
   );
 }
