@@ -26,17 +26,26 @@ export function OrdersPanel({ orders }: { orders: AdminOrder[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // Live: refetch when any order changes (new submission, status edit).
+  // Debounced because our own writes (act() below) already call router.refresh()
+  // directly - the Realtime echo of that same write would otherwise trigger a
+  // second, redundant full-table refetch moments later, and multiple admin tabs
+  // open at once would each pay that cost independently.
   useEffect(() => {
     const supabase = createClient();
+    let debounce: ReturnType<typeof setTimeout>;
     const channel = supabase
       .channel("admin-orders")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        () => router.refresh(),
+        () => {
+          clearTimeout(debounce);
+          debounce = setTimeout(() => router.refresh(), 1500);
+        },
       )
       .subscribe();
     return () => {
+      clearTimeout(debounce);
       supabase.removeChannel(channel);
     };
   }, [router]);

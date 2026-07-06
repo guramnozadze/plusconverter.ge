@@ -15,17 +15,26 @@ export function ReviewsPanel({ reviews }: { reviews: Review[] }) {
   const router = useRouter();
 
   // Live: refetch when any review changes (new completion, edit, hide).
+  // Debounced because our own writes (setReviewHidden) already call
+  // router.refresh() directly - the Realtime echo of that same write would
+  // otherwise trigger a second, redundant full-table refetch moments later,
+  // and multiple admin tabs open at once would each pay that cost independently.
   useEffect(() => {
     const supabase = createClient();
+    let debounce: ReturnType<typeof setTimeout>;
     const channel = supabase
       .channel("admin-reviews")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "reviews" },
-        () => router.refresh(),
+        () => {
+          clearTimeout(debounce);
+          debounce = setTimeout(() => router.refresh(), 1500);
+        },
       )
       .subscribe();
     return () => {
+      clearTimeout(debounce);
       supabase.removeChannel(channel);
     };
   }, [router]);
