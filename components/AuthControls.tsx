@@ -114,20 +114,20 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           <>
             <button
               type="button"
+              onClick={() => setShowEmailModal(true)}
+              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
+            >
+              <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
+              <span className="truncate">{t("signInWithCode")}</span>
+            </button>
+            <button
+              type="button"
               onClick={() => signIn("google")}
               disabled={busyProvider !== null}
               className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2 py-1.5 text-sm font-medium disabled:opacity-50"
             >
               {busyProvider === "google" ? <Spinner /> : <GoogleIcon className="h-4 w-4 shrink-0" />}
               <span className="hidden truncate sm:inline">{t("signInWithGoogle")}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowEmailModal(true)}
-              className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
-            >
-              <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
-              <span className="truncate">{t("signInWithCode")}</span>
             </button>
           </>
         )}

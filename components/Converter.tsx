@@ -302,11 +302,13 @@ export function Converter({
       setGive(String(focusAmount));
       setGet(fmtField(giveToGet(focusAmount)));
     }
-    // preventScroll: focusing an input natively auto-scrolls it into view,
-    // which raced our own scrollIntoView below (the native jump would land
-    // partway, then our smooth scroll fought it) — this leaves scrolling
-    // entirely to the explicit call after it.
-    giveInputRef.current?.focus({ preventScroll: true });
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    // Only focus on desktop — on mobile this pops the keyboard, which eats
+    // half the screen and fights the scroll below for no benefit (there's no
+    // physical keyboard to save the user a tap on).
+    if (!isMobile) {
+      giveInputRef.current?.focus({ preventScroll: true });
+    }
     // Scroll the section (not the input itself) into view — scrolling to
     // the input landed too far down, past the title. scroll-mt-4 on the
     // container gives it a little breathing room from the top edge.
@@ -314,32 +316,10 @@ export function Converter({
     // worth the jump); desktop only scrolls if the section is actually cut
     // off — if it's already fully in view, forcing a scroll would be
     // gratuitous motion for no reason.
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
     const rect = containerRef.current?.getBoundingClientRect();
     const cutOff = rect ? rect.top < 0 || rect.bottom > window.innerHeight : false;
     if (isMobile || cutOff) {
-      const scrollToSection = () =>
-        containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      // On mobile, the virtual keyboard opens after focus() above and
-      // shrinks the visual viewport, which re-scrolls the page on its own —
-      // running our scroll before that settles gets fought/undone, leaving
-      // the banner still on screen instead of scrolled past. Wait for the
-      // keyboard's resize (or a fallback timeout if it never fires, e.g. no
-      // keyboard at all) before scrolling for real.
-      if (isMobile && window.visualViewport) {
-        const vv = window.visualViewport;
-        let settled = false;
-        const settle = () => {
-          if (settled) return;
-          settled = true;
-          vv.removeEventListener("resize", settle);
-          scrollToSection();
-        };
-        vv.addEventListener("resize", settle);
-        setTimeout(settle, 400);
-      } else {
-        scrollToSection();
-      }
+      containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusToken]);
