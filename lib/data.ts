@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/server";
 import type { BankAccount, Database, Settings } from "@/lib/supabase/types";
 
 const DEFAULT_SETTINGS: Settings = {
@@ -18,25 +17,45 @@ const DEFAULT_SETTINGS: Settings = {
 };
 
 // Reads the singleton settings row. Falls back to defaults if it isn't seeded
-// yet so the converter still renders.
-export async function getSettings(): Promise<Settings> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("settings")
-    .select("*")
-    .eq("id", 1)
-    .single();
-  return data ?? DEFAULT_SETTINGS;
-}
+// yet so the converter still renders. Cached (world-readable, RLS "settings_select_all")
+// and tag-invalidated the instant an admin saves changes (lib/actions/admin.ts), so
+// caching here can't show a stale rate for longer than it takes the admin's own write
+// to complete. createOrder (lib/actions/orders.ts) re-reads this table directly and
+// never trusts this cached copy, so pricing correctness is unaffected either way.
+export const getSettings = unstable_cache(
+  async (): Promise<Settings> => {
+    const supabase = createSupabaseClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data } = await supabase
+      .from("settings")
+      .select("*")
+      .eq("id", 1)
+      .single();
+    return data ?? DEFAULT_SETTINGS;
+  },
+  ["settings"],
+  { revalidate: 3600, tags: ["settings"] },
+);
 
-export async function getBankAccounts(): Promise<BankAccount[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("bank_accounts")
-    .select("*")
-    .order("sort_order", { ascending: true });
-  return data ?? [];
-}
+// Same reasoning as getSettings above: world-readable (RLS "bank_accounts_select_all"),
+// tag-invalidated on any admin write (lib/actions/admin.ts).
+export const getBankAccounts = unstable_cache(
+  async (): Promise<BankAccount[]> => {
+    const supabase = createSupabaseClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data } = await supabase
+      .from("bank_accounts")
+      .select("*")
+      .order("sort_order", { ascending: true });
+    return data ?? [];
+  },
+  ["bank-accounts"],
+  { revalidate: 3600, tags: ["bank-accounts"] },
+);
 
 export type PlatformStats = { totalOrders: number; totalPoints: number; totalUsers: number };
 

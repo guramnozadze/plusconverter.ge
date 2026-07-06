@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { BankAccountStatus, OrderStatus } from "@/lib/supabase/types";
 
@@ -48,6 +48,9 @@ export async function updateSettings(input: {
 
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  // Homepage/converter reads settings through a cached getSettings (lib/data.ts) so
+  // it can't be reading a stale rate right after this save.
+  updateTag("settings");
   return { ok: true };
 }
 
@@ -66,6 +69,7 @@ export async function createBankAccount(input: {
   const { error } = await supabase.from("bank_accounts").insert(input);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  updateTag("bank-accounts");
   return { ok: true };
 }
 
@@ -80,6 +84,7 @@ export async function updateBankAccountStatus(
     .eq("id", id);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  updateTag("bank-accounts");
   return { ok: true };
 }
 
@@ -88,6 +93,7 @@ export async function deleteBankAccount(id: string): Promise<ActionResult> {
   const { error } = await supabase.from("bank_accounts").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  updateTag("bank-accounts");
   return { ok: true };
 }
 
