@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { getSettings, getPlatformStats } from "@/lib/data";
+import { getSettings, getPlatformStats, getReviewsFeed } from "@/lib/data";
 import { getUserProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Converter } from "@/components/Converter";
@@ -31,28 +31,23 @@ export default async function HomePage({
     { user, profile },
     { reviewsPage: reviewsPageRaw, reviewsSort: reviewsSortRaw },
     platformStats,
+    latestFeed,
   ] = await Promise.all([
     getSettings(),
     getUserProfile(),
     searchParams,
     getPlatformStats(),
+    getReviewsFeed(),
   ]);
 
   const reviewsPage = Math.max(1, Number(reviewsPageRaw) || 1);
   const reviewsSort = reviewsSortRaw === "best" ? "best" : "latest";
 
-  // Public community feed (RLS: non-hidden rows are world-readable).
-  // `latestFeed` is plain reverse-chronological, straight from the query.
+  // `latestFeed` (cached, see lib/data.ts) is plain reverse-chronological.
   // `bestSortedFeed` re-ranks so rows with a written comment come first, then
   // star-only ratings, then plain completed-transaction rows - newest first
   // within each tier. The toggle in ActivityTabs picks which one is shown;
   // the carousel always uses the "best" ranking regardless of that toggle.
-  const { data: feedData } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("hidden", false)
-    .order("created_at", { ascending: false });
-  const latestFeed = (feedData ?? []) as Review[];
   const feedTier = (r: Review) => (r.comment ? 0 : r.rating != null ? 1 : 2);
   const bestSortedFeed = [...latestFeed].sort(
     (a, b) => feedTier(a) - feedTier(b),

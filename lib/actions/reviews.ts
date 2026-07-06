@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 type ActionResult = { ok: boolean; error?: string };
@@ -46,5 +46,9 @@ export async function submitReview(input: {
   }
 
   revalidatePath("/", "layout");
+  // getReviewsFeed() (lib/data.ts) caches the homepage feed for 5 minutes —
+  // updateTag forces it fresh immediately (read-your-own-writes) instead of
+  // waiting out the cache window.
+  updateTag("reviews");
   return { ok: true };
 }

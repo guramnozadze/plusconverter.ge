@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import type { BankAccount, Database, Settings } from "@/lib/supabase/types";
+import type { BankAccount, Database, Review, Settings } from "@/lib/supabase/types";
 
 const DEFAULT_SETTINGS: Settings = {
   id: 1,
@@ -85,4 +85,26 @@ export const getPlatformStats = unstable_cache(
   },
   ["platform-stats"],
   { revalidate: 3600 },
+);
+
+// Cached across all requests for 5 minutes — the homepage community feed
+// doesn't need to be instant. Tagged "reviews" so submitting or
+// hiding/unhiding a review (lib/actions/reviews.ts, lib/actions/admin.ts)
+// can force it fresh immediately via revalidateTag instead of waiting out
+// the window. Public/non-hidden rows only, so the plain anon client is fine.
+export const getReviewsFeed = unstable_cache(
+  async (): Promise<Review[]> => {
+    const supabase = createSupabaseClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const { data } = await supabase
+      .from("reviews")
+      .select("*")
+      .eq("hidden", false)
+      .order("created_at", { ascending: false });
+    return (data ?? []) as Review[];
+  },
+  ["reviews-feed"],
+  { revalidate: 300, tags: ["reviews"] },
 );

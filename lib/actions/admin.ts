@@ -111,6 +111,10 @@ export async function setOrderStatus(
     .eq("id", orderId);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
+  // Completing an order auto-creates its review row (handle_order_completed
+  // trigger) — bust the cached homepage feed (lib/data.ts getReviewsFeed) so
+  // it shows up right away instead of waiting out the cache window.
+  if (status === "completed") updateTag("reviews");
   return { ok: true };
 }
 
@@ -127,5 +131,6 @@ export async function setReviewHidden(
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
   revalidatePath("/", "layout");
+  updateTag("reviews");
   return { ok: true };
 }
