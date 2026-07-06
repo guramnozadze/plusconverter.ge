@@ -140,42 +140,46 @@ body {
        left edge. */
   }
 
-  /* :hover for desktop pointers, :active too since mobile touch (this is a
-     mobile-first site) never sets :hover from a tap — only :active. */
-  &:hover,
-  &:active {
-    background-color: rgba(255, 255, 255, 0.5);
-  }
-
-  &:hover::before,
-  &:active::before {
-    opacity: 1;
-  }
-
-  /* Appears instantly (no fade-in transition) so the sheen's first frame —
-     fully off-screen left — is visible the moment the animation starts,
-     rather than being masked by an opacity ramp while it's already moving.
-     Still fades out over 0.3s on hover-end, via the base rule above. */
-  &:hover > .glow-ring-sheen-wrap,
-  &:active > .glow-ring-sheen-wrap {
-    opacity: 1;
-    transition-duration: 0s;
-  }
-
-  /* `linear`, not `ease-out`: ease-out decelerates hard through its last
-     stretch, so the sheen would crawl (while still technically on its way
-     off-screen) for a good chunk of the cycle before the next lap started —
-     that dead-slow tail is what read as a ~1s delay between waves. Constant
-     speed removes the tail entirely. */
-  &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
-  &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
-    animation: glow-sheen-slide 2.6s linear infinite;
-  }
-
-  @media (prefers-color-scheme: dark) {
+  /* Gated on real hover capability, not just :hover/:active — on touch
+     devices a tap sets :active too, and this effect (glow + sliding sheen)
+     reads as pointless motion right before the page scrolls away to the
+     converter. Hover-capable pointers (mouse/trackpad) still get it. */
+  @media (hover: hover) {
     &:hover,
     &:active {
-      background-color: rgba(0, 0, 0, 0.3);
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:hover::before,
+    &:active::before {
+      opacity: 1;
+    }
+
+    /* Appears instantly (no fade-in transition) so the sheen's first frame —
+       fully off-screen left — is visible the moment the animation starts,
+       rather than being masked by an opacity ramp while it's already moving.
+       Still fades out over 0.3s on hover-end, via the base rule above. */
+    &:hover > .glow-ring-sheen-wrap,
+    &:active > .glow-ring-sheen-wrap {
+      opacity: 1;
+      transition-duration: 0s;
+    }
+
+    /* `linear`, not `ease-out`: ease-out decelerates hard through its last
+       stretch, so the sheen would crawl (while still technically on its way
+       off-screen) for a good chunk of the cycle before the next lap started —
+       that dead-slow tail is what read as a ~1s delay between waves. Constant
+       speed removes the tail entirely. */
+    &:hover > .glow-ring-sheen-wrap > .glow-ring-sheen,
+    &:active > .glow-ring-sheen-wrap > .glow-ring-sheen {
+      animation: glow-sheen-slide 2.6s linear infinite;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      &:hover,
+      &:active {
+        background-color: rgba(0, 0, 0, 0.3);
+      }
     }
   }
 
