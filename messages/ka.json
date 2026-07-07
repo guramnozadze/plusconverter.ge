@@ -27,7 +27,7 @@
       "subtitle": "შექმენი შენი უნიკალური ანგარიში",
       "emailLabel": "მიუთითე ელფოსტა",
       "sendCode": "შესვლა",
-      "codeSentTitle": "დადასტურება",
+      "codeSentTitle": "ანგარიშის დადასტურება",
       "codeSentTo": "{email}",
       "codeLabel": "6-ნიშნა კოდი",
       "verify": "დადასტურება და შესვლა",
