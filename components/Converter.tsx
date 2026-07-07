@@ -129,7 +129,10 @@ export function Converter({
   // and restore it once on mount — covers whichever sign-in path the user
   // took, not just the button click that's easiest to hook.
   useEffect(() => {
-    if (isAuthenticated) return;
+    // No isAuthenticated guard here (unlike the save effect below): this
+    // must run on the mount right after sign-in, when isAuthenticated has
+    // already flipped to true, to actually restore what was saved while
+    // signed out.
     try {
       const raw = sessionStorage.getItem(DRAFT_KEY);
       if (!raw) return;

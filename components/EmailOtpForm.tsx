@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -71,18 +78,25 @@ function RefreshIcon({ className }: { className?: string }) {
 
 type Step = "email" | "code";
 
+// Exposes the code step's "back to email" action to EmailOtpModal, which
+// renders its own back button up in the header (alongside the close
+// button) rather than inline in the form - see the modal component below.
+export type EmailOtpFormHandle = {
+  back: () => void;
+};
+
 // Email OTP is the sign-in path that works inside embedded webviews
 // (Messenger, Facebook, Instagram) where Google refuses to complete OAuth:
 // the whole exchange happens on this page, with no redirect for the webview
 // to break. Requires custom SMTP on the Supabase project — the built-in
 // mailer is rate-limited to a couple of emails per hour.
-export function EmailOtpForm({
-  onSuccess,
-  onStepChange,
-}: {
-  onSuccess?: () => void;
-  onStepChange?: (step: Step, email: string) => void;
-}) {
+export const EmailOtpForm = forwardRef<
+  EmailOtpFormHandle,
+  {
+    onSuccess?: () => void;
+    onStepChange?: (step: Step, email: string) => void;
+  }
+>(function EmailOtpForm({ onSuccess, onStepChange }, ref) {
   const t = useTranslations("common.emailOtp");
   const router = useRouter();
 
@@ -123,10 +137,13 @@ export function EmailOtpForm({
   }
 
   function changeEmail() {
+    if (verifying) return;
     setError(null);
     setCode("");
     goToStep("email");
   }
+
+  useImperativeHandle(ref, () => ({ back: changeEmail }));
 
   async function sendCode() {
     const target = email.trim();
@@ -240,18 +257,7 @@ export function EmailOtpForm({
         </>
       ) : (
         <>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={changeEmail}
-              disabled={verifying}
-              aria-label={t("changeEmail")}
-              className="-m-1 shrink-0 rounded-md p-1 text-foreground/60 hover:text-foreground/80 disabled:opacity-50"
-            >
-              <BackIcon className="h-4 w-4" />
-            </button>
-            <p className="text-sm text-foreground/70">{t("linkFallbackHint")}</p>
-          </div>
+          <p className="text-sm text-foreground/70">{t("linkFallbackHint")}</p>
           <label className="block">
             <span className="mb-1 block text-xs text-foreground/60">
               {t("codeLabel")}
@@ -306,7 +312,7 @@ export function EmailOtpForm({
       )}
     </div>
   );
-}
+});
 
 // The OTP flow always runs in this modal — sign-in buttons stay compact and
 // the email/code exchange gets its own focused surface. Header copy tracks
@@ -316,6 +322,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
   const t = useTranslations("common");
   const [step, setStep] = useState<Step>("email");
   const [sentTo, setSentTo] = useState("");
+  const formRef = useRef<EmailOtpFormHandle>(null);
 
   return (
     <div
@@ -326,6 +333,28 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-7 pb-6 shadow-lg"
       >
+        {/* Back (code step only) and close share this top row so the close
+            button stays put whether or not the back button is showing. */}
+        <div className="mb-3 flex items-center">
+          {step === "code" && (
+            <button
+              type="button"
+              onClick={() => formRef.current?.back()}
+              aria-label={t("emailOtp.changeEmail")}
+              className="-ml-2 rounded-md p-2 text-foreground/60 hover:text-foreground/80"
+            >
+              <BackIcon className="h-6 w-6" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t("cancel")}
+            className="-m-1.5 ml-auto rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
+          >
+            <CloseIcon className="h-6 w-6" />
+          </button>
+        </div>
 
         <div className="mb-6 flex items-start gap-3.5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
@@ -343,16 +372,9 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
                 : t("emailOtp.subtitle")}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("cancel")}
-            className="-m-1.5 rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
-          >
-            <CloseIcon className="h-6 w-6" />
-          </button>
         </div>
         <EmailOtpForm
+          ref={formRef}
           onSuccess={onClose}
           onStepChange={(nextStep, email) => {
             setStep(nextStep);
