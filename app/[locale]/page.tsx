@@ -105,6 +105,7 @@ export default async function HomePage({
         <Converter
           initialSettings={settings}
           isAuthenticated={Boolean(user)}
+          userEmail={user?.email ?? null}
         />
       </ConverterDirectionProvider>
       <ActivityTabs
