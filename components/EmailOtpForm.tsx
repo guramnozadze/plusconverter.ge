@@ -308,7 +308,7 @@ export const EmailOtpForm = forwardRef<
         </>
       )}
       {error && (
-        <p className="text-sm text-red-600 dark:text-red-400">{t(error)}</p>
+        <p className="text-center text-sm text-red-600 dark:text-red-400">{t(error)}</p>
       )}
     </div>
   );
