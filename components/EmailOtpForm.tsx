@@ -21,11 +21,11 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
-function PencilIcon({ className }: { className?: string }) {
+function BackIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <path
-        d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"
+        d="M19 12H5M11 6l-6 6 6 6"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -240,7 +240,18 @@ export function EmailOtpForm({
         </>
       ) : (
         <>
-          <p className="text-sm text-foreground/70">{t("linkFallbackHint")}</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={changeEmail}
+              disabled={verifying}
+              aria-label={t("changeEmail")}
+              className="-m-1 shrink-0 rounded-md p-1 text-foreground/60 hover:text-foreground/80 disabled:opacity-50"
+            >
+              <BackIcon className="h-4 w-4" />
+            </button>
+            <p className="text-sm text-foreground/70">{t("linkFallbackHint")}</p>
+          </div>
           <label className="block">
             <span className="mb-1 block text-xs text-foreground/60">
               {t("codeLabel")}
@@ -277,7 +288,7 @@ export function EmailOtpForm({
             {verifying ? <Spinner /> : <ArrowRightIcon className="h-4 w-4 shrink-0" />}
             {t("verify")}
           </button>
-          <div className="flex items-center justify-center gap-4 pt-1 text-sm">
+          <div className="flex items-center justify-center pt-1 text-sm">
             <button
               type="button"
               onClick={sendCode}
@@ -286,16 +297,6 @@ export function EmailOtpForm({
             >
               <RefreshIcon className="h-3.5 w-3.5 shrink-0" />
               {t("resend")}
-            </button>
-            <span className="text-foreground/20">•</span>
-            <button
-              type="button"
-              onClick={changeEmail}
-              disabled={verifying}
-              className="inline-flex items-center gap-1 font-medium text-foreground/60 hover:text-foreground/80 disabled:opacity-50"
-            >
-              <PencilIcon className="h-3.5 w-3.5 shrink-0" />
-              {t("changeEmail")}
             </button>
           </div>
         </>
