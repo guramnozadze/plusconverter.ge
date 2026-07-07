@@ -33,7 +33,7 @@
       "verify": "Verify & sign in",
       "resend": "Resend code",
       "linkFallbackHint": "Enter the code or open the link you received by email.",
-      "changeEmail": "Use a different email",
+      "changeEmail": "Change email",
       "invalidEmail": "Enter a valid email address.",
       "invalidCode": "Wrong or expired code. Try again.",
       "sendError": "Couldn't send the code. Please try again."

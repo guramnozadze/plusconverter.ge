@@ -344,10 +344,10 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={() => formRef.current?.back()}
-              aria-label={t("emailOtp.changeEmail")}
-              className="-ml-2 rounded-md p-2 text-foreground/60 hover:text-foreground/80"
+              className="-ml-2 flex items-center gap-1 rounded-md p-2 text-foreground/60 hover:text-foreground/80"
             >
               <BackIcon className="h-6 w-6" />
+              <span className="text-sm font-medium">{t("emailOtp.changeEmail")}</span>
             </button>
             <button
               type="button"
