@@ -34,6 +34,14 @@ export function track(event: string, params?: Record<string, unknown>) {
   withFbq((fbq) => fbq("track", event, ...(params ? [params] : [])));
 }
 
+// Advanced Matching: re-init with the user's plain-text email so Meta can
+// hash and match it client-side. Call right before a track/trackOnce once the
+// email is known — fbq('init', ...) is cheap to repeat and doesn't reset
+// event history, but the match data doesn't persist across a fresh page load.
+export function setAdvancedMatching(userData: { em?: string }) {
+  withFbq((fbq) => fbq("init", META_PIXEL_ID, userData));
+}
+
 // One-time conversions (Lead, Purchase): a localStorage guard keeps repeat
 // visits and re-renders from refiring. Fires anyway if storage is unavailable
 // (private mode) — a duplicate beats a lost conversion.

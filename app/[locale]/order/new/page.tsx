@@ -65,6 +65,7 @@ export default async function NewOrderPage({
         accounts={accounts}
         defaultFullName={profile?.full_name ?? ""}
         defaultAccountNumber={profile?.account_number ?? ""}
+        userEmail={user!.email ?? null}
       />
     </div>
   );

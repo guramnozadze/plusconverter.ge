@@ -11,7 +11,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { trackOnce } from "@/lib/meta-pixel";
+import { setAdvancedMatching, trackOnce } from "@/lib/meta-pixel";
 import { Spinner } from "./Spinner";
 import { MailIcon } from "./icons/ProviderIcons";
 
@@ -204,9 +204,11 @@ export const EmailOtpForm = forwardRef<
       setError("invalidCode");
       return;
     }
-    // Same one-shot Lead as the OAuth ?signed_in=1 path — shared localStorage
-    // key, so whichever method completes first wins and the other no-ops.
-    trackOnce("lead", "Lead");
+    // Same one-shot CompleteRegistration as the OAuth ?signed_in=1 path —
+    // shared localStorage key, so whichever method completes first wins and
+    // the other no-ops.
+    setAdvancedMatching({ em: email.trim().toLowerCase() });
+    trackOnce("lead", "CompleteRegistration");
     // The user may have scrolled deep into the converter while signing in —
     // bring them back to the top so the now-signed-in header/CTA is visible.
     window.scrollTo({ top: 0, behavior: "smooth" });

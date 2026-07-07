@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { markOrderPaid } from "@/lib/actions/orders";
-import { trackOnce } from "@/lib/meta-pixel";
+import { setAdvancedMatching, trackOnce } from "@/lib/meta-pixel";
 import { saveProfile } from "@/lib/actions/profile";
 import { PlusBadge } from "./PlusBadge";
 import { ReviewForm } from "./ReviewForm";
@@ -18,6 +18,7 @@ type Props = {
   expiresAt: string;
   alreadyReviewed: boolean;
   hasUsername: boolean;
+  userEmail: string | null;
 };
 
 function useCountdown(expiresAt: string, paused: boolean) {
@@ -41,6 +42,7 @@ export function OrderView({
   expiresAt,
   alreadyReviewed,
   hasUsername,
+  userEmail,
 }: Props) {
   const t = useTranslations("order");
   const tc = useTranslations("converter");
@@ -82,12 +84,13 @@ export function OrderView({
   // so this catches admin completion live; the once-guard covers revisits.
   useEffect(() => {
     if (order.status !== "completed") return;
+    if (userEmail) setAdvancedMatching({ em: userEmail.trim().toLowerCase() });
     trackOnce(`purchase_${order.id}`, "Purchase", {
       value: order.gel_amount,
       currency: "GEL",
       content_category: order.direction,
     });
-  }, [order.status, order.id, order.gel_amount, order.direction]);
+  }, [order.status, order.id, order.gel_amount, order.direction, userEmail]);
 
   const gelFmt = useMemo(
     () => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }),
@@ -125,6 +128,13 @@ export function OrderView({
     setBusy(true);
     const res = await markOrderPaid(order.id);
     if (res.ok) {
+      // Self-reported, not admin-confirmed — kept out of `value`/`currency`
+      // so it can't be mistaken for the real Purchase revenue signal.
+      if (userEmail) setAdvancedMatching({ em: userEmail.trim().toLowerCase() });
+      trackOnce(`payment_reported_${order.id}`, "payment_reported", {
+        content_category: order.direction,
+        reported_value: order.gel_amount,
+      });
       setConfirmed(true);
       router.refresh();
     }

@@ -2,17 +2,28 @@
 
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { META_PIXEL_ID, trackOnce } from "@/lib/meta-pixel";
+import { createClient } from "@/lib/supabase/client";
+import { META_PIXEL_ID, setAdvancedMatching, trackOnce } from "@/lib/meta-pixel";
 
 // The OAuth callback route appends ?signed_in=1 to its redirect so the app
-// can tell a *completed* sign-in from a mere button click. Fire `Lead` once
-// per browser, then strip the marker so refreshes and copied links are clean.
+// can tell a *completed* sign-in from a mere button click. Fire
+// `CompleteRegistration` once per browser, then strip the marker so refreshes
+// and copied links are clean.
 function SignInLead() {
   const signedIn = useSearchParams().get("signed_in") === "1";
 
   useEffect(() => {
     if (!signedIn) return;
-    trackOnce("lead", "Lead");
+    // The redirect only tells us *that* sign-in completed, not who — fetch
+    // the email it just established so this event gets the same Advanced
+    // Matching as the OTP path.
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => {
+        const email = data.user?.email;
+        if (email) setAdvancedMatching({ em: email.trim().toLowerCase() });
+        trackOnce("lead", "CompleteRegistration");
+      });
     const url = new URL(window.location.href);
     url.searchParams.delete("signed_in");
     window.history.replaceState(null, "", url);

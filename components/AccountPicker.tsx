@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createOrder } from "@/lib/actions/orders";
+import { setAdvancedMatching, track } from "@/lib/meta-pixel";
 import type { BankAccount, OrderDirection } from "@/lib/supabase/types";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   accounts: BankAccount[];
   defaultFullName: string;
   defaultAccountNumber: string;
+  userEmail: string | null;
 };
 
 // createOrder error codes that have their own user-facing message; anything
@@ -30,6 +32,7 @@ export function AccountPicker({
   accounts,
   defaultFullName,
   defaultAccountNumber,
+  userEmail,
 }: Props) {
   const t = useTranslations("selectAccount");
   const router = useRouter();
@@ -61,6 +64,10 @@ export function AccountPicker({
       comment,
     });
     if (result.ok) {
+      // Funnel signal between InitiateCheckout and Purchase: the user has
+      // committed to a specific order, not just picked an amount.
+      if (userEmail) setAdvancedMatching({ em: userEmail.trim().toLowerCase() });
+      track("order_created", { content_category: direction, points_amount: points });
       router.push(`/order/${result.orderId}`);
     } else {
       setError(result.error);
