@@ -353,7 +353,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={onClose}
               aria-label={t("cancel")}
-              className="-m-1.5 ml-auto rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
+              className="-m-1.5 ml-auto rounded-md p-1.5 text-foreground/60 hover:text-foreground/80"
             >
               <CloseIcon className="h-6 w-6" />
             </button>
@@ -381,7 +381,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={onClose}
               aria-label={t("cancel")}
-              className="-m-1.5 rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
+              className="-m-1.5 rounded-md p-1.5 text-foreground/60 hover:text-foreground/80"
             >
               <CloseIcon className="h-6 w-6" />
             </button>
