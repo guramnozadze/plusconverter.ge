@@ -71,7 +71,7 @@
     "buyDisabled": "ყიდვა დროებით შეუძლებელია",
     "sellDisabled": "გაყიდვა დროებით შეუძლებელია",
     "continue": "გაგრძელება",
-    "loginToContinue": "გასაგრძელებლად შედით სისტემაში",
+    "loginToContinue": "სისტემაში შესვლა",
     "continueWithGoogle": "გაგრძელება Google-ით",
     "enterAmount": "შეიყვანეთ თანხა",
     "available": "დარჩა {amount} {unit}",
