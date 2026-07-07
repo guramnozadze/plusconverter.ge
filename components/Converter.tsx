@@ -652,16 +652,8 @@ export function Converter({
             {t("loginToContinue")}
           </p>
           {/* Inside Meta's in-app browser Google OAuth is a dead end, so the
-              email code is the only option there; in a normal browser email
-              leads as the primary path with Google as the alternative. */}
-          <button
-            type="button"
-            onClick={() => setShowEmailModal(true)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium"
-          >
-            <MailIcon className="h-5 w-5 shrink-0" />
-            {tCommon("emailOtp.continueWithEmail")}
-          </button>
+              email code is the only option there; in a normal browser Google
+              leads with email as the alternative. */}
           {!inApp && (
             <button
               type="button"
@@ -673,6 +665,14 @@ export function Converter({
               {t("continueWithGoogle")}
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setShowEmailModal(true)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium"
+          >
+            <MailIcon className="h-5 w-5 shrink-0" />
+            {tCommon("emailOtp.continueWithEmail")}
+          </button>
         </div>
       )}
 
