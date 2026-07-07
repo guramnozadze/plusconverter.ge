@@ -331,12 +331,14 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-7 pb-6 shadow-lg"
+        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-6 pb-6 shadow-lg"
       >
-        {/* Back (code step only) and close share this top row so the close
-            button stays put whether or not the back button is showing. */}
-        <div className="mb-3 flex items-center">
-          {step === "code" && (
+        {step === "code" && (
+          // Back shares this row with close so close stays put regardless
+          // of step; on the email step there's no back button, so close
+          // just joins the mail-icon row below instead of sitting alone up
+          // here (which used to add a whole empty row of top padding).
+          <div className="mb-3 flex items-center">
             <button
               type="button"
               onClick={() => formRef.current?.back()}
@@ -345,16 +347,16 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
             >
               <BackIcon className="h-6 w-6" />
             </button>
-          )}
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t("cancel")}
-            className="-m-1.5 ml-auto rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
-          >
-            <CloseIcon className="h-6 w-6" />
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t("cancel")}
+              className="-m-1.5 ml-auto rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
+            >
+              <CloseIcon className="h-6 w-6" />
+            </button>
+          </div>
+        )}
 
         <div className="mb-6 flex items-start gap-3.5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
@@ -372,6 +374,16 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
                 : t("emailOtp.subtitle")}
             </p>
           </div>
+          {step === "email" && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t("cancel")}
+              className="-m-1.5 rounded-md p-1.5 text-foreground/40 hover:text-foreground/70"
+            >
+              <CloseIcon className="h-6 w-6" />
+            </button>
+          )}
         </div>
         <EmailOtpForm
           ref={formRef}
