@@ -37,6 +37,10 @@ type Props = {
   isAuthenticated: boolean;
 };
 
+// sessionStorage key for the pre-sign-in draft (direction/give/get) - see
+// the restore/save effects in the component below.
+const DRAFT_KEY = "converter:draft";
+
 type FlashDir = "up" | "down" | null;
 // Only used by the disabled realtime-flash feature below — see REMINDER.
 // type FlashField = "give" | "get" | "max";
@@ -80,6 +84,12 @@ const QUICK_BUY_AMOUNTS = [
   },
 ] as const;
 
+// Quick-fill shortcuts for the sell "you get" field — lets the user pick the
+// GEL amount they want to receive rather than the points amount they're
+// sending. Same chip styling/tiers as the buy shortcuts, for visual
+// consistency, but wired to the reverse-priced `get` leg via onGetChange.
+const QUICK_SELL_GEL_AMOUNTS = QUICK_BUY_AMOUNTS;
+
 // Keep only digits and a single decimal point — no commas, signs, or letters.
 function sanitizeNumeric(raw: string): string {
   const cleaned = raw.replace(/[^0-9.]/g, "");
@@ -111,6 +121,53 @@ export function Converter({
   const [give, setGive] = useState("");
   const [get, setGet] = useState("");
   const anchor = useRef<"give" | "get">("give");
+
+  // Guests who fill in an amount (e.g. from the promo banner) and then sign
+  // in lose all React state: Google OAuth is a full-page redirect away and
+  // back, and a tapped magic-link email is the same. Mirror the in-progress
+  // draft to sessionStorage while signed out so it survives that round trip,
+  // and restore it once on mount — covers whichever sign-in path the user
+  // took, not just the button click that's easiest to hook.
+  useEffect(() => {
+    if (isAuthenticated) return;
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as {
+        direction?: "buy" | "sell";
+        give?: string;
+        get?: string;
+        anchor?: "give" | "get";
+      };
+      if (draft.direction) setDirection(draft.direction);
+      setGive(draft.give ?? "");
+      setGet(draft.get ?? "");
+      anchor.current = draft.anchor ?? "give";
+    } catch {
+      // Storage inaccessible (e.g. private mode) - just skip the restore.
+    } finally {
+      sessionStorage.removeItem(DRAFT_KEY);
+    }
+    // Restore once on mount only - the save effect below takes over after.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) return;
+    try {
+      if (give || get) {
+        sessionStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ direction, give, get, anchor: anchor.current }),
+        );
+      } else {
+        sessionStorage.removeItem(DRAFT_KEY);
+      }
+    } catch {
+      // Storage inaccessible - the draft just won't survive a reload.
+    }
+  }, [isAuthenticated, direction, give, get]);
+
   const [busyProvider, setBusyProvider] = useState<Provider | null>(null);
   const [navigating, setNavigating] = useState(false);
   const [showMinPopup, setShowMinPopup] = useState(false);
@@ -527,6 +584,29 @@ export function Converter({
         {t("youGet")}
       </label>
       {numField(get, onGetChange, getCurrency, flashGet)}
+
+      {/* Quick-fill shortcuts — sell only, picks the GEL amount received */}
+      {direction === "sell" && (
+        <div className="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
+          {QUICK_SELL_GEL_AMOUNTS.map(({ value, selectedClassName }) => {
+            const selected = getNum === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => onGetChange(String(value))}
+                className={`whitespace-nowrap rounded-full border bg-clip-padding px-[11px] py-[3px] text-[11px] font-medium transition-all sm:px-3.5 sm:py-1 sm:text-xs ${
+                  selected
+                    ? selectedClassName
+                    : "border-black/15 dark:border-white/20 text-foreground/60 hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
+                }`}
+              >
+                {value} {t("gel")}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Buy: July 5th spend-power pitch (2× value at the bank) */}
       {direction === "buy" && getNum > 0 && (

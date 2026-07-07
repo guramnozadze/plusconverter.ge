@@ -25,6 +25,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Chrome/Safari paint autofilled inputs with their own opaque background
+   (yellow in light mode, gray in dark) that ignores our transparent/theme
+   styles - and Chrome applies it liberally, including to nearby inputs it
+   merely *offered* to autofill (e.g. the converter's amount fields, right
+   after the email OTP field above them gets autofilled). The only reliable
+   override is this inset box-shadow trick: painting a huge inset shadow in
+   our own background color fully covers the browser's fill color, and the
+   absurdly long transition delay stops it from flashing before settling. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--background) inset;
+  box-shadow: 0 0 0 1000px var(--background) inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* Sweeping highlight + soft glow for the 199 GEL quick-amount chip (and the
    promo banner's price-chip wave, which shares this keyframe). Declared via
    @utility (not a plain class) so Tailwind v4 actually generates the class —
