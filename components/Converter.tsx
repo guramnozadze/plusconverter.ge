@@ -142,10 +142,42 @@ export function Converter({
         get?: string;
         anchor?: "give" | "get";
       };
+      const restoredDirection = draft.direction ?? direction;
+      const restoredAnchor = draft.anchor ?? "give";
       if (draft.direction) setDirection(draft.direction);
-      setGive(draft.give ?? "");
-      setGet(draft.get ?? "");
-      anchor.current = draft.anchor ?? "give";
+      anchor.current = restoredAnchor;
+
+      // Recompute the non-anchor leg fresh from settings instead of trusting
+      // the saved pair verbatim - the "re-anchor and recompute" effect below
+      // also runs on this same mount, but reads give/get from its stale
+      // pre-restore closure (still ""), so its own setGive/setGet would
+      // otherwise clobber whichever leg it computes with "". Doing the full
+      // give+get pair here, and skipping that effect's first run (see its
+      // mountedRef below), keeps the two fields from ever landing out of
+      // sync - one populated, the other blank - after a restore.
+      const m = multiplierFor(restoredDirection, settings);
+      if (restoredAnchor === "give") {
+        const g = Number(draft.give ?? "");
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setGive(draft.give ?? "");
+        setGet(
+          g > 0
+            ? fmtField(
+                restoredDirection === "buy" ? pointsFromGel(g, m) : gelFromPoints(g, m),
+              )
+            : "",
+        );
+      } else {
+        const x = Number(draft.get ?? "");
+        setGet(draft.get ?? "");
+        setGive(
+          x > 0
+            ? fmtField(
+                restoredDirection === "buy" ? gelFromPoints(x, m) : pointsFromGel(x, m),
+              )
+            : "",
+        );
+      }
     } catch {
       // Storage inaccessible (e.g. private mode) - just skip the restore.
     } finally {
@@ -311,7 +343,17 @@ export function Converter({
   );
 
   // Re-anchor and recompute when the multiplier (live) or direction changes.
+  // Skips its first (mount) run: the draft-restore effect above already
+  // produces a consistent give/get pair on mount (using a freshly computed
+  // multiplier), and this effect's first invocation would otherwise read
+  // give/get from a stale pre-restore closure and clobber whichever leg it
+  // computes with "".
+  const skippedMountRecompute = useRef(false);
   useEffect(() => {
+    if (!skippedMountRecompute.current) {
+      skippedMountRecompute.current = true;
+      return;
+    }
     if (anchor.current === "give") {
       const g = Number(give);
       setGet(g > 0 ? fmtField(giveToGet(g)) : "");
