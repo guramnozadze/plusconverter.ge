@@ -19,7 +19,7 @@ type Ctx = {
 const ConverterDirectionContext = createContext<Ctx | null>(null);
 
 export function ConverterDirectionProvider({ children }: { children: ReactNode }) {
-  const [direction, setDirection] = useState<OrderDirection>("buy");
+  const [direction, setDirection] = useState<OrderDirection>("sell");
   const [focusToken, setFocusToken] = useState(0);
   const [focusAmount, setFocusAmount] = useState<number | null>(null);
 
