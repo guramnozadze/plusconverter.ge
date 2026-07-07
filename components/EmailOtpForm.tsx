@@ -331,14 +331,14 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-6 pb-6 shadow-lg"
+        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background px-6 pt-4 pb-6 shadow-lg"
       >
         {step === "code" && (
           // Back shares this row with close so close stays put regardless
           // of step; on the email step there's no back button, so close
           // just joins the mail-icon row below instead of sitting alone up
           // here (which used to add a whole empty row of top padding).
-          <div className="mb-3 flex items-center">
+          <div className="mb-2 flex items-center">
             <button
               type="button"
               onClick={() => formRef.current?.back()}
@@ -358,7 +358,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        <div className="mb-6 flex items-start gap-3.5">
+        <div className="mb-4 flex items-start gap-3.5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/20">
             <MailIcon className="h-5 w-5 text-orange-600 dark:text-orange-400" />
           </span>
