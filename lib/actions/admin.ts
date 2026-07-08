@@ -4,6 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { sendPointsSentEmail } from "@/lib/notifications";
+import { sendPurchaseCapiEvent } from "@/lib/meta-capi";
 import type { BankAccountStatus, OrderStatus } from "@/lib/supabase/types";
 
 type ActionResult = { ok: boolean; error?: string };
@@ -111,7 +112,7 @@ export async function setOrderStatus(
       completed_at: status === "completed" ? new Date().toISOString() : null,
     })
     .eq("id", orderId)
-    .select("user_id, direction, points_amount")
+    .select("user_id, direction, points_amount, gel_amount")
     .single();
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
@@ -120,16 +121,29 @@ export async function setOrderStatus(
   // it shows up right away instead of waiting out the cache window.
   if (status === "completed") updateTag("reviews");
 
-  // Buy orders: we send the customer PLUS points directly via BOG, whose own
-  // SMS confirmation to them is unreliable overnight — email them a receipt
-  // in that window as a fallback (sendPointsSentEmail checks the time itself).
-  if (status === "completed" && order.direction === "buy") {
+  if (status === "completed") {
     const { data: profile } = await supabase
       .from("profiles")
       .select("email")
       .eq("id", order.user_id)
       .single();
-    if (profile?.email) {
+
+    // Server-side Purchase mirror: fires here regardless of whether the
+    // buyer's browser is anywhere near the order page (see lib/meta-capi.ts).
+    after(() =>
+      sendPurchaseCapiEvent({
+        orderId,
+        userId: order.user_id,
+        userEmail: profile?.email ?? null,
+        gelAmount: order.gel_amount,
+        direction: order.direction,
+      }),
+    );
+
+    // Buy orders: we send the customer PLUS points directly via BOG, whose own
+    // SMS confirmation to them is unreliable overnight — email them a receipt
+    // in that window as a fallback (sendPointsSentEmail checks the time itself).
+    if (order.direction === "buy" && profile?.email) {
       after(() =>
         sendPointsSentEmail({
           orderId,
