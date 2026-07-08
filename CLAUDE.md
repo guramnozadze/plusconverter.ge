@@ -17,9 +17,10 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
 - `messages/{ka,en,ru}.json` — all UI strings (ICU). English is source of truth.
 - `lib/supabase/` — `client.ts` (browser), `server.ts` (RSC/actions), `middleware.ts`
   (`updateSession`), `types.ts` (hand-maintained DB types).
-- `lib/actions/` — server actions (`orders.ts`, `admin.ts`). `lib/data.ts`, `lib/auth.ts`,
-  `lib/pricing.ts` (canonical conversion math).
+- `lib/actions/` — server actions (`orders.ts`, `admin.ts`, `auth.ts`). `lib/data.ts`,
+  `lib/auth.ts`, `lib/pricing.ts` (canonical conversion math).
 - `supabase/migrations/` — schema, RLS, triggers, RPCs, Realtime, seed.
+- `lib/meta-pixel.ts` (browser) + `lib/meta-capi.ts` (server) — Meta ad tracking, see below.
 
 ## Rules / gotchas (these bit us — keep them true)
 
@@ -46,6 +47,40 @@ Next.js 16 (App Router) + Supabase (Postgres/Auth/Realtime/RLS) + next-intl. See
   readonly side; the multiplier/rate is never rendered (only used to derive `points`).
 - User-side order mutations go through SECURITY DEFINER RPCs (e.g. `mark_order_paid`), not
   broad UPDATE policies, so users can't self-complete orders.
+
+## Auth flow
+
+- **OAuth** (Google, and any future provider): `Converter.tsx` calls
+  `signInWithOAuth` → `app/auth/callback/route.ts` exchanges the code server-side,
+  appends `?signed_in=1` to mark a *completed* sign-in (vs. just clicking the
+  button), then redirects. This route is provider-agnostic — it never branches
+  on which provider was used.
+- **Email OTP**: `EmailOtpForm.tsx` calls `supabase.auth.verifyOtp()` directly
+  from the browser — there's no server route in the middle for this path.
+- Both paths converge on the same post-sign-in behavior (draft restore, Meta
+  tracking) — see below.
+
+## Meta Pixel / Conversions API
+
+- Dual-fired for `CompleteRegistration` and `Purchase`: a browser pixel event
+  (`lib/meta-pixel.ts`, fired from components) **and** a server-side Conversions
+  API event (`lib/meta-capi.ts`, fired from the server action/route that
+  actually owns that moment — `app/auth/callback/route.ts` + `lib/actions/auth.ts`
+  for sign-in, `lib/actions/admin.ts`'s `setOrderStatus` for order completion).
+  The server-side twin exists because the browser event depends on the user's
+  tab/script surviving to that moment, which isn't reliable (e.g. admin
+  completing an order is async and manual — the buyer may be long gone).
+- **`trackOnce(key, event, params)`'s `key` doubles as Meta's `eventID`** — pass
+  the *same* key server-side (`lib/meta-capi.ts`'s `eventId`) so Meta dedupes
+  the browser/server pair instead of double-counting. Keys are per-entity, not
+  per-browser (e.g. `registration_${userId}`, `purchase_${orderId}`) — a
+  hardcoded key would make Meta dedupe unrelated users/orders against each other.
+- `sendCompleteRegistrationCapiEvent` is guarded by `isFirstSignIn` (compares
+  `created_at` vs `last_sign_in_at`) so a returning user re-authenticating
+  weeks later — past Meta's ~48h dedup window — doesn't get recounted as a
+  fresh registration.
+- Both no-op silently when unset: `NEXT_PUBLIC_META_PIXEL_ID` (browser + server)
+  and `META_CAPI_ACCESS_TOKEN` (server only, never `NEXT_PUBLIC_`).
 
 ## i18n conventions
 

@@ -42,9 +42,13 @@ export function setAdvancedMatching(userData: { em?: string }) {
   withFbq((fbq) => fbq("init", META_PIXEL_ID, userData));
 }
 
-// One-time conversions (Lead, Purchase): a localStorage guard keeps repeat
-// visits and re-renders from refiring. Fires anyway if storage is unavailable
-// (private mode) — a duplicate beats a lost conversion.
+// One-time conversions (CompleteRegistration, Purchase): a localStorage guard
+// keeps repeat visits and re-renders from refiring. Fires anyway if storage
+// is unavailable (private mode) — a duplicate beats a lost conversion.
+//
+// `key` doubles as Meta's eventID: when a server-side Conversions API twin
+// exists for this event (lib/meta-capi.ts), passing the same key there makes
+// Meta dedupe the two instead of double-counting.
 export function trackOnce(
   key: string,
   event: string,
@@ -58,6 +62,6 @@ export function trackOnce(
     try {
       localStorage.setItem(storageKey, "1");
     } catch {}
-    fbq("track", event, ...(params ? [params] : []));
+    fbq("track", event, params ?? {}, { eventID: key });
   });
 }

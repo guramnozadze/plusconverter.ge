@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isFirstSignIn, sendCompleteRegistrationCapiEvent } from "@/lib/meta-capi";
 
 // OAuth callback (non-localized). Supabase redirects here with a `code` that we
 // exchange for a session; cookies are written via the server client.
@@ -12,10 +13,22 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // This route doesn't branch on which OAuth provider was used, so this
+      // covers Google today and any future provider Supabase adds, with no
+      // extra per-provider code.
+      const { user } = data;
+      if (user && isFirstSignIn(user)) {
+        after(() =>
+          sendCompleteRegistrationCapiEvent({
+            userId: user.id,
+            userEmail: user.email ?? null,
+          }),
+        );
+      }
       // Marks the redirect as a *completed* sign-in so the client can fire
-      // the Meta Pixel `Lead` event (see components/MetaPixel.tsx).
+      // the Meta Pixel `CompleteRegistration` event (see components/MetaPixel.tsx).
       const url = new URL(redirectTo);
       url.searchParams.set("signed_in", "1");
       return NextResponse.redirect(url);

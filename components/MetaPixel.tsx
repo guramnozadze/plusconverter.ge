@@ -6,23 +6,24 @@ import { createClient } from "@/lib/supabase/client";
 import { META_PIXEL_ID, setAdvancedMatching, trackOnce } from "@/lib/meta-pixel";
 
 // The OAuth callback route appends ?signed_in=1 to its redirect so the app
-// can tell a *completed* sign-in from a mere button click. Fire
-// `CompleteRegistration` once per browser, then strip the marker so refreshes
-// and copied links are clean.
+// can tell a *completed* sign-in from a mere button click. Fires the browser
+// `CompleteRegistration` twin here; the server-side event for this path
+// already fired from app/auth/callback/route.ts.
 function SignInLead() {
   const signedIn = useSearchParams().get("signed_in") === "1";
 
   useEffect(() => {
     if (!signedIn) return;
     // The redirect only tells us *that* sign-in completed, not who — fetch
-    // the email it just established so this event gets the same Advanced
-    // Matching as the OTP path.
+    // the user it just established so this event gets the same Advanced
+    // Matching and dedup key as the OTP path.
     createClient()
       .auth.getUser()
       .then(({ data }) => {
-        const email = data.user?.email;
+        if (!data.user) return;
+        const email = data.user.email;
         if (email) setAdvancedMatching({ em: email.trim().toLowerCase() });
-        trackOnce("lead", "CompleteRegistration");
+        trackOnce(`registration_${data.user.id}`, "CompleteRegistration");
       });
     const url = new URL(window.location.href);
     url.searchParams.delete("signed_in");

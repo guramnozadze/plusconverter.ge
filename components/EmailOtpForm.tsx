@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { setAdvancedMatching, trackOnce } from "@/lib/meta-pixel";
+import { reportCompleteRegistration } from "@/lib/actions/auth";
 import { Spinner } from "./Spinner";
 import { MailIcon } from "./icons/ProviderIcons";
 
@@ -205,10 +206,12 @@ export const EmailOtpForm = forwardRef<
       return;
     }
     // Same one-shot CompleteRegistration as the OAuth ?signed_in=1 path —
-    // shared localStorage key, so whichever method completes first wins and
-    // the other no-ops.
+    // keyed by user id (not per-browser) so Meta dedupes correctly against
+    // the server-side twin (lib/actions/auth.ts) regardless of which method
+    // the user signs in through.
     setAdvancedMatching({ em: email.trim().toLowerCase() });
-    trackOnce("lead", "CompleteRegistration");
+    trackOnce(`registration_${data.session.user.id}`, "CompleteRegistration");
+    reportCompleteRegistration();
     // The user may have scrolled deep into the converter while signing in —
     // bring them back to the top so the now-signed-in header/CTA is visible.
     window.scrollTo({ top: 0, behavior: "smooth" });
