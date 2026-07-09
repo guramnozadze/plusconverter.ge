@@ -161,7 +161,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         <ChevronDownIcon className="h-3.5 w-3.5 shrink-0 text-foreground/50" />
       </button>
       {menuOpen && (
-        <div className="absolute right-0 z-20 mt-2 w-48 overflow-hidden rounded-lg border border-black/10 dark:border-white/15 bg-background shadow-lg">
+        <div className="surface-card absolute right-0 z-20 mt-2 w-48 overflow-hidden rounded-lg border shadow-lg">
           <p className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wide text-foreground/40">
             {tNav("help")}
           </p>

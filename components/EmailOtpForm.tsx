@@ -336,7 +336,7 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background px-6 pb-6 shadow-lg ${
+        className={`surface-card w-full max-w-sm rounded-2xl border px-6 pb-6 shadow-lg ${
           step === "code" ? "pt-3" : "pt-6"
         }`}
       >

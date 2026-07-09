@@ -522,7 +522,7 @@ export function Converter({
     flash: FlashDir = null,
     inputRef?: RefObject<HTMLInputElement | null>,
   ) => (
-    <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/20 px-3 focus-within:ring-2 focus-within:ring-foreground/30">
+    <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/10 bg-black/[0.03] dark:bg-black/30 px-3 focus-within:ring-2 focus-within:ring-foreground/30 focus-within:border-transparent">
       <input
         ref={inputRef}
         type="text"
@@ -543,14 +543,14 @@ export function Converter({
     <div
       id="converter"
       ref={containerRef}
-      className="scroll-mt-4 rounded-2xl border border-black/10 dark:border-white/15 p-5 sm:p-6"
+      className="surface-card scroll-mt-4 rounded-2xl border p-5 sm:p-6"
     >
       <div className="mb-4">
         <h1 className="text-xl font-semibold">{t("title")}</h1>
       </div>
 
       {/* Direction toggle */}
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-black/5 dark:bg-white/10 p-1 mb-5">
+      <div className="grid grid-cols-2 gap-1 rounded-lg bg-black/5 dark:bg-black/20 p-1 mb-5">
         {(["buy", "sell"] as const).map((dir) => (
           <button
             key={dir}
@@ -562,7 +562,9 @@ export function Converter({
               anchor.current = "give";
             }}
             className={`rounded-md py-2 text-sm font-medium transition-colors ${
-              direction === dir ? "bg-background shadow-sm" : "text-foreground/60"
+              direction === dir
+                ? "bg-white dark:bg-white/15 shadow-sm"
+                : "text-foreground/60"
             }`}
             aria-pressed={direction === dir}
           >
@@ -732,7 +734,7 @@ export function Converter({
           onClick={() => setShowMinPopup(false)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-background p-5 shadow-lg"
+            className="surface-card w-full max-w-sm rounded-2xl border p-5 shadow-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-lg font-semibold mb-2">{t("minPopupTitle")}</h2>

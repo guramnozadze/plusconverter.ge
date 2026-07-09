@@ -74,7 +74,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
     .join(" · ");
 
   return (
-    <div className="mb-4 rounded-xl border border-black/10 dark:border-white/15 p-4">
+    <div className="surface-card mb-4 rounded-xl border p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-medium">{t("title")}</h2>
         <button

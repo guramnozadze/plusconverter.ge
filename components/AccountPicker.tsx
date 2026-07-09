@@ -78,14 +78,14 @@ export function AccountPicker({
   return (
     <div className="space-y-4">
       {!hasAvailable && (
-        <p className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm text-foreground/60">
+        <p className="surface-card rounded-xl border p-4 text-sm text-foreground/60">
           {t("noneAvailable")}
         </p>
       )}
 
       {/* The user's own bank details for this order (prefilled from profile,
           required to submit). */}
-      <div className="rounded-xl border border-black/10 dark:border-white/15 p-4 space-y-3">
+      <div className="surface-card rounded-xl border p-4 space-y-3">
         <div>
           <h2 className="text-base font-semibold">{t("yourDetails")}</h2>
           <p className="mt-0.5 text-sm text-foreground/60">

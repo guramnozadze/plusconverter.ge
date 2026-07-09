@@ -168,7 +168,7 @@ export function OrderView({
     return (
       <div className="space-y-4">
         <h1 className="text-xl font-semibold mb-2.5">{t("title")}</h1>
-        <div className="rounded-2xl border border-black/10 dark:border-white/15 p-6 text-center">
+        <div className="surface-card rounded-2xl border p-6 text-center">
           <p className="text-lg font-medium">{t(`status.${order.status}`)}</p>
           <p className="mt-2 text-sm text-foreground/60">
             {receiveLabel} · {sendLabel}
@@ -188,7 +188,7 @@ export function OrderView({
       {confirmed && <HelpContactCard />}
 
       {/* Timer */}
-      <div className="rounded-2xl border border-black/10 dark:border-white/15 p-3 text-center">
+      <div className="surface-card rounded-2xl border p-3 text-center">
         {confirmed ? (
           <>
             <p className="flex items-center justify-center gap-2 text-base font-semibold text-amber-600 dark:text-amber-400">
@@ -264,7 +264,7 @@ export function OrderView({
 
       {/* Assigned account */}
       {assigned && (
-        <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 space-y-2">
+        <div className="surface-card rounded-2xl border p-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-foreground/60">{t("bank")}</span>
             <span>{assigned.bank_name}</span>
@@ -311,7 +311,7 @@ export function OrderView({
       {/* The user's own account (snapshotted at order time): where they send
           from / receive to. Shown to the owner and, for sell orders, the admin. */}
       {(order.user_full_name || order.user_account_number) && (
-        <div className="rounded-2xl border border-black/10 dark:border-white/15 p-4 space-y-2">
+        <div className="surface-card rounded-2xl border p-4 space-y-2">
           <div>
             <span className="text-sm font-medium">{t("yourAccount")}</span>
             <span className="text-xs text-foreground/60">
@@ -376,7 +376,7 @@ export function OrderView({
           Only shown once they've reported payment, so it doesn't distract
           from paying. */}
       {confirmed && !hasUsername && !usernameSaved && (
-        <div className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm space-y-2">
+        <div className="surface-card rounded-xl border p-4 text-sm space-y-2">
           <p className="text-foreground/70">{t("usernameNudge")}</p>
           <div className="flex gap-2">
             <input

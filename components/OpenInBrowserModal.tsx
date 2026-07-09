@@ -94,7 +94,7 @@ export function OpenInBrowserModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-black/10 dark:border-white/15 bg-background p-5 shadow-lg"
+        className="surface-card w-full max-w-sm rounded-2xl border p-5 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-2">{t("openInBrowserTitle")}</h2>

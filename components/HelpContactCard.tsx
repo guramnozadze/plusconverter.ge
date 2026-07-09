@@ -7,7 +7,7 @@ import { FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons"
 export function HelpContactCard() {
   const t = useTranslations("help");
   return (
-    <div className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-sm space-y-2">
+    <div className="surface-card rounded-xl border p-4 text-sm space-y-2">
       <p className="text-foreground/70">{t("intro")}</p>
       <div className="flex flex-wrap gap-2">
         <a

@@ -18,7 +18,7 @@ export function ReviewForm({ orderId }: { orderId: string }) {
 
   if (done) {
     return (
-      <p className="rounded-xl border border-black/10 dark:border-white/15 p-4 text-center text-sm text-green-600 dark:text-green-400">
+      <p className="surface-card rounded-xl border p-4 text-center text-sm text-green-600 dark:text-green-400">
         {t("submitted")}
       </p>
     );
@@ -39,7 +39,7 @@ export function ReviewForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="rounded-xl border border-black/10 dark:border-white/15 p-4 space-y-3">
+    <div className="surface-card rounded-xl border p-4 space-y-3">
       <p className="text-sm font-medium">{t("leaveReview")}</p>
 
       {/* Star selector */}
