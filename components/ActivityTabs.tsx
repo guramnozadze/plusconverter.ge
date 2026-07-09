@@ -281,7 +281,7 @@ export function ActivityTabs({
   if (!isAuthenticated) {
     return (
       <section className="mt-6">
-        <h2 className="mb-3 font-semibold">{t("communityTab")}</h2>
+        <h2 className="mb-1 font-semibold">{t("communityTab")}</h2>
         {community}
       </section>
     );
