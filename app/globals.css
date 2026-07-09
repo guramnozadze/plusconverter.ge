@@ -23,11 +23,12 @@
   /* Solid white, not a translucent overlay - the direction-toggle track
      above it (bg-black/5) IS a translucent overlay on this same card, and
      at low opacity the two were indistinguishable. A flat, brighter solid
-     color reads unambiguously as its own field. Orange is reserved for
-     :focus-within, so it stays a deliberate accent, not the resting color. */
+     color reads unambiguously as its own field. Focus uses a plain darker
+     neutral in light mode (orange-on-white read as too loud/branded for a
+     focus ring); dark mode keeps the orange focus accent below. */
   --input-bg: #ffffff;
   --input-border: rgba(20, 15, 10, 0.2);
-  --input-border-focus: rgba(234, 88, 12, 0.6);
+  --input-border-focus: rgba(20, 15, 10, 0.45);
   --input-shadow: inset 0 1px 2px rgba(20, 15, 10, 0.05);
 }
 
