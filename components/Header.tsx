@@ -35,8 +35,10 @@ export async function Header() {
             isAuthenticated={Boolean(user)}
             displayName={displayName}
           />
-          <ThemeToggle />
-          <LanguageSwitcher />
+          <div className="flex items-center gap-1.5">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </header>

@@ -33,9 +33,26 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={t("toggleTheme")}
-      className="inline-flex shrink-0 items-center justify-center rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-base leading-none"
+      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-base leading-none"
     >
-      {mounted && (isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />)}
+      {mounted && (
+        <>
+          <SunIcon
+            className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
+              isDark
+                ? "rotate-0 scale-100 opacity-100"
+                : "rotate-90 scale-50 opacity-0"
+            }`}
+          />
+          <MoonIcon
+            className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
+              isDark
+                ? "-rotate-90 scale-50 opacity-0"
+                : "rotate-0 scale-100 opacity-100"
+            }`}
+          />
+        </>
+      )}
     </button>
   );
 }

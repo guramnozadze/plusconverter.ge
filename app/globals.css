@@ -63,6 +63,7 @@
   background: var(--surface);
   border-color: var(--surface-border);
   box-shadow: var(--surface-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Quiet row surface for lists sitting directly on the page background
@@ -71,6 +72,7 @@
 @utility surface-muted {
   background: var(--surface-muted);
   border-color: var(--surface-muted-border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Brand-tinted input well - see --input-* tokens above. */
@@ -88,6 +90,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .surface-card,
+  .surface-muted {
+    transition: none;
+  }
 }
 
 /* Chrome/Safari paint autofilled inputs with their own opaque background
