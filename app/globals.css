@@ -13,8 +13,13 @@
   --surface: #faf8f6;
   --surface-border: rgba(20, 15, 10, 0.08);
   --surface-shadow: 0 1px 2px rgba(20, 15, 10, 0.04);
-  --surface-muted: #f4f2f0;
-  --surface-muted-border: rgba(20, 15, 10, 0.06);
+  /* Crisp white, not a gray fill - against the white page, a gray card
+     read as muddy rather than "quiet". A soft shadow (not a visible fill
+     color) is what lifts it off the page here. */
+  --surface-muted: #ffffff;
+  --surface-muted-border: rgba(20, 15, 10, 0.07);
+  --surface-muted-shadow: 0 1px 2px rgba(20, 15, 10, 0.03),
+    0 6px 16px -10px rgba(20, 15, 10, 0.12);
   /* Brand-tinted input well (orange, at low opacity) so fields read as an
      active/editable brand surface rather than a disabled gray box - same
      formula in light and dark, just tuned for contrast in each. */
@@ -51,6 +56,8 @@
      than the warm elevated cards. */
   --surface-muted: #161616;
   --surface-muted-border: rgba(255, 255, 255, 0.07);
+  --surface-muted-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.02) inset,
+    0 8px 20px -14px rgba(0, 0, 0, 0.6);
   --input-bg: rgba(249, 115, 22, 0.1);
   --input-border: rgba(249, 115, 22, 0.28);
   --input-border-focus: rgba(251, 146, 60, 0.65);
@@ -72,7 +79,8 @@
 @utility surface-muted {
   background: var(--surface-muted);
   border-color: var(--surface-muted-border);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: var(--surface-muted-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Brand-tinted input well - see --input-* tokens above. */
