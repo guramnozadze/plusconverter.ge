@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (not just prefers-color-scheme) so the header's
+   sun/moon toggle can force a theme regardless of system setting. The
+   inline script in the root layout sets/removes this class before first
+   paint (from localStorage, falling back to system preference) so there's
+   no flash of the wrong theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -8,6 +15,12 @@
   --surface-shadow: 0 1px 2px rgba(20, 15, 10, 0.04);
   --surface-muted: #f4f2f0;
   --surface-muted-border: rgba(20, 15, 10, 0.06);
+  /* Brand-tinted input well (orange, at low opacity) so fields read as an
+     active/editable brand surface rather than a disabled gray box - same
+     formula in light and dark, just tuned for contrast in each. */
+  --input-bg: rgba(249, 115, 22, 0.05);
+  --input-border: rgba(249, 115, 22, 0.22);
+  --input-border-focus: rgba(234, 88, 12, 0.55);
 }
 
 @theme inline {
@@ -21,25 +34,26 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    /* Warm-tinted charcoal (R > G > B), not neutral gray - it lifts off the
-       near-black page background enough to read as its own surface while
-       staying dark, and the warm undertone pairs with the orange brand
-       accent instead of fighting it. */
-    --surface: #1c1815;
-    --surface-border: rgba(255, 245, 235, 0.08);
-    --surface-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
-      0 12px 28px -18px rgba(0, 0, 0, 0.7);
-    /* Neutral (not warm-tinted) - for rows/lists that sit directly on the
-       page rather than inside a surface-card. Warm --surface read too close
-       to the page black here; this is a plain lighter gray instead, quieter
-       than the warm elevated cards. */
-    --surface-muted: #161616;
-    --surface-muted-border: rgba(255, 255, 255, 0.07);
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  /* Warm-tinted charcoal (R > G > B), not neutral gray - it lifts off the
+     near-black page background enough to read as its own surface while
+     staying dark, and the warm undertone pairs with the orange brand
+     accent instead of fighting it. */
+  --surface: #1c1815;
+  --surface-border: rgba(255, 245, 235, 0.08);
+  --surface-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
+    0 12px 28px -18px rgba(0, 0, 0, 0.7);
+  /* Neutral (not warm-tinted) - for rows/lists that sit directly on the
+     page rather than inside a surface-card. Warm --surface read too close
+     to the page black here; this is a plain lighter gray instead, quieter
+     than the warm elevated cards. */
+  --surface-muted: #161616;
+  --surface-muted-border: rgba(255, 255, 255, 0.07);
+  --input-bg: rgba(249, 115, 22, 0.1);
+  --input-border: rgba(249, 115, 22, 0.28);
+  --input-border-focus: rgba(251, 146, 60, 0.65);
 }
 
 /* Elevated content surface (cards, panels, popovers, modals) - distinct from
@@ -57,6 +71,17 @@
 @utility surface-muted {
   background: var(--surface-muted);
   border-color: var(--surface-muted-border);
+}
+
+/* Brand-tinted input well - see --input-* tokens above. */
+@utility input-well {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--input-border-focus);
+  }
 }
 
 body {
@@ -233,11 +258,9 @@ input:-webkit-autofill:active {
       animation: glow-sheen-slide 2.6s linear infinite;
     }
 
-    @media (prefers-color-scheme: dark) {
-      &:hover,
-      &:active {
-        background-color: rgba(0, 0, 0, 0.3);
-      }
+    :root.dark &:hover,
+    :root.dark &:active {
+      background-color: rgba(0, 0, 0, 0.3);
     }
   }
 

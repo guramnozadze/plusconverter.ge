@@ -118,7 +118,19 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${balooRounded.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Sets the `.dark` class before first paint (from a saved choice,
+            falling back to system preference) so the sun/moon toggle in
+            Header doesn't cause a flash of the wrong theme on load. Inline
+            and synchronous - runs before Tailwind's dark: styles apply. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d)document.documentElement.classList.add("dark")}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider>
           <BackNavRefresh />

@@ -42,7 +42,8 @@
   "nav": {
     "home": "Home",
     "admin": "Admin",
-    "help": "Help"
+    "help": "Help",
+    "toggleTheme": "Toggle theme"
   },
   "promoBanner": {
     "badge": "🔥 We're online",

@@ -522,7 +522,7 @@ export function Converter({
     flash: FlashDir = null,
     inputRef?: RefObject<HTMLInputElement | null>,
   ) => (
-    <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/15 bg-black/[0.02] dark:bg-black px-3 transition-colors focus-within:border-orange-500/60 focus-within:ring-2 focus-within:ring-orange-500/25">
+    <div className="input-well flex flex-1 items-center rounded-lg border px-3 focus-within:ring-2 focus-within:ring-orange-500/20">
       <input
         ref={inputRef}
         type="text"

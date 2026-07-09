@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { getUserProfile } from "@/lib/auth";
 import { AuthControls } from "./AuthControls";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 export async function Header() {
   const t = await getTranslations();
@@ -34,6 +35,7 @@ export async function Header() {
             isAuthenticated={Boolean(user)}
             displayName={displayName}
           />
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
       </div>

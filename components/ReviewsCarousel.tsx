@@ -34,7 +34,7 @@ export async function ReviewsCarousel({
     <div
       key={`${r.id}-${hidden ? "dup" : "orig"}`}
       aria-hidden={hidden}
-      className="surface-card w-64 shrink-0 rounded-xl border p-3 text-sm"
+      className="surface-muted w-64 shrink-0 rounded-xl border p-3 text-sm"
     >
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">@{r.display_name}</span>
