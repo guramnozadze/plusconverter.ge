@@ -15,6 +15,8 @@
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-border: var(--surface-border);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-muted-border: var(--surface-muted-border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -31,6 +33,12 @@
     --surface-border: rgba(255, 245, 235, 0.08);
     --surface-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.03) inset,
       0 12px 28px -18px rgba(0, 0, 0, 0.7);
+    /* Neutral (not warm-tinted) - for rows/lists that sit directly on the
+       page rather than inside a surface-card. Warm --surface read too close
+       to the page black here; this is a plain lighter gray instead, quieter
+       than the warm elevated cards. */
+    --surface-muted: #161616;
+    --surface-muted-border: rgba(255, 255, 255, 0.07);
   }
 }
 
@@ -41,6 +49,14 @@
   background: var(--surface);
   border-color: var(--surface-border);
   box-shadow: var(--surface-shadow);
+}
+
+/* Quiet row surface for lists sitting directly on the page background
+   (review feed, order history) - distinct from the page black without
+   competing with the warmer surface-card elevation used for real cards. */
+@utility surface-muted {
+  background: var(--surface-muted);
+  border-color: var(--surface-muted-border);
 }
 
 body {

@@ -177,14 +177,14 @@ export function ActivityTabs({
       </div>
       <ul className="space-y-2">
         {feed.length === 0 ? (
-          <li className="surface-card rounded-xl border p-4 text-sm text-foreground/60">
+          <li className="surface-muted rounded-xl border p-4 text-sm text-foreground/60">
             {t("emptyFeed")}
           </li>
         ) : (
           feed.map((r) => (
             <li
               key={r.id}
-              className="surface-card rounded-xl border p-3 text-sm"
+              className="surface-muted rounded-xl border p-3 text-sm"
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="font-medium">@{r.display_name}</span>
@@ -240,7 +240,7 @@ export function ActivityTabs({
   const mine = (
     <ul className="space-y-2">
       {myOrders.length === 0 ? (
-        <li className="surface-card rounded-xl border p-4 text-sm text-foreground/60">
+        <li className="surface-muted rounded-xl border p-4 text-sm text-foreground/60">
           {t("emptyMine")}
         </li>
       ) : (
@@ -250,7 +250,7 @@ export function ActivityTabs({
           return (
             <li
               key={o.id}
-              className="surface-card rounded-xl border p-3 text-sm space-y-2"
+              className="surface-muted rounded-xl border p-3 text-sm space-y-2"
             >
               <div className="flex items-center justify-between gap-2">
                 <Link href={`/order/${o.id}`} className="font-medium underline">

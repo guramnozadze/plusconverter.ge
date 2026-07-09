@@ -522,7 +522,7 @@ export function Converter({
     flash: FlashDir = null,
     inputRef?: RefObject<HTMLInputElement | null>,
   ) => (
-    <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/10 bg-black/[0.03] dark:bg-black/30 px-3 focus-within:ring-2 focus-within:ring-foreground/30 focus-within:border-transparent">
+    <div className="flex flex-1 items-center rounded-lg border border-black/15 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.06] px-3 transition-colors focus-within:border-orange-500/60 focus-within:bg-black/[0.03] dark:focus-within:bg-white/[0.09] focus-within:ring-2 focus-within:ring-orange-500/25">
       <input
         ref={inputRef}
         type="text"
@@ -531,7 +531,7 @@ export function Converter({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="0"
-        className={`w-full bg-transparent py-3 text-lg outline-none transition-colors duration-300 ${
+        className={`w-full bg-transparent py-3 text-lg font-medium outline-none transition-colors duration-300 placeholder:text-foreground/30 ${
           flash ? flashClass[flash] : ""
         }`}
       />
