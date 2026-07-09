@@ -20,14 +20,15 @@
   --surface-muted-border: rgba(20, 15, 10, 0.07);
   --surface-muted-shadow: 0 1px 2px rgba(20, 15, 10, 0.03),
     0 6px 16px -10px rgba(20, 15, 10, 0.12);
-  /* Neutral (not brand-colored) input well against the warm --surface card:
-     a cool-neutral black overlay reads as a distinct "well" purely through
-     contrast, no hue competing with the card's warmth. Orange is reserved
-     for :focus-within, so it still shows up as a deliberate accent instead
-     of the resting color. */
-  --input-bg: rgba(20, 15, 10, 0.045);
-  --input-border: rgba(20, 15, 10, 0.18);
+  /* Solid white, not a translucent overlay - the direction-toggle track
+     above it (bg-black/5) IS a translucent overlay on this same card, and
+     at low opacity the two were indistinguishable. A flat, brighter solid
+     color reads unambiguously as its own field. Orange is reserved for
+     :focus-within, so it stays a deliberate accent, not the resting color. */
+  --input-bg: #ffffff;
+  --input-border: rgba(20, 15, 10, 0.2);
   --input-border-focus: rgba(234, 88, 12, 0.6);
+  --input-shadow: inset 0 1px 2px rgba(20, 15, 10, 0.05);
 }
 
 @theme inline {
@@ -60,12 +61,15 @@
   --surface-muted-border: rgba(255, 255, 255, 0.07);
   --surface-muted-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.02) inset,
     0 8px 20px -14px rgba(0, 0, 0, 0.6);
-  /* Lighter than --surface, not darker - a darker well on an already-dark
-     card read as recessed/disabled. A neutral white overlay lifts it off
-     the card instead, same "orange only on focus" rule as light mode. */
-  --input-bg: rgba(255, 255, 255, 0.07);
-  --input-border: rgba(255, 255, 255, 0.18);
+  /* Solid, lighter than --surface - the toggle track above it
+     (dark:bg-black/20) darkens the card via a translucent overlay, so a
+     translucent input well at similar opacity read the same. A flat solid
+     color, clearly lighter than both the card and the track, reads as its
+     own distinct field instead. */
+  --input-bg: #322a24;
+  --input-border: rgba(255, 255, 255, 0.2);
   --input-border-focus: rgba(251, 146, 60, 0.7);
+  --input-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 /* Elevated content surface (cards, panels, popovers, modals) - distinct from
@@ -88,10 +92,11 @@
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Brand-tinted input well - see --input-* tokens above. */
+/* Input well - see --input-* tokens above. */
 @utility input-well {
   background: var(--input-bg);
   border-color: var(--input-border);
+  box-shadow: var(--input-shadow);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 
   &:focus-within {
