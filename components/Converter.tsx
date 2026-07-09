@@ -500,8 +500,8 @@ export function Converter({
   }
 
   // Currency suffix per leg, flipped by direction.
-  const giveCurrency = direction === "buy" ? t("gel") : t("points");
-  const getCurrency = direction === "buy" ? t("points") : t("gel");
+  const giveCurrency = direction === "buy" ? t("gelInput") : t("points");
+  const getCurrency = direction === "buy" ? t("points") : t("gelInput");
 
   // "PLUS Points" renders as an orange badge; GEL stays plain text. Full unit
   // word on mobile too now that both directions render a single full-width
@@ -580,7 +580,7 @@ export function Converter({
             flashMax ? flashClass[flashMax] : "text-foreground/60"
           }`}
         >
-          {t("available", { amount: gelFmt.format(max), unit: t("points") })}
+          {t("available", { amount: gelFmt.format(max), unit: t("pointsAvailable") })}
         </p>
       )}
 
