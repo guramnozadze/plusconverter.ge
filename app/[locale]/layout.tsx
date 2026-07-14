@@ -122,12 +122,14 @@ export default async function LocaleLayout({
     >
       <head>
         {/* Sets the `.dark` class before first paint (from a saved choice,
-            falling back to system preference) so the sun/moon toggle in
-            Header doesn't cause a flash of the wrong theme on load. Inline
-            and synchronous - runs before Tailwind's dark: styles apply. */}
+            defaulting to dark otherwise) so the sun/moon toggle in Header
+            doesn't cause a flash of the wrong theme on load. Inline and
+            synchronous - runs before Tailwind's dark: styles apply. Dark is
+            the product default regardless of system preference; light mode
+            is opt-in via the toggle. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d)document.documentElement.classList.add("dark")}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":true;if(d)document.documentElement.classList.add("dark")}catch(e){}})();`,
           }}
         />
       </head>
