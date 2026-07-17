@@ -71,23 +71,33 @@ export async function createOrder(input: {
   }
 
   // Resolve the bank account: use the one the user picked (must still be
-  // available), otherwise fall back to the first available one.
+  // available), otherwise fall back to the first available one. Sell orders
+  // are settled by transferring PLUS points, which only move within Bank of
+  // Georgia, so the assigned account must always be a Bank of Georgia one.
   let accountId: string | null;
   if (bankAccountId) {
     const { data: picked } = await supabase
       .from("bank_accounts")
-      .select("id, status")
+      .select("id, status, bank_name")
       .eq("id", bankAccountId)
       .maybeSingle();
-    if (!picked || picked.status !== "available") {
+    if (
+      !picked ||
+      picked.status !== "available" ||
+      (direction === "sell" && picked.bank_name !== "Bank of Georgia")
+    ) {
       return { ok: false, error: "account_unavailable" };
     }
     accountId = picked.id;
   } else {
-    const { data: account } = await supabase
+    let query = supabase
       .from("bank_accounts")
       .select("id")
-      .eq("status", "available")
+      .eq("status", "available");
+    if (direction === "sell") {
+      query = query.eq("bank_name", "Bank of Georgia");
+    }
+    const { data: account } = await query
       .order("sort_order", { ascending: true })
       .limit(1)
       .maybeSingle();

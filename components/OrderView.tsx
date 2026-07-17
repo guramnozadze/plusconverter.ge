@@ -267,7 +267,12 @@ export function OrderView({
         <div className="surface-card rounded-2xl border p-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-foreground/60">{t("bank")}</span>
-            <span>{assigned.bank_name}</span>
+            {/* Sell orders are settled via PLUS point transfer, which only
+                moves within Bank of Georgia — always show that, regardless
+                of which bank the assigned account row belongs to. */}
+            <span>
+              {order.direction === "sell" ? "Bank of Georgia" : assigned.bank_name}
+            </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-foreground/60">{t("accountName")}</span>
