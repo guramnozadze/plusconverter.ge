@@ -24,7 +24,13 @@ export function ThemeToggle() {
   function toggle() {
     const next = !isDark;
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
+    // Persisting the choice can throw (storage disabled/blocked, private-
+    // browsing quirks, quota) - guarded so a failed write can't stop
+    // `setIsDark` below and leave the button's own state stuck out of sync
+    // with the class it just toggled.
+    try {
+      localStorage.setItem("theme", next ? "dark" : "light");
+    } catch {}
     setIsDark(next);
   }
 

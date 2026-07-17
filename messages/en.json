@@ -140,7 +140,7 @@
     "yourDetailsHint": "{direction, select, sell {The account where you'll receive your GEL.} other {The account where you'll receive your PLUS Points.}}",
     "yourFullName": "Full name",
     "yourAccountNumber": "ID number",
-    "comment": "Mobile number / account",
+    "comment": "Account number / mobile number / comment",
     "optional": "optional",
     "commentPlaceholder": "Feel free to add a mobile number or account number, or leave this blank"
   },
