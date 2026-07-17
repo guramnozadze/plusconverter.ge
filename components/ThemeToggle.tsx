@@ -11,14 +11,25 @@ export function ThemeToggle() {
   // Starts unmounted so the server-rendered markup (no `document`) matches
   // the first client render exactly - the inline theme script in the root
   // layout has already set the real `.dark` class on <html> by the time
-  // this mounts, so we just read it rather than guessing and risking a
-  // hydration mismatch.
+  // this mounts in the common case.
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    setIsDark(document.documentElement.classList.contains("dark"));
+    // Re-derives from localStorage rather than trusting the class already on
+    // <html> - if the inline pre-paint script in the root layout got
+    // stripped (some ad/privacy-extension setups drop small inline
+    // <script> tags while leaving bundled JS alone), this is what actually
+    // corrects the class instead of just reading whatever it already is.
+    // Same default-dark-when-unset rule as that script.
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem("theme");
+    } catch {}
+    const dark = stored ? stored === "dark" : true;
+    document.documentElement.classList.toggle("dark", dark);
+    setIsDark(dark);
   }, []);
 
   function toggle() {
