@@ -2,7 +2,7 @@
 
 ![PLUS Converter](public/plusoncverter-cover.png)
 
-**Live at [plusconverter.ge](https://plusconverter.ge)** — a mobile-first exchange for
+**Live at [plusconverter.ge](https://plusconverter.ge/en)** — a mobile-first exchange for
 Bank of Georgia **PLUS loyalty points**, running as a real single-operator business.
 Users sign in with Google, get a live quote, place a buy or sell order, and settle by
 bank transfer against a countdown timer; the operator manages pricing, inventory, and
