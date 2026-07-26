@@ -15,24 +15,41 @@
 
 </div>
 
-Georgian bank customers accumulate PLUS loyalty points they often can't spend, and buyers
-want them at a discount. That trade used to happen in Facebook groups: no pricing, no trust,
-no record. **PLUS Converter turns it into a product.** A customer gets an instant quote,
-places a buy or sell order, and settles by bank transfer against a countdown timer, while a
-single operator runs pricing, inventory, and the order queue from a realtime admin panel.
+## Why it exists
 
-It runs in production as a real business, not a portfolio exercise. Every decision below was
-made under that constraint.
+Bank of Georgia customers accumulate PLUS loyalty points faster than they ever spend them.
+Other people would happily buy those points at a discount. Until now that trade
+lived in Facebook comment threads: no published price, no idea who you were sending money
+to, no record that the deal ever happened. Every trade was a small act of faith.
+
+PLUS Converter replaces the comment thread with a market. A published price, an order that
+exists on the record, a countdown that tells you how long the quote is good for, and a
+public feed of completed trades that makes the next stranger easier to trust.
 
 | | |
 |---|---|
 | **Live** | [plusconverter.ge](https://plusconverter.ge/en) (English; the bare domain serves Georgian) |
-| **Users** | Customers buying and selling points · one operator running the desk |
-| **Platform** | Mobile-first web, trilingual (Georgian default, English, Russian) |
+| **Who uses it** | Customers buying and selling points · one operator running the desk |
+| **Reach** | Mobile-first, in Georgian, English and Russian |
+| **Built by** | One person: product, design, engineering, and daily operations |
 
-## How it works
+## What it does
 
-Bank of Georgia fixes the face value of a point. The operator's spread rides on top of it:
+**For the customer**, it removes every reason to hesitate. A quote appears as they type, in
+either direction. They sign in with Google or a one-time email code, pick which bank
+account settles the trade, and get a live order page with payment instructions and a timer
+counting down the quote they were promised. When it completes, they can rate it, and that
+rating joins the public feed the next customer reads before deciding to trust the place.
+
+**For the operator**, it replaces a spreadsheet and a full inbox. One screen sets both
+prices, the minimum and maximum trade sizes, and how long a quote survives. Either side of
+the market can be switched off outright the moment inventory or cash runs out. Orders
+arrive in a live queue and by email, so the desk isn't chained to a dashboard, and prices
+can be moved at any time without stranding a customer mid-decision.
+
+## How a trade is priced
+
+The bank fixes what a point is worth. The operator's margin rides on top:
 
 ```
         400 points  =  1 GEL          fixed face value, set by the bank
@@ -41,162 +58,109 @@ Bank of Georgia fixes the face value of a point. The operator's spread rides on 
       =  your quote
 ```
 
-Two multipliers, one per direction, live in a single `settings` row the operator edits from
-the admin panel. **The customer sees only the 400-base face value, never the multiplier**,
-so the desk's margin isn't public. Internally, points are always the canonical amount: a buy
-order entered in GEL is converted to points, and the server derives the GEL leg back from
-them, so the two legs can never disagree.
+The customer sees the face value and their quote - never the multiplier, so the desk's
+margin stays private. Changing a price is one number, and it reaches every open browser
+before the next order is placed.
 
-## Architecture
+## Idea to live in five days
 
-```
-app/[locale]/          Locale-routed pages: converter, order/new, order/[id], admin, legal
-app/auth/callback/     Non-localized OAuth code exchange
-proxy.ts               next-intl routing + Supabase session refresh (Node runtime)
-components/            Client components (Converter, AccountPicker, OrderView, admin/*)
-lib/actions/           Server actions: orders, admin, auth, profile, reviews
-lib/pricing.ts         Canonical conversion math, shared by client preview and server
-lib/supabase/          Browser/server/proxy clients + hand-maintained DB types
-i18n/ · messages/      Routing config and ICU message catalogs (ka, en, ru)
-supabase/migrations/   Numbered schema: tables, RLS, triggers, RPCs, Realtime, seed
-```
+First commit was June 30, 2026. Bank of Georgia had announced a promotion for July 5 that
+temporarily doubled what points were worth to spend, which meant a short, sharp spike in
+people wanting to buy them and a narrow window to be the place they bought them from.
 
-| Table | Purpose | Who can write |
-|---|---|---|
-| `profiles` | Auto-created on signup; username, bank details, `is_admin` | Own row; admin via policy |
-| `settings` | Singleton: multipliers, thresholds, toggles, order timer | Admin only |
-| `bank_accounts` | Operator's accounts with availability states | Admin only |
-| `orders` | Snapshotted rate + both legs; status machine | Insert guarded by trigger; customer transitions via RPC; admin via policy |
-| `reviews` | Minted by trigger on completion; one rating per order | `submit_review` RPC only; moderation via policy |
+The bet was that being live and trustworthy on the day beat being feature-complete later.
+Auth, pricing, orders, the admin desk, three languages, and paid-ad conversion tracking all
+shipped inside five days, and the site was live and advertising through the event. It has
+been in production since, still run by one operator.
 
-## What it does
-
-**Customers** get an instant quote with a live buy/sell toggle, sign in with Google or a
-one-time email code, settle on a realtime order page with a countdown and payment
-instructions, and rate the trade once it completes. They see their own history plus a public
-feed of completed trades.
-
-**The operator** sets both multipliers, per-direction limits and the order timer; kills
-either direction outright when inventory or cash runs out; manages bank-account availability;
-works the pending-order queue; and moderates the review feed. Every new order also arrives
-as an email, so the desk doesn't have to watch a dashboard.
-
-## Running locally
-
-**Prerequisites:** Node 20.9+, a free [Supabase](https://supabase.com) project.
-
-```bash
-npm install
-cp .env.example .env.local     # fill in the two NEXT_PUBLIC_SUPABASE_* values
-```
-
-1. Apply `supabase/migrations/` in order (or `supabase db push`). `0001_init.sql` creates the
-   tables, RLS policies, triggers and RPCs, enables Realtime, and seeds default settings;
-   later migrations layer on the multiplier pricing model, reviews, thresholds, and the
-   order-insert guard.
-2. Enable **Google OAuth** in Supabase → Authentication → Providers, backed by a Google Cloud
-   OAuth client using the redirect URL Supabase gives you.
-3. Run `npm run dev`, sign in once, then promote yourself in the SQL editor:
-
-   ```sql
-   update public.profiles set is_admin = true where email = 'you@example.com';
-   ```
-
-   The **Admin** link appears in the header.
-
-`npm run build` doubles as the full typecheck; `npm run lint` for ESLint. Ad tracking
-(`NEXT_PUBLIC_META_PIXEL_ID`, `META_CAPI_ACCESS_TOKEN`) and order alert emails
-(`RESEND_API_KEY`) are optional and no-op when unset.
-
-**Deploying:** Vercel, Node 20.9+. Register the production domain in **both** Supabase Auth
-redirect URLs **and** the Google OAuth client - missing either produces an auth failure that
-only reproduces in production.
+What that timeline bought, and what it deliberately skipped, is the substance of the
+sections below.
 
 ---
 
-## Engineering highlights
+## Under the hood
+
+For readers who want the engineering rather than the product.
 
 <details open>
-<summary><b>Server-authoritative pricing, with defense in depth</b></summary>
+<summary><b>The database is the last word on money</b></summary>
 
-The client-side converter is a preview and nothing more. `createOrder`
-([`lib/actions/orders.ts`](lib/actions/orders.ts)) discards client-sent amounts and recomputes
-the rate and both legs from the canonical `settings` row; [`lib/pricing.ts`](lib/pricing.ts)
-is imported by both the preview and the server, so the math cannot drift between them.
+The converter in the browser is a preview and nothing more. The server discards whatever
+amounts the client sends and recomputes the price from scratch, and the conversion math
+lives in [one shared module](lib/pricing.ts) that both the preview and the server import,
+so the two can never quietly disagree.
 
-Then a Postgres `BEFORE INSERT` trigger
-([`0008_order_insert_guard.sql`](supabase/migrations/0008_order_insert_guard.sql)) recomputes
-and re-validates the same fields **again**. A direct PostgREST call that skips the server
-action still can't forge a price, insert an order as already `completed` (which would have
-minted a fake public review), or exceed the concurrent-order cap. The database, not the app
-tier, is the last word on money.
+Then Postgres does it a third time. A [trigger](supabase/migrations/0008_order_insert_guard.sql)
+recomputes and re-validates every order as it's inserted, so a request that skips the
+application entirely still cannot forge a favorable rate, book an order as already
+completed, or open more orders than one person is allowed. Handling other people's money
+seemed like the wrong place to trust a single layer of validation.
 </details>
 
 <details>
-<summary><b>RLS-first security model</b></summary>
+<summary><b>Customers can't do what they shouldn't, by construction</b></summary>
 
-Every table has Row Level Security, which is what makes shipping the publishable key to the
-browser safe. Customers can't self-complete orders, because the transitions they're allowed
-to make (`mark_order_paid`, `submit_review`) are narrow `SECURITY DEFINER` RPCs instead of
-broad `UPDATE` policies - so the full set of writes a user can perform is enumerated in SQL
-and reviewable in one place. Aggregates like the homepage stats go through purpose-built RPCs
-for the same reason: no broad `SELECT` grant on a table holding names and account numbers.
+Every table enforces row-level security, so a customer's session can only ever read and
+write their own rows. The two changes a customer is allowed to make - confirming they've
+paid, and rating a finished trade - are single-purpose database functions rather than
+general write permission, which means the complete list of things a user can do is short,
+explicit, and reviewable in one place instead of inferred from application code.
 
-The public review feed is denormalized to match: no `user_id`, and a snapshotted display name
-that is [masked at fixed width](supabase/migrations/0011_masked_email_display_name.sql) for
-users without a username, so the real length isn't leaked either.
+The public review feed follows the same instinct: it carries no account identifiers at all,
+and reviewers who never chose a username get a
+[fixed-width masked name](supabase/migrations/0011_masked_email_display_name.sql), so the
+length of the original isn't leaked either.
 </details>
 
 <details>
-<summary><b>Realtime as the default, not a feature</b></summary>
+<summary><b>Repricing reaches everyone already looking</b></summary>
 
-Pricing, thresholds and direction toggles live in a singleton `settings` row the converter
-subscribes to over Supabase Realtime. When the operator reprices, open sessions update without
-a refresh - which matters when a customer is mid-decision and the desk's inventory just
-changed. The admin queue, account availability, and the review feed ride the same channel.
+Prices, limits and the on/off switches live in one row that every open converter subscribes
+to. When the operator moves a price, every browser currently mid-decision updates without a
+refresh, and the admin queue, account availability and review feed arrive the same way.
+For a desk whose inventory changes hour to hour, a stale quote on someone's screen is a
+support conversation at best and a loss at worst.
 </details>
 
 <details>
-<summary><b>Attribution that survives the user closing the tab</b></summary>
+<summary><b>Conversion tracking that survives the tab closing</b></summary>
 
-`CompleteRegistration` and `Purchase` are dual-fired: a browser pixel event, plus a
-server-side Conversions API event from the code that actually owns that moment. Orders are
-completed manually by the operator, possibly hours later, so a browser-only pixel would
-systematically under-report the conversions that matter most.
+Orders are completed by hand, sometimes hours after the customer has closed the browser.
+A conventional browser-only ad pixel would therefore miss precisely the conversions worth
+measuring, so registrations and purchases are also reported server-side, from the code that
+actually owns the moment they happen.
 
-The details are where this gets right or wrong: the dedup key is per-entity
-(`purchase_${orderId}`) and shared by both sides so Meta collapses the pair instead of
-double-counting, and the registration event is gated on an actual first sign-in so a returning
-user re-authenticating past Meta's dedup window isn't recounted as a new signup.
+Doing that without corrupting the numbers is the interesting part: both halves share a
+per-order identifier so the ad platform merges the pair instead of counting it twice, and
+the signup event checks that a sign-in is genuinely a first one, so a returning customer
+isn't recounted as a new acquisition weeks later.
 </details>
 
 <details>
-<summary><b>Current-generation Next.js, read from the source</b></summary>
+<summary><b>Choosing the current generation on purpose</b></summary>
 
-App Router on Next 16: Server Components by default, mutations through server actions, and
-[`proxy.ts`](proxy.ts) - Next 16's successor to `middleware.ts` - composing next-intl locale
-routing and Supabase session refresh into one Node-runtime response. Enough of this surface
-changed in Next 16 that the published tutorials are actively wrong, so the conventions here
-came from the shipped docs in `node_modules` and the traps are written down in
-[`CLAUDE.md`](CLAUDE.md) to only cost time once.
+Built on Next.js 16 and React 19 - new enough that most published tutorials are actively
+wrong about the parts that changed, which is a real cost. It was worth paying once: the
+framework's own shipped documentation settled the conventions, and the traps are written
+down in the repo so they don't get rediscovered.
 
-Operationally: Supabase clients are wrapped with an
-[abort-signal timeout](lib/supabase/fetch-with-timeout.ts) so a stalled upstream fails in 10s
-instead of holding a serverless function open to the platform's 300s ceiling, and side effects
-like alert emails run in `after()` where they can never fail an order.
+Smaller choices in the same spirit: upstream calls time out in ten seconds rather than
+holding a serverless function open to the platform's five-minute ceiling, and side effects
+like alert emails run after the response, where a mail outage can't take an order down
+with it.
 </details>
 
-## Trade-offs, deliberately made
+## Decisions worth defending
 
-- **Hand-maintained DB types** ([`lib/supabase/types.ts`](lib/supabase/types.ts)) over codegen.
-  The schema is small and the types double as documentation. One non-obvious constraint is
-  baked in: they must be `type` aliases, not `interface`, or postgrest-js resolves every query
-  to `never`.
-- **Manual bank-transfer settlement** over a payment provider. It's how the market actually
-  operates, it avoids per-transaction fees on thin margins, and keeping the operator in the
-  loop on every order *is* the fraud control.
-- **Single-operator by design.** No multi-tenancy, no role hierarchy beyond `is_admin`.
-  Building for a second operator who doesn't exist yet would be the expensive mistake.
+- **Bank transfers, not a payment processor.** It's how this market already works, it
+  avoids per-transaction fees on thin margins, and a human seeing every order is itself the
+  fraud control. A card flow would have looked more impressive and served the business
+  worse.
+- **Built for one operator, not an imagined ten.** No multi-tenancy, no role hierarchy.
+  Generalizing for a second operator who doesn't exist would have cost the launch window
+  and bought nothing.
+- **The margin stays private, the price does not.** Publishing a quote is what makes the
+  market trustworthy; publishing the spread behind it would just invite being undercut.
 
 <div align="center">
 <br>
