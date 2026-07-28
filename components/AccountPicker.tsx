@@ -110,7 +110,6 @@ export function AccountPicker({
           </span>
           <input
             type="text"
-            inputMode="numeric"
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value)}
             maxLength={40}
