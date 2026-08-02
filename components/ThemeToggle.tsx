@@ -1,47 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { MoonIcon, SunIcon } from "./icons/ThemeIcons";
 
 // Mirrors LanguageSwitcher's button shell (h-8 w-8 bordered square) so the
 // two toggles read as a matched pair in the header.
-export function ThemeToggle() {
+export function ThemeToggle({ initialDark }: { initialDark: boolean }) {
   const t = useTranslations("nav");
-  // Starts unmounted so the server-rendered markup (no `document`) matches
-  // the first client render exactly - the inline theme script in the root
-  // layout has already set the real `.dark` class on <html> by the time
-  // this mounts in the common case.
-  const [mounted, setMounted] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    // Re-derives from localStorage rather than trusting the class already on
-    // <html> - if the inline pre-paint script in the root layout got
-    // stripped (some ad/privacy-extension setups drop small inline
-    // <script> tags while leaving bundled JS alone), this is what actually
-    // corrects the class instead of just reading whatever it already is.
-    // Same default-dark-when-unset rule as that script.
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem("theme");
-    } catch {}
-    const dark = stored ? stored === "dark" : true;
-    document.documentElement.classList.toggle("dark", dark);
-    setIsDark(dark);
-  }, []);
+  // `initialDark` comes from the `theme` cookie, read server-side in
+  // `Header` - it's already what's rendered in the `dark` class on <html>
+  // (see the root layout), so there's nothing to reconcile on mount.
+  const [isDark, setIsDark] = useState(initialDark);
 
   function toggle() {
     const next = !isDark;
     document.documentElement.classList.toggle("dark", next);
-    // Persisting the choice can throw (storage disabled/blocked, private-
-    // browsing quirks, quota) - guarded so a failed write can't stop
-    // `setIsDark` below and leave the button's own state stuck out of sync
-    // with the class it just toggled.
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {}
+    // Cookie, not localStorage - it needs to be readable during SSR (by the
+    // root layout and Header) so the `dark` class is already correct in the
+    // first byte of HTML on the next load, instead of a client script
+    // racing first paint to add it.
+    document.cookie = `theme=${next ? "dark" : "light"}; path=/; max-age=31536000; SameSite=Lax`;
     setIsDark(next);
   }
 
@@ -52,24 +31,20 @@ export function ThemeToggle() {
       aria-label={t("toggleTheme")}
       className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-black/15 dark:border-white/20 h-8 w-8 text-base leading-none"
     >
-      {mounted && (
-        <>
-          <SunIcon
-            className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
-              isDark
-                ? "rotate-0 scale-100 opacity-100"
-                : "rotate-90 scale-50 opacity-0"
-            }`}
-          />
-          <MoonIcon
-            className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
-              isDark
-                ? "-rotate-90 scale-50 opacity-0"
-                : "rotate-0 scale-100 opacity-100"
-            }`}
-          />
-        </>
-      )}
+      <SunIcon
+        className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
+          isDark
+            ? "rotate-0 scale-100 opacity-100"
+            : "rotate-90 scale-50 opacity-0"
+        }`}
+      />
+      <MoonIcon
+        className={`absolute h-4 w-4 transition-all duration-300 ease-out motion-reduce:transition-none ${
+          isDark
+            ? "-rotate-90 scale-50 opacity-0"
+            : "rotate-0 scale-100 opacity-100"
+        }`}
+      />
     </button>
   );
 }

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Baloo_2 } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
 import { MetaPixel } from "@/components/MetaPixel";
 import { BackNavRefresh } from "@/components/BackNavRefresh";
@@ -114,25 +115,22 @@ export default async function LocaleLayout({
   // Enable static rendering for this locale.
   setRequestLocale(locale);
 
+  // Theme is decided server-side from the `theme` cookie (ThemeToggle writes
+  // it on every toggle) so the `dark` class is present in the very first
+  // byte of HTML - no client-side script or `useEffect` ever has to correct
+  // it after the fact, which is what caused a flash of the wrong theme on
+  // load (a pre-paint inline script relies on JS running before that first
+  // paint, which browsers don't always guarantee - extensions stripping
+  // inline scripts, bfcache snapshots, slow parsing, etc). Dark is the
+  // product default regardless of system preference; light mode is opt-in.
+  const cookieStore = await cookies();
+  const isDark = cookieStore.get("theme")?.value !== "light";
+
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${balooRounded.variable} h-full antialiased`}
-      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} ${balooRounded.variable} h-full antialiased${isDark ? " dark" : ""}`}
     >
-      <head>
-        {/* Sets the `.dark` class before first paint (from a saved choice,
-            defaulting to dark otherwise) so the sun/moon toggle in Header
-            doesn't cause a flash of the wrong theme on load. Inline and
-            synchronous - runs before Tailwind's dark: styles apply. Dark is
-            the product default regardless of system preference; light mode
-            is opt-in via the toggle. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":true;if(d)document.documentElement.classList.add("dark")}catch(e){}})();`,
-          }}
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider>
           <BackNavRefresh />

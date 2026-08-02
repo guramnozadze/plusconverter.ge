@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getUserProfile } from "@/lib/auth";
@@ -8,6 +9,8 @@ import { ThemeToggle } from "./ThemeToggle";
 export async function Header() {
   const t = await getTranslations();
   const { user, profile } = await getUserProfile();
+  const cookieStore = await cookies();
+  const isDark = cookieStore.get("theme")?.value !== "light";
 
   const displayName = profile?.username
     ? `@${profile.username}`
@@ -36,7 +39,7 @@ export async function Header() {
             displayName={displayName}
           />
           <div className="flex items-center gap-1.5">
-            <ThemeToggle />
+            <ThemeToggle initialDark={isDark} />
             <LanguageSwitcher />
           </div>
         </div>

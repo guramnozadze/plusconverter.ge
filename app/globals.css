@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 /* Class-based dark mode (not just prefers-color-scheme) so the header's
-   sun/moon toggle can force a theme regardless of system setting. The
-   inline script in the root layout sets/removes this class before first
-   paint (from localStorage, falling back to system preference) so there's
-   no flash of the wrong theme. */
+   sun/moon toggle can force a theme regardless of system setting. The root
+   layout renders this class server-side from the `theme` cookie, so it's
+   present in the initial HTML - no client script deciding it after first
+   paint, so there's no flash of the wrong theme. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
