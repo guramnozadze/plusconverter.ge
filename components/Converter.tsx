@@ -29,7 +29,7 @@ import type { Settings } from "@/lib/supabase/types";
 import { PlusBadge } from "./PlusBadge";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
-import { EmailOtpModal } from "./EmailOtpForm";
+import { EmailOtpModal, openEmailOtpModal, type EmailOtpModalHandle } from "./EmailOtpForm";
 import { GoogleIcon, MailIcon } from "./icons/ProviderIcons";
 
 type Props = {
@@ -210,6 +210,7 @@ export function Converter({
   const [showMinPopup, setShowMinPopup] = useState(false);
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const emailModalRef = useRef<EmailOtpModalHandle>(null);
   const inApp = useIsInAppBrowser();
   const giveInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -719,7 +720,7 @@ export function Converter({
           )}
           <button
             type="button"
-            onClick={() => setShowEmailModal(true)}
+            onClick={() => openEmailOtpModal(() => setShowEmailModal(true), emailModalRef)}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-foreground text-background py-3 font-medium"
           >
             <MailIcon className="h-5 w-5 shrink-0" />
@@ -753,15 +754,17 @@ export function Converter({
       )}
 
       {showEmailModal && (
-        <EmailOtpModal onClose={() => setShowEmailModal(false)} />
+        <EmailOtpModal ref={emailModalRef} onClose={() => setShowEmailModal(false)} />
       )}
 
       {showOpenInBrowserHint && (
         <OpenInBrowserModal
           onClose={() => setShowOpenInBrowserHint(false)}
           onUseEmail={() => {
-            setShowOpenInBrowserHint(false);
-            setShowEmailModal(true);
+            openEmailOtpModal(() => {
+              setShowOpenInBrowserHint(false);
+              setShowEmailModal(true);
+            }, emailModalRef);
           }}
         />
       )}

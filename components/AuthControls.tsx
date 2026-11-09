@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isInAppBrowser, useIsInAppBrowser } from "@/lib/inAppBrowser";
 import { Spinner } from "./Spinner";
 import { OpenInBrowserModal } from "./OpenInBrowserModal";
-import { EmailOtpModal } from "./EmailOtpForm";
+import { EmailOtpModal, openEmailOtpModal, type EmailOtpModalHandle } from "./EmailOtpForm";
 import { GoogleIcon, MailIcon, FacebookIcon, TelegramIcon, WhatsAppIcon } from "./icons/ProviderIcons";
 
 function UserIcon({ className }: { className?: string }) {
@@ -54,6 +54,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
   const [showOpenInBrowserHint, setShowOpenInBrowserHint] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const emailModalRef = useRef<EmailOtpModalHandle>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const inApp = useIsInAppBrowser();
 
@@ -104,7 +105,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
         {inApp ? (
           <button
             type="button"
-            onClick={() => setShowEmailModal(true)}
+            onClick={() => openEmailOtpModal(() => setShowEmailModal(true), emailModalRef)}
             className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
           >
             <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
@@ -114,7 +115,7 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           <>
             <button
               type="button"
-              onClick={() => setShowEmailModal(true)}
+              onClick={() => openEmailOtpModal(() => setShowEmailModal(true), emailModalRef)}
               className="inline-flex min-w-0 shrink items-center gap-1.5 rounded-md border border-black/15 dark:border-white/20 px-2.5 py-1.5 text-sm font-medium"
             >
               <MailIcon className="h-4 w-4 shrink-0 text-foreground/70" />
@@ -132,14 +133,16 @@ export function AuthControls({ isAuthenticated, displayName }: Props) {
           </>
         )}
         {showEmailModal && (
-          <EmailOtpModal onClose={() => setShowEmailModal(false)} />
+          <EmailOtpModal ref={emailModalRef} onClose={() => setShowEmailModal(false)} />
         )}
         {showOpenInBrowserHint && (
           <OpenInBrowserModal
             onClose={() => setShowOpenInBrowserHint(false)}
             onUseEmail={() => {
-              setShowOpenInBrowserHint(false);
-              setShowEmailModal(true);
+              openEmailOtpModal(() => {
+                setShowOpenInBrowserHint(false);
+                setShowEmailModal(true);
+              }, emailModalRef);
             }}
           />
         )}
