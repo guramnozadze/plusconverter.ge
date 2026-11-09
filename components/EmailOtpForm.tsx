@@ -124,12 +124,59 @@ export const EmailOtpForm = forwardRef<
   }, [signedIn, isRefreshing, onSuccess]);
 
   useEffect(() => {
-    // A plain focus() here can lose to the browser's own layout/keyboard
-    // timing right after the step swap — wait a frame so the input is
-    // actually painted and interactive before we grab focus.
+    // Wait a frame so the input is painted before we grab focus — a
+    // same-turn focus loses to iOS layout/keyboard timing on the step
+    // swap, and would no longer count as part of the tap that has to
+    // raise the keyboard.
+    //
+    // preventScroll is load-bearing, and there is no autoFocus attribute
+    // for the same reason: React's autoFocus calls focus() with the
+    // default scrolling behavior. That scrolls the focused control into
+    // view on the *document*. On a phone the field used to sit in the
+    // vertical center of the viewport, which is exactly the region the
+    // keyboard covers, so Safari/Chrome pan the page to lift it — and
+    // that pan sticks after the dialog closes (the header jumps, the
+    // URL bar collapses, the user is left scrolled down). The dialog is
+    // pinned to the top of the viewport on small screens, so the field
+    // is already in the band that stays visible above the keyboard and
+    // the pan has nothing to do. The short restore below catches the
+    // browsers that scroll anyway and ignore preventScroll once the
+    // keyboard animation starts. It stops well before a successful
+    // sign-in, which intentionally scrolls to the top.
     const target = step === "code" ? codeInputRef : emailInputRef;
-    const raf = requestAnimationFrame(() => target.current?.focus());
-    return () => cancelAnimationFrame(raf);
+    const x = window.scrollX;
+    const y = window.scrollY;
+    let restoreLock = false;
+
+    const restore = () => {
+      if (restoreLock) return;
+      if (window.scrollX === x && window.scrollY === y) return;
+      restoreLock = true;
+      window.scrollTo(x, y);
+      restoreLock = false;
+    };
+
+    const raf = requestAnimationFrame(() => {
+      target.current?.focus({ preventScroll: true });
+      restore();
+    });
+
+    window.addEventListener("scroll", restore, true);
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("scroll", restore);
+    const timers = [50, 150, 350, 700].map((ms) => window.setTimeout(restore, ms));
+    const stop = window.setTimeout(() => {
+      window.removeEventListener("scroll", restore, true);
+      viewport?.removeEventListener("scroll", restore);
+    }, 800);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      for (const timer of timers) window.clearTimeout(timer);
+      window.clearTimeout(stop);
+      window.removeEventListener("scroll", restore, true);
+      viewport?.removeEventListener("scroll", restore);
+    };
   }, [step]);
 
   function goToStep(next: Step) {
@@ -237,7 +284,6 @@ export const EmailOtpForm = forwardRef<
             <input
               key="email-step-input"
               ref={emailInputRef}
-              autoFocus
               type="email"
               inputMode="email"
               autoComplete="email"
@@ -270,7 +316,6 @@ export const EmailOtpForm = forwardRef<
             <input
               key="code-step-input"
               ref={codeInputRef}
-              autoFocus
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
@@ -329,9 +374,14 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
   const [sentTo, setSentTo] = useState("");
   const formRef = useRef<EmailOtpFormHandle>(null);
 
+  // Pinned near the top of the viewport on phones (including landscape).
+  // Vertical centering puts the focused email field mid-screen; mobile
+  // browsers then scroll the document to keep that field above the
+  // keyboard, and the page stays scrolled after the dialog closes.
+  // Desktop — wide and tall — keeps the centered placement.
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/[72%] p-4"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/[72%] px-4 pt-[max(4.5rem,env(safe-area-inset-top))] pb-4 [@media(min-width:640px)_and_(min-height:700px)]:items-center [@media(min-width:640px)_and_(min-height:700px)]:pt-4"
       onClick={step === "email" ? onClose : undefined}
     >
       <div
