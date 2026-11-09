@@ -4,10 +4,13 @@ import {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   useTransition,
+  type RefObject,
 } from "react";
+import { flushSync } from "react-dom";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -82,9 +85,71 @@ type Step = "email" | "code";
 // Exposes the code step's "back to email" action to EmailOtpModal, which
 // renders its own back button up in the header (alongside the close
 // button) rather than inline in the form - see the modal component below.
+// `focusField` focuses whichever input is on screen without scrolling.
 export type EmailOtpFormHandle = {
   back: () => void;
+  focusField: () => void;
 };
+
+export type EmailOtpModalHandle = {
+  focusField: () => void;
+};
+
+// iOS Safari and Android Chrome only raise the software keyboard when
+// focus() runs on the user-gesture call stack. React commits a click's
+// setState in that same stack (and flushSync makes it happen before the
+// handler returns), so the field is focused here — not in a
+// requestAnimationFrame, which is a new task and does not count.
+// preventScroll plus the short restore is what keeps that focus from
+// repeating the page jump: the default focus() scrolls the document to
+// reveal the control, and phones then pan again when the keyboard
+// animation starts.
+function focusWithoutScroll(el: HTMLInputElement | null) {
+  if (!el) return;
+  const x = window.scrollX;
+  const y = window.scrollY;
+  el.focus({ preventScroll: true });
+  if (window.scrollX !== x || window.scrollY !== y) window.scrollTo(x, y);
+  holdPageScroll(x, y);
+}
+
+let releaseScrollHold: (() => void) | undefined;
+
+function holdPageScroll(x: number, y: number) {
+  releaseScrollHold?.();
+  let restoreLock = false;
+  const restore = () => {
+    if (restoreLock) return;
+    if (window.scrollX === x && window.scrollY === y) return;
+    restoreLock = true;
+    window.scrollTo(x, y);
+    restoreLock = false;
+  };
+  window.addEventListener("scroll", restore, true);
+  const viewport = window.visualViewport;
+  viewport?.addEventListener("scroll", restore);
+  const timers = [50, 150, 350, 700].map((ms) => window.setTimeout(restore, ms));
+  const stop = window.setTimeout(release, 800);
+  function release() {
+    for (const timer of timers) window.clearTimeout(timer);
+    window.clearTimeout(stop);
+    window.removeEventListener("scroll", restore, true);
+    viewport?.removeEventListener("scroll", restore);
+    if (releaseScrollHold === release) releaseScrollHold = undefined;
+  }
+  releaseScrollHold = release;
+}
+
+// Opens the dialog and focuses its field before the tap handler returns.
+// Call this from the button's onClick — a later effect is too late for
+// the keyboard.
+export function openEmailOtpModal(
+  show: () => void,
+  modalRef: RefObject<EmailOtpModalHandle | null>,
+) {
+  flushSync(show);
+  modalRef.current?.focusField();
+}
 
 // Email OTP is the sign-in path that works inside embedded webviews
 // (Messenger, Facebook, Instagram) where Google refuses to complete OAuth:
@@ -123,60 +188,23 @@ export const EmailOtpForm = forwardRef<
     }
   }, [signedIn, isRefreshing, onSuccess]);
 
-  useEffect(() => {
-    // Wait a frame so the input is painted before we grab focus — a
-    // same-turn focus loses to iOS layout/keyboard timing on the step
-    // swap, and would no longer count as part of the tap that has to
-    // raise the keyboard.
-    //
-    // preventScroll is load-bearing, and there is no autoFocus attribute
-    // for the same reason: React's autoFocus calls focus() with the
-    // default scrolling behavior. That scrolls the focused control into
-    // view on the *document*. On a phone the field used to sit in the
-    // vertical center of the viewport, which is exactly the region the
-    // keyboard covers, so Safari/Chrome pan the page to lift it — and
-    // that pan sticks after the dialog closes (the header jumps, the
-    // URL bar collapses, the user is left scrolled down). The dialog is
-    // pinned to the top of the viewport on small screens, so the field
-    // is already in the band that stays visible above the keyboard and
-    // the pan has nothing to do. The short restore below catches the
-    // browsers that scroll anyway and ignore preventScroll once the
-    // keyboard animation starts. It stops well before a successful
-    // sign-in, which intentionally scrolls to the top.
-    const target = step === "code" ? codeInputRef : emailInputRef;
-    const x = window.scrollX;
-    const y = window.scrollY;
-    let restoreLock = false;
-
-    const restore = () => {
-      if (restoreLock) return;
-      if (window.scrollX === x && window.scrollY === y) return;
-      restoreLock = true;
-      window.scrollTo(x, y);
-      restoreLock = false;
-    };
-
+  useLayoutEffect(() => {
+    // Runs in the same commit as the tap that opened the dialog or
+    // advanced the step (callers flushSync that update). That is still
+    // the user-gesture call stack, so iOS/Android raise the keyboard.
+    // A frame-later focus is not, which is why this is a layout effect
+    // and not an effect. There is no autoFocus attribute: React implements
+    // it with focus() and the default scrolling behavior.
+    const target = step === "code" ? codeInputRef.current : emailInputRef.current;
+    focusWithoutScroll(target);
+    // If the sync focus was dropped before paint, try once more. This
+    // cannot itself open the keyboard; it only puts the caret back when
+    // the gesture-time focus already did.
     const raf = requestAnimationFrame(() => {
-      target.current?.focus({ preventScroll: true });
-      restore();
+      const el = step === "code" ? codeInputRef.current : emailInputRef.current;
+      if (el && document.activeElement !== el) focusWithoutScroll(el);
     });
-
-    window.addEventListener("scroll", restore, true);
-    const viewport = window.visualViewport;
-    viewport?.addEventListener("scroll", restore);
-    const timers = [50, 150, 350, 700].map((ms) => window.setTimeout(restore, ms));
-    const stop = window.setTimeout(() => {
-      window.removeEventListener("scroll", restore, true);
-      viewport?.removeEventListener("scroll", restore);
-    }, 800);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      for (const timer of timers) window.clearTimeout(timer);
-      window.clearTimeout(stop);
-      window.removeEventListener("scroll", restore, true);
-      viewport?.removeEventListener("scroll", restore);
-    };
+    return () => cancelAnimationFrame(raf);
   }, [step]);
 
   function goToStep(next: Step) {
@@ -188,10 +216,16 @@ export const EmailOtpForm = forwardRef<
     if (verifying) return;
     setError(null);
     setCode("");
-    goToStep("email");
+    // Same gesture rule as opening: the email field has to be focused
+    // before this tap returns, or iOS will not show the keyboard.
+    flushSync(() => goToStep("email"));
+    focusWithoutScroll(emailInputRef.current);
   }
 
-  useImperativeHandle(ref, () => ({ back: changeEmail }));
+  useImperativeHandle(ref, () => ({
+    back: changeEmail,
+    focusField: () => focusWithoutScroll(codeInputRef.current ?? emailInputRef.current),
+  }));
 
   async function sendCode() {
     const target = email.trim();
@@ -201,12 +235,12 @@ export const EmailOtpForm = forwardRef<
     }
     setError(null);
     setCode("");
-    // Switch to the code step before the network call, not after: once an
-    // await crosses a real network round-trip, iOS Safari stops treating a
-    // later focus() as tied to this tap and won't raise the keyboard. Doing
-    // it here keeps the step change (and the mount + focus it triggers) in
-    // the same gesture window as the click; roll back on send failure.
-    goToStep("code");
+    // Mount and focus the code field before the network call, and before
+    // this tap returns. Once an await crosses a real network round-trip,
+    // iOS Safari no longer treats a later focus() as part of this tap and
+    // will not raise the keyboard. Roll the step back on send failure.
+    flushSync(() => goToStep("code"));
+    focusWithoutScroll(codeInputRef.current);
     setSending(true);
     const supabase = createClient();
     const { error: sendError } = await supabase.auth.signInWithOtp({
@@ -317,10 +351,20 @@ export const EmailOtpForm = forwardRef<
               key="code-step-input"
               ref={codeInputRef}
               type="text"
+              name="one-time-code"
               inputMode="numeric"
               autoComplete="one-time-code"
-              // Matches the project's Email OTP length setting (Supabase
-              // dashboard: Auth → Providers → Email → Email OTP length = 6).
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              // [0-9]* is the pattern older iOS uses to offer the number
+              // pad. maxLength matches the project's Email OTP length
+              // (Supabase dashboard: Auth → Providers → Email → Email OTP
+              // length = 6). autocomplete=one-time-code is what Safari
+              // attaches a Mail suggestion to (iOS 17+, inbox in Mail) and
+              // what Android Chrome uses for SMS codes. It does not let
+              // Chrome read an email inbox.
+              pattern="[0-9]*"
               maxLength={6}
               value={code}
               onChange={(e) => {
@@ -368,11 +412,18 @@ export const EmailOtpForm = forwardRef<
 // the email/code exchange gets its own focused surface. Header copy tracks
 // the form's current step so "code sent" replaces the intro once a code
 // has actually gone out.
-export function EmailOtpModal({ onClose }: { onClose: () => void }) {
+export const EmailOtpModal = forwardRef<
+  EmailOtpModalHandle,
+  { onClose: () => void }
+>(function EmailOtpModal({ onClose }, ref) {
   const t = useTranslations("common");
   const [step, setStep] = useState<Step>("email");
   const [sentTo, setSentTo] = useState("");
   const formRef = useRef<EmailOtpFormHandle>(null);
+
+  useImperativeHandle(ref, () => ({
+    focusField: () => formRef.current?.focusField(),
+  }));
 
   // Pinned near the top of the viewport on phones (including landscape).
   // Vertical centering puts the focused email field mid-screen; mobile
@@ -453,4 +504,4 @@ export function EmailOtpModal({ onClose }: { onClose: () => void }) {
       </div>
     </div>
   );
-}
+});
